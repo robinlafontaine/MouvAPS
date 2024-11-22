@@ -1,16 +1,30 @@
-# mouvaps
+# MOUV'APS
+## Description
+MOUV'APS est une application mobile de sport-santé conçue pour accompagner les patients dans leur parcours de santé, particulièrement en Hauts-de-France. L'application propose un suivi personnalisé combinant activité physique et nutrition, spécialement adaptée pour les personnes atteintes de cancer, d'obésité ou de maladies cardiovasculaires.
 
-Application Mouv'APS
+## Fonctionnalités Principales
 
-## Getting Started
+### Programmes Personnalisés
+- Évaluations physiques régulières
+- Programmes d'exercices avec vidéos
+- Plans alimentaires avec recettes et tutoriels vidéo
 
-This project is a starting point for a Flutter application.
+### Suivi Médical
+- Téléversement d'ordonnances sport-santé (PDF/Photos)
+- Questionnaire initial détaillé
+- Suivi des résultats par les thérapeutes
 
-A few resources to get you started if this is your first Flutter project:
+### Interaction
+- Séances en direct par vidéo
+- ChatBot pour assistance immédiate
+- Communication directe avec les thérapeutes
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Gamification
+- Système de points
+- Badges de progression
+- Objectifs personnalisés
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Architecture
+### Plateformes
+- iOS
+- Android
