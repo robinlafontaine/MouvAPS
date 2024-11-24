@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: "Mouv'APS v0.0.1"),
+      home: const MyHomePage(title: "Mouv'APS v0.0.1 "),
     );
   }
 }
