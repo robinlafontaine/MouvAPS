@@ -1,0 +1,61 @@
+name: Release CI
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  generate-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - run: npx changelogithub
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  build-and-release-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+      - name: Flutter action
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.24.5
+          channel: stable
+      - name: Decode keystore
+        run: |
+          echo $ENCODED_KEYSTORE | base64 -di > android/app/keystore.jks
+        env:
+          ENCODED_KEYSTORE: ${{ secrets.KEYSTORE }}
+
+      - run: flutter pub get
+
+      - name: Collect Apks
+        run: flutter build apk --release -v
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD}}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          path: "build/app/outputs/flutter-apk/app-release.apk"
+          name: MouvAPS.apk
+      - name: Release Packages
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/flutter-apk/app-release.apk"
+          allowUpdates: true
+          omitBody: true
+
+    # TODO: Add build-and-release-ios job
