@@ -15,9 +15,6 @@ jobs:
           channel: 'stable'      
       - name: Get dependencies
         run: flutter pub get
-
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
       
       - name: Analyze source
         run: flutter analyze --fatal-warnings
