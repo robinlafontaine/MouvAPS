@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mouvaps/signin_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 void main() {
@@ -87,6 +88,15 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            ShadButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignInScreen()),
+                );
+              },
+              child: const Text('Continuer'),
+            ),
             const Text(
               'You have pushed the button this many times:',
             ),
