@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-//import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,9 +19,6 @@ class MyApp extends StatelessWidget {
       theme: ShadThemeData(
         colorScheme: const ShadBlueColorScheme.light(),
         brightness: Brightness.light,
-//        textTheme: ShadTextTheme.fromGoogleFont(
-//        GoogleFonts.poppins
-//      ),
     ),
       title: 'Shadcn Demo',
       home: const MyHomePage(title: "Mouv'APS Demo"),
