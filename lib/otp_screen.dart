@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mouvaps/home_screen.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OTPScreen extends StatefulWidget {
   final String email;
@@ -15,6 +17,7 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
+  final SupabaseClient supabase = Supabase.instance.client;
   final pinController = TextEditingController();
   final focusNode = FocusNode();
   String? errorMessage;
@@ -35,41 +38,41 @@ class _OTPScreenState extends State<OTPScreen> {
     super.dispose();
   }
 
-  void _sendOtpToEmail() {
-    // TODO: Implement OTP sending logic
+  Future<void> _sendOtpToEmail() async {
+    await supabase.auth.signInWithOtp(email: widget.email);
     print('OTP $generatedOtp sent to ${widget.email}');
   }
 
-  void _verifyOtp() {
+  Future<void> _verifyOtp() async {
     setState(() {
       isLoading = true;
       errorMessage = null;
     });
 
-    // Simulate OTP verification
-    Future.delayed(const Duration(seconds: 1), () {
+    final AuthResponse res = await supabase.auth.verifyOTP(
+      type: OtpType.email,
+      email: widget.email,
+      token: pinController.text,
+    );
+
+    if (res.session != null) {
+      _onVerificationSuccess(res);
+    } else {
       setState(() {
+        errorMessage = 'Code invalide';
         isLoading = false;
       });
-
-      if (pinController.text == generatedOtp) {
-        _onVerificationSuccess();
-      } else {
-        setState(() {
-          errorMessage = 'Code incorrect. Veuillez réessayer.';
-        });
-      }
-    });
+    }
   }
 
-  void _onVerificationSuccess() {
-    // TODO: Navigate to next screen
+  void _onVerificationSuccess(AuthResponse res) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Vérification réussie pour ${widget.email}'),
+        content: Text('Bonjour ${res.user?.email}'),
         duration: const Duration(seconds: 2),
       ),
     );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
   }
 
   void _resendOtp() {
@@ -78,7 +81,8 @@ class _OTPScreenState extends State<OTPScreen> {
       isLoading = false;
     });
 
-    // TODO: Implement OTP resend logic
+    _sendOtpToEmail();
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Nouveau code envoyé à ${widget.email}'),

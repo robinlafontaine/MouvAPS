@@ -70,7 +70,6 @@ class _SignInScreenState extends State<SignInScreen> {
                   onPressed: () {
                     if (formKey.currentState!.saveAndValidate()) {
                       print('Validation succeeded with ${formKey.currentState!.value}');
-                      // TODO: Implement sign-in logic
                       Navigator.push(context, MaterialPageRoute(builder: (context) => OTPScreen(email: formKey.currentState!.value['email'],)));
                       print('Signing in with email: ${formKey.currentState!.value['email']}');
                     } else {
