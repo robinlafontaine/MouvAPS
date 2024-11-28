@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/auth_screen.dart';
+import 'package:mouvaps/auth_controller.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
     ),
       title: "Mouv'APS",
-      home: const AuthPage(),
+      home: const AuthController(),
     );
   }
 }

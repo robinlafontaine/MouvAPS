@@ -3,14 +3,14 @@ import 'package:mouvaps/home_screen.dart';
 import 'package:mouvaps/signin_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AuthPage extends StatefulWidget {
-  const AuthPage({super.key});
+class AuthController extends StatefulWidget {
+  const AuthController({super.key});
 
   @override
-  State<AuthPage> createState() => _AuthPageState();
+  State<AuthController> createState() => _AuthControllerState();
 }
 
-class _AuthPageState extends State<AuthPage> {
+class _AuthControllerState extends State<AuthController> {
   User? _user;
   @override
   void initState() {
@@ -33,15 +33,6 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _getAuth(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else {
-          return _user == null ? const SignInScreen() : const HomeScreen();
-        }
-      },
-    );
+    return _user == null ? const SignInScreen() : const HomeScreen();
   }
 }
