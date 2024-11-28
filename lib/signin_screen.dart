@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:mouvaps/otp_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -10,6 +11,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  var logger = Logger(printer: SimplePrinter());
   final formKey = GlobalKey<ShadFormState>();
 
   bool _isValidEmailFormat(String email) {
@@ -69,11 +71,11 @@ class _SignInScreenState extends State<SignInScreen> {
                 ShadButton(
                   onPressed: () {
                     if (formKey.currentState!.saveAndValidate()) {
-                      print('Validation succeeded with ${formKey.currentState!.value}');
+                      logger.d('Validation succeeded with ${formKey.currentState!.value}');
                       Navigator.push(context, MaterialPageRoute(builder: (context) => OTPScreen(email: formKey.currentState!.value['email'],)));
-                      print('Signing in with email: ${formKey.currentState!.value['email']}');
+                      logger.d('Signing in with email: ${formKey.currentState!.value['email']}');
                     } else {
-                      print('Validation failed');
+                      logger.d('Validation failed');
                     }
                   },
                   child: const Text('Recevoir un code'),

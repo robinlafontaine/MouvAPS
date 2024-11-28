@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:mouvaps/home_screen.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OTPScreen extends StatefulWidget {
+
   final String email;
 
   const OTPScreen({
@@ -17,6 +19,7 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
+  var logger = Logger(printer: SimplePrinter());
   final SupabaseClient supabase = Supabase.instance.client;
   final pinController = TextEditingController();
   final focusNode = FocusNode();
@@ -40,7 +43,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
   Future<void> _sendOtpToEmail() async {
     await supabase.auth.signInWithOtp(email: widget.email);
-    print('OTP $generatedOtp sent to ${widget.email}');
+    logger.d('OTP $generatedOtp sent to ${widget.email}');
   }
 
   Future<void> _verifyOtp() async {
@@ -66,12 +69,6 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   void _onVerificationSuccess(AuthResponse res) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Bonjour ${res.user?.email}'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
     Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
   }
 
@@ -83,11 +80,10 @@ class _OTPScreenState extends State<OTPScreen> {
 
     _sendOtpToEmail();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Nouveau code envoyé à ${widget.email}'),
-        duration: const Duration(seconds: 2),
-      ),
+    ShadAlert(
+      iconSrc: LucideIcons.send,
+      title: const Text('Email envoyé'),
+      description: Text('Nouveau code envoyé à ${widget.email}'),
     );
   }
 

@@ -39,6 +39,7 @@ dependencies:
   pinput: ^5.0.0
   supabase_flutter: ^2.8.1
   flutter_dotenv: ^5.2.1
+  logger: ^2.5.0
 
 dev_dependencies:
   flutter_test:

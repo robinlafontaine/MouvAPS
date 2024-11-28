@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -6,6 +7,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var logger = Logger(printer: SimplePrinter());
     final SupabaseClient supabase = Supabase.instance.client;
     return Scaffold(
       appBar: AppBar(
@@ -15,7 +17,7 @@ class HomeScreen extends StatelessWidget {
             icon: const Icon(Icons.settings),
             onPressed: () {
               // Action for settings
-              print("Settings clicked");
+              logger.d("Settings clicked");
             },
           ),
         ],
