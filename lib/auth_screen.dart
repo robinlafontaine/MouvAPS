@@ -39,7 +39,7 @@ class _AuthPageState extends State<AuthPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else {
-          return _user == null ? const SignInScreen() : const Home();
+          return _user == null ? const SignInScreen() : const HomeScreen();
         }
       },
     );

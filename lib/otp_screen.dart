@@ -49,19 +49,19 @@ class _OTPScreenState extends State<OTPScreen> {
       errorMessage = null;
     });
 
-    final AuthResponse res = await supabase.auth.verifyOTP(
-      type: OtpType.email,
-      email: widget.email,
-      token: pinController.text,
-    );
-
-    if (res.session != null) {
+    try {
+      final AuthResponse res = await supabase.auth.verifyOTP(
+        type: OtpType.email,
+        email: widget.email,
+        token: pinController.text,
+      );
       _onVerificationSuccess(res);
-    } else {
+    } catch (e) {
       setState(() {
         errorMessage = 'Code invalide';
         isLoading = false;
       });
+      return;
     }
   }
 
@@ -72,7 +72,7 @@ class _OTPScreenState extends State<OTPScreen> {
         duration: const Duration(seconds: 2),
       ),
     );
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
   }
 
   void _resendOtp() {
@@ -152,7 +152,9 @@ class _OTPScreenState extends State<OTPScreen> {
             if (errorMessage != null)
               Text(
                 errorMessage!,
-                style: const TextStyle(color: Colors.red),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.red,
+                ),
               ),
             const SizedBox(height: 20),
             ShadButton(
