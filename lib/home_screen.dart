@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final SupabaseClient supabase = Supabase.instance.client;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Screen'),
@@ -24,35 +26,19 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Welcome to the Home Screen!',
+              'You are logged in!',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Action for button 1
-                print('Button 1 clicked');
-              },
-              child: const Text('Button 1'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // Action for button 2
-                print('Button 2 clicked');
-              },
-              child: const Text('Button 2'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // Action for button 3
-                print('Button 3 clicked');
-              },
-              child: const Text('Button 3'),
+            Text(
+              supabase.auth.currentUser?.email ?? 'No email',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
