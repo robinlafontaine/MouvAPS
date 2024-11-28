@@ -57,6 +57,15 @@ jobs:
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=keystore.jks" >> android/key.properties
 
+      - name: 'Create env file'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          touch .env
+          echo SUPABASE_URL=$SUPABASE_URL >> .env
+          echo SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY >> .env   
+
       - name: Run tests
         run: |
           flutter test
