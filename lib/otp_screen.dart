@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/home_screen.dart';
@@ -25,25 +26,46 @@ class _OTPScreenState extends State<OTPScreen> {
   final focusNode = FocusNode();
   String? errorMessage;
   bool isLoading = false;
-
-  final String generatedOtp = '123456';
+  bool isButtonDisabled = true;
+  int countdown = 60;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     _sendOtpToEmail();
+    _startCountdown();
   }
 
   @override
   void dispose() {
     pinController.dispose();
     focusNode.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
   Future<void> _sendOtpToEmail() async {
     await supabase.auth.signInWithOtp(email: widget.email);
-    logger.d('OTP $generatedOtp sent to ${widget.email}');
+    logger.d('OTP sent to ${widget.email}');
+  }
+
+  void _startCountdown() {
+    setState(() {
+      isButtonDisabled = true;
+      countdown = 60;
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (countdown > 0) {
+          countdown--;
+        } else {
+          isButtonDisabled = false;
+          timer.cancel();
+        }
+      });
+    });
   }
 
   Future<void> _verifyOtp() async {
@@ -79,6 +101,7 @@ class _OTPScreenState extends State<OTPScreen> {
     });
 
     _sendOtpToEmail();
+    _startCountdown();
 
     ShadAlert(
       iconSrc: LucideIcons.send,
@@ -155,7 +178,8 @@ class _OTPScreenState extends State<OTPScreen> {
             const SizedBox(height: 20),
             ShadButton(
               onPressed: _resendOtp,
-              child: const Text('Renvoyer le code'),
+              enabled: !isButtonDisabled,
+              child: Text(isButtonDisabled ? 'Renvoyer le code ($countdown)' : 'Renvoyer le code'),
             ),
           ],
         ),
