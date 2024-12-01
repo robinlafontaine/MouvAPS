@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/home_screen.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -46,6 +45,7 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   Future<void> _sendOtpToEmail() async {
+    logger.d('Sending OTP to ${widget.email}');
     await supabase.auth.signInWithOtp(email: widget.email);
     logger.d('OTP sent to ${widget.email}');
   }
@@ -91,7 +91,7 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   void _onVerificationSuccess(AuthResponse res) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
   void _resendOtp() {

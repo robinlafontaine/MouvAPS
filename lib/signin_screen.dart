@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/otp_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -72,7 +71,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   onPressed: () {
                     if (formKey.currentState!.saveAndValidate()) {
                       logger.d('Validation succeeded with ${formKey.currentState!.value}');
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => OTPScreen(email: formKey.currentState!.value['email'],)));
+                      Navigator.pushNamed(context, '/otp', arguments: formKey.currentState!.value['email']);
                       logger.d('Signing in with email: ${formKey.currentState!.value['email']}');
                     } else {
                       logger.d('Validation failed');
