@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:mouvaps/utils/textUtils.dart';
 
 class OTPScreen extends StatefulWidget {
 
@@ -126,29 +127,20 @@ class _OTPScreenState extends State<OTPScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Vérification'),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+      appBar: AppBar(),
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 40),
-            Text(
-              'Vérification par email',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            const ShadImage(
+              'https://avatars.githubusercontent.com/u/124599?v=4',
+              height: 100,
             ),
             const SizedBox(height: 16),
-            Text(
-              'Entrez le code de 6 chiffres envoyé à ${widget.email}',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 40),
+            const H1(content: 'Vérification par email'),
+            const SizedBox(height: 16),
+            MediumText(content : 'Veuillez entrer le code à 6 chiffres envoyé à ${widget.email}.'),
             Pinput(
               length: 6,
               controller: pinController,
@@ -175,6 +167,9 @@ class _OTPScreenState extends State<OTPScreen> {
                   color: Colors.red,
                 ),
               ),
+            const SizedBox(height: 20),
+            const Text("Vous n'avez pas reçu de mail ?"),
+            const Text("Vérifiez vos spams et indésirables."),
             const SizedBox(height: 20),
             ShadButton(
               onPressed: _resendOtp,
