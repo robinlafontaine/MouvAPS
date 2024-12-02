@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/auth_controller.dart';
+import 'package:mouvaps/auth/auth_controller.dart';
 import 'package:mouvaps/home_screen.dart';
-import 'package:mouvaps/signin_screen.dart';
+import 'package:mouvaps/auth/signin_screen.dart';
+import 'package:mouvaps/profile/profile_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'otp_screen.dart';
+import 'auth/otp_screen.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
@@ -28,23 +29,23 @@ class MyApp extends StatelessWidget {
     return ShadApp.material(
       materialThemeBuilder: (context, theme) {
         return theme.copyWith(
-          appBarTheme: const AppBarTheme(toolbarHeight: 52),
+          appBarTheme: const AppBarTheme(
+            toolbarHeight: 52,
+          ),
         );
       },
-      theme: ShadThemeData(
-        colorScheme: const ShadBlueColorScheme.light(),
-        brightness: Brightness.light,
-    ),
+      themeMode: ThemeMode.light,
+      debugShowCheckedModeBanner: false,
       title: "Mouv'APS",
       initialRoute: '/',
       routes: {
-        '/': (context) => const AuthController(),
-        '/home': (context) => const HomeScreen(),
+        '/auth': (context) => const AuthController(),
+        '/': (context) => const HomeScreen(),
         '/signin': (context) => const SignInScreen(),
-        '/otp': (context) => OTPScreen(email: ModalRoute.of(context)!.settings.arguments as String),
+        '/otp': (context) => OTPScreen(
+            email: ModalRoute.of(context)!.settings.arguments as String),
+        '/profile': (context) => const ProfileScreen(),
       },
     );
   }
 }
-
-

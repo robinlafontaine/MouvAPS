@@ -1,49 +1,87 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:mouvaps/colors.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text(
+      'Index 0: Sport',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 1: Recettes',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 2: Infos',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 3: Chat',
+      style: optionStyle,
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var logger = Logger(printer: SimplePrinter());
-    final SupabaseClient supabase = Supabase.instance.client;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Screen'),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(
+              Icons.account_circle,
+              color: primaryColor,
+            ),
             onPressed: () {
-              // Action for settings
-              logger.d("Settings clicked");
+              Navigator.pushNamed(context, '/profile');
             },
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'You are logged in!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              supabase.auth.currentUser?.email ?? 'No email',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fitness_center),
+            label: 'Sport',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant),
+            label: 'Recettes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info),
+            label: 'Infos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.live_help),
+            label: 'Chat',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: primaryColor,
+        unselectedItemColor: primaryColor,
+        showUnselectedLabels: true,
+        onTap: _onItemTapped,
       ),
     );
   }
