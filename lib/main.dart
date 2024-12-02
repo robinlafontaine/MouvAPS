@@ -7,6 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'otp_screen.dart';
 
+import 'constants.dart' as Constants;
+
 Future main() async {
   await dotenv.load(fileName: ".env");
 
@@ -31,9 +33,53 @@ class MyApp extends StatelessWidget {
           appBarTheme: const AppBarTheme(toolbarHeight: 52),
         );
       },
+      themeMode: ThemeMode.light,
       theme: ShadThemeData(
-        colorScheme: const ShadBlueColorScheme.light(),
+        colorScheme: const ShadSlateColorScheme.light(),
         brightness: Brightness.light,
+
+        // TYPOGRAPHY
+        textTheme: ShadTextTheme(
+          h1: const TextStyle(
+            fontSize: Constants.h1_font_size,
+              fontWeight: Constants.h1_font_weight,
+              color: Constants.primary_color,),
+
+          h2: const TextStyle(
+            fontSize: Constants.h2_font_size,
+              fontWeight: Constants.h2_font_weight,
+              decoration: TextDecoration.underline,
+              color: Constants.secondary_color,
+          ),
+
+          h3: const TextStyle(
+            fontSize: Constants.h3_font_size,
+              fontWeight: Constants.h3_font_weight,
+              color: Constants.text_color,),
+
+          p: const TextStyle(
+            fontSize: Constants.p_font_size,
+              fontWeight: Constants.p_font_weight,
+              color: Constants.text_color,),
+
+          small: const TextStyle(
+            fontSize: Constants.small_font_size,
+              fontWeight: Constants.small_font_weight,
+              color: Constants.text_color,),
+
+
+        ),
+
+        // BUTTONS
+        primaryButtonTheme: const ShadButtonTheme(
+          backgroundColor: Constants.primary_color,
+        ),
+        destructiveButtonTheme: const ShadButtonTheme(
+          backgroundColor: Constants.destructive_button_color,
+          hoverBackgroundColor: Constants.destructive_button_hover_color,
+        ),
+
+
     ),
       title: "Mouv'APS",
       initialRoute: '/',
