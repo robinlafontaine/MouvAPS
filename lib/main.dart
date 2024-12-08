@@ -39,8 +39,8 @@ class MyApp extends StatelessWidget {
       title: "Mouv'APS",
       initialRoute: '/',
       routes: {
-        '/auth': (context) => const AuthController(),
-        '/': (context) => const HomeScreen(),
+        '/': (context) => const AuthController(),
+        '/home': (context) => const HomeScreen(),
         '/signin': (context) => const SignInScreen(),
         '/otp': (context) => OTPScreen(
             email: ModalRoute.of(context)!.settings.arguments as String),
