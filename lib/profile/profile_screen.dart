@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../colors.dart';
+import 'package:mouvaps/colors.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -9,19 +8,14 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile Screen'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.account_circle,
-              color: primaryColor,
-            ),
-            onPressed: () {
-              Navigator.pushNamed(context, '/profile');
-            },
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
           ),
-        ],
+        ),
       ),
       body: const Center(child: Text('Profile Screen')),
     );

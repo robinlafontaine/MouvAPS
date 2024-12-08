@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/colors.dart';
+import 'package:mouvaps/home/sport_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,13 +11,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const TextStyle optionStyle = TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.bold,
+  );
   static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Sport',
-      style: optionStyle,
-    ),
+    SportScreen(),
     Text(
       'Index 1: Recettes',
       style: optionStyle,
@@ -31,6 +31,13 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
+  static const List<String> _appBarTitles = <String>[
+    'Programme',
+    'Recettes',
+    'Informations',
+    'Discussions',
+  ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -41,13 +48,20 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Screen'),
-        centerTitle: true,
+        title: Text(
+          _appBarTitles.elementAt(_selectedIndex),
+          style: const TextStyle(
+            color: primaryColor,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(
               Icons.account_circle,
               color: primaryColor,
+              size: 36,
             ),
             onPressed: () {
               Navigator.pushNamed(context, '/profile');

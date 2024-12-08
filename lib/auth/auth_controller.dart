@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/home_screen.dart';
+import 'package:mouvaps/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/auth/auth_controller.dart';
-import 'package:mouvaps/home_screen.dart';
+import 'package:mouvaps/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
 import 'package:mouvaps/profile/profile_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
