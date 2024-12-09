@@ -36,7 +36,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 100,
                 ),
                 const SizedBox(height: 16),
-                Text("Se connecter", style: ShadTheme.of(context).textTheme.h1),
+                Text('Se connecter',
+                    textAlign: TextAlign.center,
+                    style: ShadTheme.of(context).textTheme.h1),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: 350,
