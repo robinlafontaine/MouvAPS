@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:mouvaps/utils/textUtils.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -36,14 +35,20 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 100,
                 ),
                 const SizedBox(height: 16),
-                const H1(
-                  content: "Se connecter",
+                const Text(
+                  'Se connecter',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 ShadInputFormField(
                   id: 'email',
-                  label: const MediumText(content: 'Adresse mail'),
-                  placeholder: const MediumText(content: 'mail@example.com'),
+                  label: const Text('Adresse mail'),
+                  placeholder: const Text('mail@example.com'),
                   keyboardType: TextInputType.emailAddress,
                   prefix: const Padding(
                     padding: EdgeInsets.all(4.0),
@@ -69,7 +74,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       logger.d('Validation failed');
                     }
                   },
-                  child: MediumText(content: 'Recevoir un code'),
+                  child: const Text('Recevoir un code'),
+
                 ),
               ],
             ),
