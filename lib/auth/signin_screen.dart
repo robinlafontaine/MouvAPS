@@ -35,15 +35,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 100,
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Se connecter',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                ),
+                Text('Se connecter',
+                    textAlign: TextAlign.center,
+                    style: ShadTheme.of(context).textTheme.h1),
                 const SizedBox(height: 16),
                 ShadInputFormField(
                   id: 'email',
@@ -67,15 +61,17 @@ class _SignInScreenState extends State<SignInScreen> {
                 ShadButton(
                   onPressed: () {
                     if (formKey.currentState!.saveAndValidate()) {
-                      logger.d('Validation succeeded with ${formKey.currentState!.value}');
-                      Navigator.pushNamed(context, '/otp', arguments: formKey.currentState!.value['email']);
-                      logger.d('Signing in with email: ${formKey.currentState!.value['email']}');
+                      logger.d(
+                          'Validation succeeded with ${formKey.currentState!.value}');
+                      Navigator.pushNamed(context, '/otp',
+                          arguments: formKey.currentState!.value['email']);
+                      logger.d(
+                          'Signing in with email: ${formKey.currentState!.value['email']}');
                     } else {
                       logger.d('Validation failed');
                     }
                   },
                   child: const Text('Recevoir un code'),
-
                 ),
               ],
             ),

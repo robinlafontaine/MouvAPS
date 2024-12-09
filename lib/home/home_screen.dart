@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/colors.dart';
 import 'package:mouvaps/home/sport_screen.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:mouvaps/constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,19 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          _appBarTitles.elementAt(_selectedIndex),
-          style: const TextStyle(
-            color: primaryColor,
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text(_appBarTitles.elementAt(_selectedIndex),
+            style: ShadTheme.of(context).textTheme.h1),
         actions: [
           IconButton(
             icon: const Icon(
               Icons.account_circle,
-              color: primaryColor,
+              color: primary_color,
               size: 36,
             ),
             onPressed: () {
@@ -92,8 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: primaryColor,
-        unselectedItemColor: primaryColor,
+        selectedItemColor: primary_color,
+        unselectedItemColor: primary_color,
         showUnselectedLabels: true,
         onTap: _onItemTapped,
       ),
