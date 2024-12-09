@@ -32,7 +32,7 @@ class _CarouselWithIndicatorState extends State<CustomCarousel> {
           items: snapshot.data!.map((content) {
             return Builder(
               builder: (BuildContext context) {
-                return VideoPlayerWidget(url: Uri.parse(content.url));
+                return VideoPlayerWidget(url: Content.getUri(content));
               },
             );
           }).toList(),
