@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/auth_controller.dart';
-import 'package:mouvaps/home_screen.dart';
-import 'package:mouvaps/signin_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:mouvaps/auth/auth_controller.dart';
+import 'package:mouvaps/auth/home_screen.dart';
+import 'package:mouvaps/auth/otp_screen.dart';
+import 'package:mouvaps/auth/signin_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'otp_screen.dart';
 
-import 'constants.dart' as Constants;
+import 'utils/constants.dart' as Constants;
 
 Future main() async {
   await dotenv.load(fileName: ".env");
@@ -38,8 +39,10 @@ class MyApp extends StatelessWidget {
         colorScheme: const ShadSlateColorScheme.light(),
         brightness: Brightness.light,
 
+
         // TYPOGRAPHY
         textTheme: ShadTextTheme(
+          family: 'Poppins',
           h1: const TextStyle(
             fontSize: Constants.h1_font_size,
               fontWeight: Constants.h1_font_weight,

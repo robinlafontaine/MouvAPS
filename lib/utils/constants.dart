@@ -14,9 +14,6 @@ const Color destructive_button_hover_color = Color(0xFFAA2727);
 const Color text_field_color = Color.fromRGBO(224, 224, 224, 1);
 const Color text_field_placeholder_color = Color.fromRGBO(166, 166, 166, 1);
 
-
-
-
 const double h1_font_size = 32;
 const FontWeight h1_font_weight = FontWeight.w600;
 
@@ -35,7 +32,9 @@ const FontWeight small_font_weight = FontWeight.w400;
 const double form_label_font_size = 16;
 const FontWeight form_label_font_weight = FontWeight.w400;
 
-const double button_text_font_size = 20;
-const FontWeight button_text_font_weight = FontWeight.w600;
+const double button_text_font_size = 18;
+const FontWeight button_text_font_weight = FontWeight.w500;
 
+
+// TODO: sizes for different screen sizes
 
