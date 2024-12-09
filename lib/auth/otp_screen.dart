@@ -47,7 +47,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
   Future<void> _sendOtpToEmail() async {
     logger.d('Sending OTP to ${widget.email}');
-    await Auth().signInWithOtp(email: widget.email);
+    await Auth.instance.signInWithOtp(email: widget.email);
     logger.d('OTP sent to ${widget.email}');
   }
 
@@ -75,7 +75,7 @@ class _OTPScreenState extends State<OTPScreen> {
       errorMessage = null;
     });
 
-    final bool res = await Auth().verifyOtp(
+    final bool res = await Auth.instance.verifyOtp(
       email: widget.email,
       token: pinController.text,
     );

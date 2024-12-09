@@ -1,17 +1,29 @@
-import 'dart:ffi';
-
+import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Auth {
+
+  Auth._();
+
+  static final Auth instance = Auth._();
+
+  factory Auth() => instance;
+
   final SupabaseClient supabase = Supabase.instance.client;
 
-  static final Auth _instance = Auth._internal();
+  final Logger logger = Logger();
 
-  factory Auth() {
-    return _instance;
+  User? _user;
+
+  User? get currentUser => _user;
+
+
+  Future<void> initialize() async {
+    _user = supabase.auth.currentUser;
+    supabase.auth.onAuthStateChange.listen((event) {
+      _user = event.session?.user;
+    });
   }
-
-  Auth._internal();
 
   User? getUser() {
     return supabase.auth.currentUser;
@@ -35,14 +47,15 @@ class Auth {
 
   Future<bool> verifyOtp({required String email, required String token}) async {
     try {
-      final res = await supabase.auth.verifyOTP(
+      final AuthResponse res = await supabase.auth.verifyOTP(
         type: OtpType.email,
         email: email,
         token: token,
       );
 
-      return res.session == null;
+      return res.session != null && res.user != null;
     } catch (e) {
+      logger.e(e);
       return false;
     }
   }

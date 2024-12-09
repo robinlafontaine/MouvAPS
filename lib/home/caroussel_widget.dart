@@ -1,11 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/auth/auth_controller.dart';
 import 'package:mouvaps/home/player_widget.dart';
-
-import '../services/auth.dart';
-import '../services/content.dart';
+import 'package:mouvaps/services/auth.dart';
+import 'package:mouvaps/services/content.dart';
 
 class CustomCarousel extends StatefulWidget {
   const CustomCarousel({super.key});
@@ -37,7 +35,7 @@ class _CarouselWithIndicatorState extends State<CustomCarousel> {
                     return ClipRRect(
                       borderRadius:
                           const BorderRadius.all(Radius.circular(5.0)),
-                      child: VideoPlayerWidget(url: Uri.parse(content.url), jwt: Auth().getJwt()),
+                      child: VideoPlayerWidget(url: Uri.parse(content.url), requiresAuth: true),
                     );
                   },
                 );
