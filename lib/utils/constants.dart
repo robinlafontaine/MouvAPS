@@ -7,6 +7,8 @@ const Color unselected_color = Color.fromRGBO(166, 166, 166, 1);
 const Color disabled_button_color = Color.fromRGBO(166, 166, 166, 1);
 const Color text_color = Color.fromRGBO(37, 37, 37, 1);
 
+const error_color = Color(0xFFED5555);
+
 const Color button_text_color = light_color;
 const Color destructive_button_color = Color(0xFFED5555);
 const Color destructive_button_hover_color = Color(0xFFAA2727);

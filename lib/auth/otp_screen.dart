@@ -4,7 +4,8 @@ import 'package:logger/logger.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:mouvaps/utils/textUtils.dart';
+
+import 'package:mouvaps/utils/constants.dart' as Constants;
 
 class OTPScreen extends StatefulWidget {
 
@@ -138,9 +139,17 @@ class _OTPScreenState extends State<OTPScreen> {
               height: 100,
             ),
             const SizedBox(height: 16),
-            const H1(content: 'Vérification par email'),
+            Text(
+                'Vérification par email',
+              style: ShadTheme.of(context).textTheme.h1
+            ),
             const SizedBox(height: 16),
-            MediumText(content : 'Veuillez entrer le code à 6 chiffres envoyé à ${widget.email}.'),
+            Text('Veuillez entrer le code à 6 chiffres envoyé à ${widget.email}.',
+            style: const TextStyle(
+              fontSize: Constants.p_font_size,
+              fontWeight: Constants.p_font_weight,
+            ),),
+            const SizedBox(height: 20),
             Pinput(
               length: 6,
               controller: pinController,
@@ -148,12 +157,12 @@ class _OTPScreenState extends State<OTPScreen> {
               defaultPinTheme: defaultPinTheme,
               focusedPinTheme: defaultPinTheme.copyWith(
                 decoration: defaultPinTheme.decoration?.copyWith(
-                  border: Border.all(color: Colors.blue),
+                  border: Border.all(color: Constants.primary_color),
                 ),
               ),
               errorPinTheme: defaultPinTheme.copyWith(
                 decoration: defaultPinTheme.decoration?.copyWith(
-                  border: Border.all(color: Colors.red),
+                  border: Border.all(color: Constants.error_color),
                 ),
               ),
               errorText: errorMessage,
@@ -164,7 +173,7 @@ class _OTPScreenState extends State<OTPScreen> {
               Text(
                 errorMessage!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.red,
+                  color: Constants.error_color,
                 ),
               ),
             const SizedBox(height: 20),
