@@ -6,7 +6,8 @@ import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   final Uri url;
-  const VideoPlayerWidget({super.key, required this.url});
+  final String? jwt;
+  const VideoPlayerWidget({super.key, required this.url, this.jwt});
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -20,7 +21,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   void initState() {
     super.initState();
     flickManager = FlickManager(
-      videoPlayerController: VideoPlayerController.networkUrl(widget.url),
+      videoPlayerController: VideoPlayerController.networkUrl(
+          widget.url,
+          httpHeaders: widget.jwt != null ? {'Authorization': 'Bearer ${widget.jwt}'} : {}),
       autoPlay: false,
       onVideoEnd: () {
         logger.i('Video ended via onVideoEnd');

@@ -129,12 +129,5 @@ class Content {
     return response.map((json) => Content.fromJson(json)).toList();
   }
 
-  static Map<String, String> getBucketParams(Content content) {
-    Map<String, String> params = {
-      'url': content.url,
-      'token': _supabase.auth.currentSession!.accessToken,
-    };
-    return params;
-  }
   //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }
