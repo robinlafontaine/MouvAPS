@@ -27,46 +27,50 @@ class _CarouselWithIndicatorState extends State<CustomCarousel> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(children: [
-        CarouselSlider(
-          items: snapshot.data!.map((content) {
-            return Builder(
-              builder: (BuildContext context) {
-                return VideoPlayerWidget(url: Content.getUri(content));
-              },
-            );
-          }).toList(),
-          carouselController: _controller,
-          options: CarouselOptions(
-              enlargeCenterPage: true,
-              enlargeFactor: 0.35,
-              enlargeStrategy: CenterPageEnlargeStrategy.zoom,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _current = index;
-                });
-              }),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: snapshot.data!.asMap().entries.map((entry) {
-            return GestureDetector(
-              onTap: () => _controller.animateToPage(entry.key),
-              child: Container(
-                width: 12.0,
-                height: 12.0,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: (Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black)
-                        .withOpacity(_current == entry.key ? 0.9 : 0.4)),
-              ),
-            );
-          }).toList(),
-        ),
-      ]);
+            CarouselSlider(
+              items: snapshot.data!.map((content) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return ClipRRect(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(5.0)),
+                      child: VideoPlayerWidget(url: Content.getUri(content)),
+                    );
+                  },
+                );
+              }).toList(),
+              carouselController: _controller,
+              options: CarouselOptions(
+                  enlargeCenterPage: true,
+                  enlargeFactor: 0.35,
+                  enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      _current = index;
+                    });
+                  }),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: snapshot.data!.asMap().entries.map((entry) {
+                return GestureDetector(
+                  onTap: () => _controller.animateToPage(entry.key),
+                  child: Container(
+                    width: 12.0,
+                    height: 12.0,
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 4.0),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: (Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black)
+                            .withOpacity(_current == entry.key ? 0.9 : 0.4)),
+                  ),
+                );
+              }).toList(),
+            ),
+          ]);
         } else {
           return const CircularProgressIndicator();
         }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:mouvaps/utils/constants.dart' as Constants;
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -21,9 +22,6 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Connexion'),
-      ),
       body: Center(
         child: ShadForm(
           key: formKey,
@@ -38,36 +36,47 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 100,
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Se connecter',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                ),
+                Text('Se connecter',
+                    textAlign: TextAlign.center,
+                    style: ShadTheme.of(context).textTheme.h1),
                 const SizedBox(height: 16),
-                ShadInputFormField(
-                  id: 'email',
-                  label: const Text('Adresse mail'),
-                  placeholder: const Text('mail@example.com'),
-                  keyboardType: TextInputType.emailAddress,
-                  prefix: const Padding(
-                    padding: EdgeInsets.all(4.0),
-                    child: ShadImage.square(size: 16, LucideIcons.mail),
+                SizedBox(
+                  width: 350,
+                  child: ShadInputFormField(
+                    id: 'email',
+                    label: const Text('Adresse mail', style: TextStyle(
+                      fontSize: Constants.h3_font_size,
+                      fontWeight: Constants.h3_font_weight,
+                      color: Constants.text_color,
+                    ),),
+                    placeholder: const Text('mail@example.com', style: TextStyle(
+                      color : Constants.text_field_placeholder_color,
+                    ),),
+                    keyboardType: TextInputType.emailAddress,
+                    prefix: const Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: ShadImage.square(size: 16, LucideIcons.mail),
+                    ),
+                    decoration: const ShadDecoration(
+                        color: Constants.text_field_color,
+                        border: ShadBorder(
+                          top: BorderSide(color: Constants.text_field_color),
+                        )
+                    ),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Entrez votre adresse mail';
+                      } else if (!_isValidEmailFormat(value)) {
+                        return 'Entrez une adresse mail valide';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Entrez votre adresse mail';
-                    } else if (!_isValidEmailFormat(value)) {
-                      return 'Entrez une adresse mail valide';
-                    }
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 16),
                 ShadButton(
+                  width: 350,
+                  height: 48,
                   onPressed: () {
                     if (formKey.currentState!.saveAndValidate()) {
                       logger.d('Validation succeeded with ${formKey.currentState!.value}');
@@ -77,7 +86,11 @@ class _SignInScreenState extends State<SignInScreen> {
                       logger.d('Validation failed');
                     }
                   },
-                  child: const Text('Recevoir un code'),
+                  child: const Text("Recevoir un code", style: TextStyle(
+                    color: Constants.button_text_color,
+                    fontSize: Constants.button_text_font_size,
+                    fontWeight: Constants.button_text_font_weight,
+                  )),
                 ),
               ],
             ),

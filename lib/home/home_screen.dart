@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mouvaps/colors.dart';
 import 'package:mouvaps/home/custom_bottom_navigation.dart';
 import 'package:mouvaps/home/selected_page/selected_title.dart';
-import 'package:mouvaps/home/sport_screen.dart';
+import 'package:mouvaps/constants.dart';
 import 'package:mouvaps/globals/globals.dart' as globals;
 import 'package:mouvaps/home/selected_page/selected_content.dart';
 
@@ -21,55 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
     fontWeight: FontWeight.bold,
   );
 
-  late List<Widget> _widgetOptions;
-  late List<String> _appBarTitles;
-
-  @override
-  void initState() {
-    super.initState();
-
-    if (globals.isAdmin) {
-      _widgetOptions = <Widget>[
-        Text(
-          'Index 0: Users',
-          style: optionStyle,
-        ),
-        Text(
-          'Index 1: Content',
-          style: optionStyle,
-        ),
-      ];
-
-      _appBarTitles = <String>[
-        'Users',
-        'Content',
-      ];
-    } else {
-      _widgetOptions = <Widget>[
-        SportScreen(),
-        Text(
-          'Index 1: Recettes',
-          style: optionStyle,
-        ),
-        Text(
-          'Index 2: Infos',
-          style: optionStyle,
-        ),
-        Text(
-          'Index 3: Chat',
-          style: optionStyle,
-        ),
-      ];
-
-      _appBarTitles = <String>[
-        'Programme',
-        'Recettes',
-        'Informations',
-        'Discussions',
-      ];
-    }
-  }
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -85,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(
               Icons.account_circle,
-              color: primaryColor,
+              color: primary_color,
               size: 36,
             ),
             onPressed: () {
