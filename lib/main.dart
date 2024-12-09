@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:mouvaps/auth/auth_controller.dart';
 import 'package:mouvaps/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
@@ -41,8 +42,11 @@ class MyApp extends StatelessWidget {
         colorScheme: const ShadSlateColorScheme.light(),
         brightness: Brightness.light,
 
+
         // TYPOGRAPHY
         textTheme: ShadTextTheme(
+          family: 'Poppins',
+
           h1: const TextStyle(
             fontSize: Constants.h1_font_size,
               fontWeight: Constants.h1_font_weight,
