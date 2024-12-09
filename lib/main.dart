@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:mouvaps/auth/auth_controller.dart';
-import 'package:mouvaps/auth/home_screen.dart';
-import 'package:mouvaps/auth/otp_screen.dart';
+import 'package:mouvaps/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
+import 'package:mouvaps/profile/profile_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'auth/otp_screen.dart';
 
-import 'utils/constants.dart' as Constants;
+import 'constants.dart' as Constants;
 
 Future main() async {
   await dotenv.load(fileName: ".env");
@@ -31,7 +32,9 @@ class MyApp extends StatelessWidget {
     return ShadApp.material(
       materialThemeBuilder: (context, theme) {
         return theme.copyWith(
-          appBarTheme: const AppBarTheme(toolbarHeight: 52),
+          appBarTheme: const AppBarTheme(
+            toolbarHeight: 52,
+          ),
         );
       },
       themeMode: ThemeMode.light,
@@ -43,6 +46,7 @@ class MyApp extends StatelessWidget {
         // TYPOGRAPHY
         textTheme: ShadTextTheme(
           family: 'Poppins',
+
           h1: const TextStyle(
             fontSize: Constants.h1_font_size,
               fontWeight: Constants.h1_font_weight,
@@ -90,7 +94,9 @@ class MyApp extends StatelessWidget {
         '/': (context) => const AuthController(),
         '/home': (context) => const HomeScreen(),
         '/signin': (context) => const SignInScreen(),
-        '/otp': (context) => OTPScreen(email: ModalRoute.of(context)!.settings.arguments as String),
+        '/otp': (context) => OTPScreen(
+            email: ModalRoute.of(context)!.settings.arguments as String),
+        '/profile': (context) => const ProfileScreen(),
       },
     );
   }
