@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:mouvaps/auth/auth_controller.dart';
 import 'package:mouvaps/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
@@ -8,7 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'auth/otp_screen.dart';
 
-import 'constants.dart' as Constants;
+import 'constants.dart' as constants;
 
 Future main() async {
   await dotenv.load(fileName: ".env");
@@ -41,49 +42,48 @@ class MyApp extends StatelessWidget {
         colorScheme: const ShadSlateColorScheme.light(),
         brightness: Brightness.light,
 
+
         // TYPOGRAPHY
         textTheme: ShadTextTheme(
+          family: 'Poppins',
+
           h1: const TextStyle(
-            fontSize: Constants.h1_font_size,
-              fontWeight: Constants.h1_font_weight,
-              color: Constants.primary_color,),
-
-          h2: const TextStyle(
-            fontSize: Constants.h2_font_size,
-              fontWeight: Constants.h2_font_weight,
-              decoration: TextDecoration.underline,
-              color: Constants.secondary_color,
+            fontSize: constants.h1_font_size,
+            fontWeight: constants.h1_font_weight,
+            color: constants.primary_color,
           ),
-
+          h2: const TextStyle(
+            fontSize: constants.h2_font_size,
+            fontWeight: constants.h2_font_weight,
+            decoration: TextDecoration.underline,
+            color: constants.secondary_color,
+          ),
           h3: const TextStyle(
-            fontSize: Constants.h3_font_size,
-              fontWeight: Constants.h3_font_weight,
-              color: Constants.text_color,),
-
+            fontSize: constants.h3_font_size,
+            fontWeight: constants.h3_font_weight,
+            color: constants.text_color,
+          ),
           p: const TextStyle(
-            fontSize: Constants.p_font_size,
-              fontWeight: Constants.p_font_weight,
-              color: Constants.text_color,),
-
+            fontSize: constants.p_font_size,
+            fontWeight: constants.p_font_weight,
+            color: constants.text_color,
+          ),
           small: const TextStyle(
-            fontSize: Constants.small_font_size,
-              fontWeight: Constants.small_font_weight,
-              color: Constants.text_color,),
-
-
+            fontSize: constants.small_font_size,
+            fontWeight: constants.small_font_weight,
+            color: constants.text_color,
+          ),
         ),
 
         // BUTTONS
         primaryButtonTheme: const ShadButtonTheme(
-          backgroundColor: Constants.primary_color,
+          backgroundColor: constants.primary_color,
         ),
         destructiveButtonTheme: const ShadButtonTheme(
-          backgroundColor: Constants.destructive_button_color,
-          hoverBackgroundColor: Constants.destructive_button_hover_color,
+          backgroundColor: constants.destructive_button_color,
+          hoverBackgroundColor: constants.destructive_button_hover_color,
         ),
-
-
-    ),
+      ),
       title: "Mouv'APS",
       initialRoute: '/',
       routes: {
@@ -97,5 +97,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
