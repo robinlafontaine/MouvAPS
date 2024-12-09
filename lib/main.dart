@@ -82,7 +82,9 @@ class MyApp extends StatelessWidget {
           hoverBackgroundColor: Constants.destructive_button_hover_color,
         ),
 
-
+        switchTheme: const ShadSwitchTheme(
+          checkedTrackColor: Constants.primary_color,
+        )
     ),
       title: "Mouv'APS",
       initialRoute: '/',

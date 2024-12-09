@@ -26,7 +26,6 @@ class _CarouselWithIndicatorState extends State<CustomCarousel> {
       future: _content,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          logger.i(snapshot.data);
           return Column(children: [
         CarouselSlider(
           items: snapshot.data!.map((content) {

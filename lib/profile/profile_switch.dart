@@ -10,7 +10,7 @@ class ProfileSwitch extends StatefulWidget {
 }
 
 class _ProfileSwitchState extends State<ProfileSwitch> {
-  bool value = false;
+  bool value = globals.isAdmin;
 
   void handleToggle(bool newValue) {
     setState(() => value = newValue);
