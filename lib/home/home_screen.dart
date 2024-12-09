@@ -5,6 +5,7 @@ import 'package:mouvaps/home/selected_page/selected_title.dart';
 import 'package:mouvaps/constants.dart';
 import 'package:mouvaps/globals/globals.dart' as globals;
 import 'package:mouvaps/home/selected_page/selected_content.dart';
+import 'package:mouvaps/profile/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,7 +41,25 @@ class _HomeScreenState extends State<HomeScreen> {
               size: 36,
             ),
             onPressed: () {
-              Navigator.pushNamed(context, '/profile').then((_) {
+              Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => const ProfileScreen(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      var begin = const Offset(1.0, 0.0);
+                      var end = Offset.zero;
+                      var curve = Curves.ease;
+
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+
+                      return SlideTransition(
+                        position: animation.drive(tween),
+                        child: child,
+                      );
+                    },
+                  ),
+                 ).then((_) {
                 setState(() {});
               });
             },
