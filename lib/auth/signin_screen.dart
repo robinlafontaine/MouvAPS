@@ -21,9 +21,6 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Connexion'),
-      ),
       body: Center(
         child: ShadForm(
           key: formKey,
@@ -78,6 +75,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     }
                   },
                   child: const Text('Recevoir un code'),
+
                 ),
               ],
             ),

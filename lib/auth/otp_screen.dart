@@ -176,6 +176,9 @@ class _OTPScreenState extends State<OTPScreen> {
                 ),
               ),
             const SizedBox(height: 20),
+            const Text("Vous n'avez pas reçu de mail ?"),
+            const Text("Vérifiez vos spams et indésirables."),
+            const SizedBox(height: 20),
             ShadButton(
               onPressed: _resendOtp,
               enabled: !isButtonDisabled,
