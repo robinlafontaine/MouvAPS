@@ -1,9 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/auth/auth_controller.dart';
 import 'package:mouvaps/home/player_widget.dart';
-
 import '../services/auth.dart';
 import '../services/content.dart';
 

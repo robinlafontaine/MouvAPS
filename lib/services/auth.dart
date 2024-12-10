@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Auth {
@@ -41,7 +39,7 @@ class Auth {
         token: token,
       );
 
-      return res.session == null;
+      return res.session != null;
     } catch (e) {
       return false;
     }
