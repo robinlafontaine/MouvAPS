@@ -4,32 +4,33 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class Content {
   final int? id;
   final String name;
-  final String type;
   final String category;
   final String url;
   final int? points;
   final DateTime? createdAt;
   final Map<String, dynamic>? tags;
   final int? unlockPoints;
+  final int? difficulty;
+  final int? pricePoints;
   Logger logger = Logger();
 
   Content({
     this.id,
     required this.name,
-    required this.type,
     required this.category,
     required this.url,
     this.points,
     this.createdAt,
     this.tags,
     this.unlockPoints,
+    this.difficulty,
+    this.pricePoints,
   });
 
   factory Content.fromJson(Map<String, dynamic> json) {
     return Content(
       id: json['id'] as int?,
       name: json['name'] as String,
-      type: json['type'] as String,
       category: json['category'] as String,
       url: json['url'] as String,
       points: json['points'] as int?,
@@ -38,18 +39,22 @@ class Content {
           : null,
       tags: json['tags'] as Map<String, dynamic>?,
       unlockPoints: json['unlock_points'] as int?,
+      difficulty: json['difficulty'] as int?,
+      pricePoints: json['price_points'] as int?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
-      'type': type,
       'category': category,
       'url': url,
       'points': points,
       'tags': tags,
       'unlock_points': unlockPoints,
+      'difficulty': difficulty,
+      'price_points': pricePoints,
     };
   }
 
@@ -97,15 +102,6 @@ class Content {
     return response.map((json) => Content.fromJson(json)).toList();
   }
 
-  static Future<List<Content>> getByType(String type) async {
-    final response = await _supabase
-        .from('content')
-        .select()
-        .eq('type', type);
-
-    return response.map((json) => Content.fromJson(json)).toList();
-  }
-
   Future<void> delete() async {
     if (id == null) {
       throw Exception('Content ID is required for deletion');
@@ -138,5 +134,6 @@ class Content {
 
     return Uri.parse(response.toString());
   }
+  
   //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }

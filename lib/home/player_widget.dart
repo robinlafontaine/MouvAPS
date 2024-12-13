@@ -4,9 +4,12 @@ import 'package:logger/logger.dart';
 import 'package:mouvaps/home/custom_flick_control_manager.dart';
 import 'package:video_player/video_player.dart';
 
+import '../services/auth.dart';
+
 class VideoPlayerWidget extends StatefulWidget {
   final Uri url;
-  const VideoPlayerWidget({super.key, required this.url});
+  final bool requiresAuth;
+  const VideoPlayerWidget({super.key, required this.url, this.requiresAuth = false});
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -20,7 +23,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   void initState() {
     super.initState();
     flickManager = FlickManager(
-      videoPlayerController: VideoPlayerController.networkUrl(widget.url),
+      videoPlayerController: VideoPlayerController.networkUrl(
+          widget.url,
+          httpHeaders: widget.requiresAuth ? {'Authorization': 'Bearer ${Auth.instance.getJwt()}'} : {}),
       autoPlay: false,
       onVideoEnd: () {
         logger.i('Video ended via onVideoEnd');
