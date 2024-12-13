@@ -2,8 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/home/player_widget.dart';
-
-import '../services/content.dart';
+import 'package:mouvaps/services/content.dart';
 
 class CustomCarousel extends StatefulWidget {
   const CustomCarousel({super.key});
@@ -66,7 +65,7 @@ class _CarouselWithIndicatorState extends State<CustomCarousel> {
                         color: (Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white
                                 : Colors.black)
-                            .withOpacity(_current == entry.key ? 0.9 : 0.4)),
+                            .withValues(alpha: _current == entry.key ? 0.9 : 0.4)),
                   ),
                 );
               }).toList(),
