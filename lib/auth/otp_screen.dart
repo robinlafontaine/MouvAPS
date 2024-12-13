@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:mouvaps/services/auth.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
-
-import '../services/auth.dart';
 
 class OTPScreen extends StatefulWidget {
 
