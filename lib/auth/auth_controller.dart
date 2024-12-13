@@ -3,6 +3,8 @@ import 'package:mouvaps/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../services/auth.dart';
+
 class AuthController extends StatefulWidget {
   const AuthController({super.key});
 
@@ -11,25 +13,15 @@ class AuthController extends StatefulWidget {
 }
 
 class _AuthControllerState extends State<AuthController> {
-  User? _user;
+  User? get _user => Auth.instance.currentUser;
+
   @override
   void initState() {
-    _getAuth();
     super.initState();
-  }
-
-  Future<void> _getAuth() async {
-    setState(() {
-      _user = supabase.auth.currentUser;
-    });
-    supabase.auth.onAuthStateChange.listen((event) {
-      setState(() {
-        _user = event.session?.user;
-      });
+    Auth.instance.initialize().then((_) {
+      setState(() {});
     });
   }
-
-  final SupabaseClient supabase = Supabase.instance.client;
 
   @override
   Widget build(BuildContext context) {

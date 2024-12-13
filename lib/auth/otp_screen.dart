@@ -6,6 +6,8 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 
+import '../services/auth.dart';
+
 class OTPScreen extends StatefulWidget {
 
   final String email;
@@ -21,7 +23,6 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   var logger = Logger(printer: SimplePrinter());
-  final SupabaseClient supabase = Supabase.instance.client;
   final pinController = TextEditingController();
   final focusNode = FocusNode();
   String? errorMessage;
@@ -47,7 +48,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
   Future<void> _sendOtpToEmail() async {
     logger.d('Sending OTP to ${widget.email}');
-    await supabase.auth.signInWithOtp(email: widget.email);
+    await Auth.instance.signInWithOtp(email: widget.email);
     logger.d('OTP sent to ${widget.email}');
   }
 
@@ -75,23 +76,23 @@ class _OTPScreenState extends State<OTPScreen> {
       errorMessage = null;
     });
 
-    try {
-      final AuthResponse res = await supabase.auth.verifyOTP(
-        type: OtpType.email,
-        email: widget.email,
-        token: pinController.text,
-      );
-      _onVerificationSuccess(res);
-    } catch (e) {
+    final bool res = await Auth.instance.verifyOtp(
+      email: widget.email,
+      token: pinController.text,
+    );
+
+    if (!res) {
       setState(() {
         errorMessage = 'Code invalide';
         isLoading = false;
       });
       return;
     }
+
+    _onVerificationSuccess(res);
   }
 
-  void _onVerificationSuccess(AuthResponse res) {
+  void _onVerificationSuccess(bool res) {
     Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
