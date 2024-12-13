@@ -95,11 +95,10 @@ class Content {
   }
 
   static Future<List<Content>> getAll() async {
-    print('in');
     final response = await _supabase
         .from('content')
         .select();
-    print(response);
+
     return response.map((json) => Content.fromJson(json)).toList();
   }
 
