@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/auth.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -8,7 +8,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var logger = Logger(printer: SimplePrinter());
-    final SupabaseClient supabase = Supabase.instance.client;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Screen'),
@@ -36,7 +35,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              supabase.auth.currentUser?.email ?? 'No email',
+              Auth.instance.getUserEmail() ?? 'No email',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
