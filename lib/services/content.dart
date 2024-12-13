@@ -135,8 +135,8 @@ class Content {
         .storage
         .from('media-content')
         .getPublicUrl(content.url);
-    print(response);
-    return Uri.parse(response.toString() ?? '');
+
+    return Uri.parse(response.toString());
   }
   //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }

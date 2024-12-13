@@ -48,40 +48,40 @@ class MyApp extends StatelessWidget {
           family: 'Poppins',
 
           h1: const TextStyle(
-            fontSize: constants.h1_font_size,
-            fontWeight: constants.h1_font_weight,
-            color: constants.primary_color,
+            fontSize: constants.h1FontSize,
+            fontWeight: constants.h1FontWeight,
+            color: constants.primaryColor,
           ),
           h2: const TextStyle(
-            fontSize: constants.h2_font_size,
-            fontWeight: constants.h2_font_weight,
+            fontSize: constants.h2FontSize,
+            fontWeight: constants.h2FontWeight,
             decoration: TextDecoration.underline,
-            color: constants.secondary_color,
+            color: constants.secondaryColor,
           ),
           h3: const TextStyle(
-            fontSize: constants.h3_font_size,
-            fontWeight: constants.h3_font_weight,
-            color: constants.text_color,
+            fontSize: constants.h3FontSize,
+            fontWeight: constants.h3FontWeight,
+            color: constants.textColor,
           ),
           p: const TextStyle(
-            fontSize: constants.p_font_size,
-            fontWeight: constants.p_font_weight,
-            color: constants.text_color,
+            fontSize: constants.pFontSize,
+            fontWeight: constants.pFontWeight,
+            color: constants.textColor,
           ),
           small: const TextStyle(
-            fontSize: constants.small_font_size,
-            fontWeight: constants.small_font_weight,
-            color: constants.text_color,
+            fontSize: constants.smallFontSize,
+            fontWeight: constants.smallFontWeight,
+            color: constants.textColor,
           ),
         ),
 
         // BUTTONS
         primaryButtonTheme: const ShadButtonTheme(
-          backgroundColor: constants.primary_color,
+          backgroundColor: constants.primaryColor,
         ),
         destructiveButtonTheme: const ShadButtonTheme(
-          backgroundColor: constants.destructive_button_color,
-          hoverBackgroundColor: constants.destructive_button_hover_color,
+          backgroundColor: constants.destructiveButtonColor,
+          hoverBackgroundColor: constants.destructiveButtonHoverColor,
         ),
       ),
       title: "Mouv'APS",
