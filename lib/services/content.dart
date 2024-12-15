@@ -125,5 +125,15 @@ class Content {
     return response.map((json) => Content.fromJson(json)).toList();
   }
 
+  static Uri getUri(Content content) {
+    _supabase.storage.setAuth(_supabase.auth.currentSession!.accessToken);
+    final response = _supabase
+        .storage
+        .from('media-content')
+        .getPublicUrl(content.url);
+
+    return Uri.parse(response.toString());
+  }
+  
   //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }
