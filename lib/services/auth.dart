@@ -17,14 +17,6 @@ class Auth {
 
   User? get currentUser => _user;
 
-
-  Future<void> initialize() async {
-    _user = supabase.auth.currentUser;
-    supabase.auth.onAuthStateChange.listen((event) {
-      _user = event.session?.user;
-    });
-  }
-
   User? getUser() {
     return supabase.auth.currentUser;
   }
