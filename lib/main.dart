@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:mouvaps/auth/auth_controller.dart';
+import 'package:mouvaps/auth/auth_router.dart';
 import 'package:mouvaps/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
 import 'package:mouvaps/profile/profile_screen.dart';
@@ -87,7 +87,7 @@ class MyApp extends StatelessWidget {
       title: "Mouv'APS",
       initialRoute: '/',
       routes: {
-        '/': (context) => const AuthController(),
+        '/': (context) => const AuthRouter(),
         '/home': (context) => const HomeScreen(),
         '/signin': (context) => const SignInScreen(),
         '/otp': (context) => OTPScreen(

@@ -1,46 +1,37 @@
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class Content {
+class Exercise {
   final int? id;
   final String name;
-  final String category;
   final String url;
-  final int? points;
-  final DateTime? createdAt;
-  final Map<String, dynamic>? tags;
-  final int? unlockPoints;
   final int? difficulty;
-  final int? pricePoints;
+  final int? rewardPoints;
+  final Map<String, dynamic>? tags;
+  final DateTime? createdAt;
   Logger logger = Logger();
 
-  Content({
+  Exercise({
     this.id,
     required this.name,
-    required this.category,
     required this.url,
-    this.points,
     this.createdAt,
     this.tags,
-    this.unlockPoints,
     this.difficulty,
-    this.pricePoints,
+    this.rewardPoints,
   });
 
-  factory Content.fromJson(Map<String, dynamic> json) {
-    return Content(
+  factory Exercise.fromJson(Map<String, dynamic> json) {
+    return Exercise(
       id: json['id'] as int?,
       name: json['name'] as String,
-      category: json['category'] as String,
       url: json['url'] as String,
-      points: json['points'] as int?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'].toString())
           : null,
       tags: json['tags'] as Map<String, dynamic>?,
-      unlockPoints: json['unlock_points'] as int?,
       difficulty: json['difficulty'] as int?,
-      pricePoints: json['price_points'] as int?,
+      rewardPoints: json['price_points'] as int?,
     );
   }
 
@@ -48,58 +39,55 @@ class Content {
     return {
       'id': id,
       'name': name,
-      'category': category,
       'url': url,
-      'points': points,
       'tags': tags,
-      'unlock_points': unlockPoints,
       'difficulty': difficulty,
-      'price_points': pricePoints,
+      'price_points': rewardPoints,
     };
   }
 
   static final _supabase = Supabase.instance.client;
 
-  Future<Content> create() async {
+  Future<Exercise> create() async {
     final response = await _supabase
-        .from('content')
+        .from('exercises')
         .insert(toJson())
         .select()
         .single();
-    return Content.fromJson(response);
+    return Exercise.fromJson(response);
   }
 
-  Future<Content> update() async {
+  Future<Exercise> update() async {
     if (id == null) {
       throw Exception('Content ID is required for update');
     }
 
     final response = await _supabase
-        .from('content')
+        .from('exercises')
         .update(toJson())
         .eq('id', id as int)
         .select()
         .single();
 
-    return Content.fromJson(response);
+    return Exercise.fromJson(response);
   }
 
-  static Future<Content> getById(int id) async {
+  static Future<Exercise> getById(int id) async {
     final response = await _supabase
-        .from('content')
+        .from('exercises')
         .select()
         .eq('id', id)
         .single();
 
-    return Content.fromJson(response);
+    return Exercise.fromJson(response);
   }
 
-  static Future<List<Content>> getAll() async {
+  static Future<List<Exercise>> getAll() async {
     final response = await _supabase
-        .from('content')
+        .from('exercises')
         .select();
 
-    return response.map((json) => Content.fromJson(json)).toList();
+    return response.map((json) => Exercise.fromJson(json)).toList();
   }
 
   Future<void> delete() async {
@@ -108,22 +96,22 @@ class Content {
     }
 
     await _supabase
-        .from('content')
+        .from('exercises')
         .delete()
         .eq('id', id as int);
   }
 
-  static Future<List<Content>> search(String query) async {
+  static Future<List<Exercise>> search(String query) async {
     final response = await _supabase
-        .from('content')
+        .from('exercises')
         .select()
         .or(
         'name.ilike.%$query%,'
             'tags->contains.{"search_key": "$query"}'
     );
 
-    return response.map((json) => Content.fromJson(json)).toList();
+    return response.map((json) => Exercise.fromJson(json)).toList();
   }
 
-  //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
+//TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }
