@@ -7,7 +7,7 @@ class Recipe {
   final String videoUrl;
   final List<Ingredient>? ingredients;
   final String descriptionUrl;
-  final String difficulty;
+  final int difficulty;
   final int? timeMins;
   final int? pricePoints;
   final DateTime? createdAt;
@@ -34,7 +34,7 @@ class Recipe {
           ?.map((e) => Ingredient.fromJson(e))
           .toList(),
       descriptionUrl: json['description_url'] as String,
-      difficulty: json['difficulty'] as String,
+      difficulty: json['difficulty'] as int,
       timeMins: json['time_mins'] as int?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'].toString())
@@ -104,15 +104,9 @@ class Recipe {
       )
     )
   ''');
-
-    print("============================================");
-    print("============================================");
-    print("============================================");
     print(response);
 
-    Iterable<Recipe> recipes = response.map((json) => Recipe.fromJson(json));
-
-    return recipes.toList();
+    return response.map((json) => Recipe.fromJson(json)).toList();
   }
 
   Future<void> delete() async {

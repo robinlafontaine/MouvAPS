@@ -112,7 +112,7 @@ class CustomRecipeWidget extends StatelessWidget {
                   child: const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Icon(
-                      Icons.local_grocery_store,
+                      Icons.menu_book,
                       color: lightColor,
                     ),
                   ),
