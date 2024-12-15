@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:mouvaps/utils/constants.dart' as Constants;
-
-import '../services/auth.dart';
+import 'package:mouvaps/services/auth.dart';
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class OTPScreen extends StatefulWidget {
 
@@ -145,8 +144,8 @@ class _OTPScreenState extends State<OTPScreen> {
             const SizedBox(height: 16),
             Text('Veuillez entrer le code à 6 chiffres envoyé à ${widget.email}.',
             style: const TextStyle(
-              fontSize: Constants.p_font_size,
-              fontWeight: Constants.p_font_weight,
+              fontSize: constants.pFontSize,
+              fontWeight: constants.pFontWeight,
             ),),
             const SizedBox(height: 20),
             Pinput(
@@ -156,12 +155,12 @@ class _OTPScreenState extends State<OTPScreen> {
               defaultPinTheme: defaultPinTheme,
               focusedPinTheme: defaultPinTheme.copyWith(
                 decoration: defaultPinTheme.decoration?.copyWith(
-                  border: Border.all(color: Constants.primary_color),
+                  border: Border.all(color: constants.primaryColor),
                 ),
               ),
               errorPinTheme: defaultPinTheme.copyWith(
                 decoration: defaultPinTheme.decoration?.copyWith(
-                  border: Border.all(color: Constants.error_color),
+                  border: Border.all(color: constants.errorColor),
                 ),
               ),
               errorText: errorMessage,
@@ -172,7 +171,7 @@ class _OTPScreenState extends State<OTPScreen> {
               Text(
                 errorMessage!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Constants.error_color,
+                  color: constants.errorColor,
                 ),
               ),
             const SizedBox(height: 20),

@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(
               Icons.account_circle,
-              color: primary_color,
+              color: primaryColor,
               size: 36,
             ),
             onPressed: () {
@@ -87,8 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: primary_color,
-        unselectedItemColor: primary_color,
+        selectedItemColor: primaryColor,
+        unselectedItemColor: primaryColor,
         showUnselectedLabels: true,
         onTap: _onItemTapped,
       ),
