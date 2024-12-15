@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mouvaps/home/recettes/recipe_screen.dart';
 import 'package:mouvaps/home/sport_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/constants.dart';
@@ -18,10 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   static const List<Widget> _widgetOptions = <Widget>[
     SportScreen(),
-    Text(
-      'Index 1: Recettes',
-      style: optionStyle,
-    ),
+    RecetteScreen(),
     Text(
       'Index 2: Infos',
       style: optionStyle,
@@ -64,9 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
+      body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

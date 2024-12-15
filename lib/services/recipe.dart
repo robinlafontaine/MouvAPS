@@ -5,6 +5,7 @@ class Recipe {
   final int? id;
   final String name;
   final String videoUrl;
+  final List<String> ingredients;
   final String descriptionUrl;
   final String difficulty;
   final int? timeMins;
@@ -16,6 +17,7 @@ class Recipe {
     this.id,
     required this.name,
     required this.videoUrl,
+    required this.ingredients,
     required this.descriptionUrl,
     required this.difficulty,
     this.timeMins,
@@ -28,6 +30,7 @@ class Recipe {
       id: json['id'] as int?,
       name: json['name'] as String,
       videoUrl: json['video_url'] as String,
+      ingredients: (json['ingredients'] as List<dynamic>).cast<String>(),
       descriptionUrl: json['description_url'] as String,
       difficulty: json['difficulty'] as String,
       timeMins: json['time_mins'] as int?,
@@ -43,6 +46,7 @@ class Recipe {
       'id': id,
       'name': name,
       'video_url': videoUrl,
+      'ingredients': ingredients,
       'description_url': descriptionUrl,
       'time_mins': timeMins,
       'created_at': createdAt,
@@ -54,11 +58,8 @@ class Recipe {
   static final _supabase = Supabase.instance.client;
 
   Future<Recipe> create() async {
-    final response = await _supabase
-        .from('recipes')
-        .insert(toJson())
-        .select()
-        .single();
+    final response =
+        await _supabase.from('recipes').insert(toJson()).select().single();
     return Recipe.fromJson(response);
   }
 
@@ -78,19 +79,14 @@ class Recipe {
   }
 
   static Future<Recipe> getById(int id) async {
-    final response = await _supabase
-        .from('recipes')
-        .select()
-        .eq('id', id)
-        .single();
+    final response =
+        await _supabase.from('recipes').select().eq('id', id).single();
 
     return Recipe.fromJson(response);
   }
 
   static Future<List<Recipe>> getAll() async {
-    final response = await _supabase
-        .from('recipes')
-        .select();
+    final response = await _supabase.from('recipes').select();
 
     return response.map((json) => Recipe.fromJson(json)).toList();
   }
@@ -100,20 +96,13 @@ class Recipe {
       throw Exception('Content ID is required for deletion');
     }
 
-    await _supabase
-        .from('recipes')
-        .delete()
-        .eq('id', id as int);
+    await _supabase.from('recipes').delete().eq('id', id as int);
   }
 
   static Future<List<Recipe>> search(String query) async {
-    final response = await _supabase
-        .from('recipes')
-        .select()
-        .or(
-        'name.ilike.%$query%,'
-            'tags->contains.{"search_key": "$query"}'
-    );
+    final response =
+        await _supabase.from('recipes').select().or('name.ilike.%$query%,'
+            'tags->contains.{"search_key": "$query"}');
 
     return response.map((json) => Recipe.fromJson(json)).toList();
   }

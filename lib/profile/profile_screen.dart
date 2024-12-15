@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/colors.dart';
 import 'package:mouvaps/services/auth.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -12,7 +11,7 @@ class ProfileScreen extends StatelessWidget {
         title: const Text(
           'Profile',
           style: TextStyle(
-            color: primaryColor,
+            color: Colors.blue,
             fontSize: 32,
             fontWeight: FontWeight.bold,
           ),
