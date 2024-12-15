@@ -5,7 +5,7 @@ class Recipe {
   final int? id;
   final String name;
   final String videoUrl;
-  final List<String> ingredients;
+  final List<Ingredient>? ingredients;
   final String descriptionUrl;
   final String difficulty;
   final int? timeMins;
@@ -30,7 +30,9 @@ class Recipe {
       id: json['id'] as int?,
       name: json['name'] as String,
       videoUrl: json['video_url'] as String,
-      ingredients: (json['ingredients'] as List<dynamic>).cast<String>(),
+      ingredients: (json['recipe_ingredient'] as List<dynamic>?)
+          ?.map((e) => Ingredient.fromJson(e))
+          .toList(),
       descriptionUrl: json['description_url'] as String,
       difficulty: json['difficulty'] as String,
       timeMins: json['time_mins'] as int?,
@@ -46,10 +48,10 @@ class Recipe {
       'id': id,
       'name': name,
       'video_url': videoUrl,
-      'ingredients': ingredients,
+      'ingredients': ingredients?.map((e) => e.toJson()).toList(),
       'description_url': descriptionUrl,
       'time_mins': timeMins,
-      'created_at': createdAt,
+      'created_at': createdAt?.toIso8601String(),
       'difficulty': difficulty,
       'price_points': pricePoints,
     };
@@ -86,9 +88,31 @@ class Recipe {
   }
 
   static Future<List<Recipe>> getAll() async {
-    final response = await _supabase.from('recipes').select();
+    final response = await _supabase.from('recipes').select('''
+    id,
+    name,
+    video_url,
+    description_url,
+    difficulty,
+    time_mins,
+    created_at,
+    price_points,
+    recipe_ingredient (
+      quantity,
+      ingredient: ingredients (
+        name
+      )
+    )
+  ''');
 
-    return response.map((json) => Recipe.fromJson(json)).toList();
+    print("============================================");
+    print("============================================");
+    print("============================================");
+    print(response);
+
+    Iterable<Recipe> recipes = response.map((json) => Recipe.fromJson(json));
+
+    return recipes.toList();
   }
 
   Future<void> delete() async {
@@ -108,4 +132,28 @@ class Recipe {
   }
 
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
+}
+
+class Ingredient {
+  final String name;
+  final int quantity;
+
+  Ingredient({
+    required this.name,
+    required this.quantity,
+  });
+
+  factory Ingredient.fromJson(Map<String, dynamic> json) {
+    return Ingredient(
+      name: json['ingredient']['name'] as String,
+      quantity: json['quantity'] as int,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'quantity': quantity,
+    };
+  }
 }

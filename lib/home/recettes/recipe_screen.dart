@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/home/recettes/custom_recipe_widget.dart';
+import 'package:mouvaps/services/recipe.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class RecetteScreen extends StatefulWidget {
@@ -15,8 +16,11 @@ class _RecetteScreenState extends State<RecetteScreen> {
   final ExpansionTileController _unlockedController = ExpansionTileController();
   final ExpansionTileController _lockedController = ExpansionTileController();
 
+  late final Future<List<Recipe>> _recipes = Recipe.getAll();
+
   @override
   Widget build(BuildContext context) {
+    logger.i(_recipes);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
