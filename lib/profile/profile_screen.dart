@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/colors.dart';
+import 'package:mouvaps/services/auth.dart';
 import 'package:mouvaps/profile/profile_switch.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
-  static final supabase = Supabase.instance.client;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
       body: Center(child:
       Column(
         children: [
-          Text(supabase.auth.currentUser!.email ?? ''),
+          Text(Auth.instance.getUserEmail() ?? ''),
           ProfileSwitch()
         ],
       )

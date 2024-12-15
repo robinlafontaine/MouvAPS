@@ -2,8 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/home/player_widget.dart';
-
-import '../services/content.dart';
+import 'package:mouvaps/services/exercise.dart';
 
 class CustomCarousel extends StatefulWidget {
   const CustomCarousel({super.key});
@@ -16,14 +15,14 @@ class CustomCarousel extends StatefulWidget {
 
 class _CarouselWithIndicatorState extends State<CustomCarousel> {
   Logger logger = Logger();
-  final Future<List<Content>> _content = Content.getAll();
+  final Future<List<Exercise>> _exercises = Exercise.getAll();
   int _current = 0;
   final CarouselSliderController _controller = CarouselSliderController();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _content,
+      future: _exercises,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(children: [
@@ -34,7 +33,7 @@ class _CarouselWithIndicatorState extends State<CustomCarousel> {
                     return ClipRRect(
                       borderRadius:
                           const BorderRadius.all(Radius.circular(5.0)),
-                      child: VideoPlayerWidget(url: Content.getUri(content)),
+                      child: VideoPlayerWidget(url: Uri.parse(content.url), requiresAuth: true),
                     );
                   },
                 );
@@ -65,7 +64,7 @@ class _CarouselWithIndicatorState extends State<CustomCarousel> {
                         color: (Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white
                                 : Colors.black)
-                            .withOpacity(_current == entry.key ? 0.9 : 0.4)),
+                            .withValues(alpha: _current == entry.key ? 0.9 : 0.4)),
                   ),
                 );
               }).toList(),

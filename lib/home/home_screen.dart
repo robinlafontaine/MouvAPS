@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/colors.dart';
 import 'package:mouvaps/home/custom_bottom_navigation.dart';
 import 'package:mouvaps/home/selected_page/selected_title.dart';
 import 'package:mouvaps/constants.dart';
@@ -37,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(
               Icons.account_circle,
-              color: primary_color,
+              color: primaryColor,
               size: 36,
             ),
             onPressed: () {

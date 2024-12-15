@@ -10,7 +10,7 @@ class MediumText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       content,
-      style: TextStyle(fontWeight: FontWeight.w500),
+      style: const TextStyle(fontWeight: FontWeight.w500),
     );
   }
 }
