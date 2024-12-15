@@ -6,7 +6,7 @@ class Recipe {
   final String name;
   final String videoUrl;
   final List<Ingredient>? ingredients;
-  final String descriptionUrl;
+  final String description;
   final int difficulty;
   final int? timeMins;
   final int? pricePoints;
@@ -18,7 +18,7 @@ class Recipe {
     required this.name,
     required this.videoUrl,
     required this.ingredients,
-    required this.descriptionUrl,
+    required this.description,
     required this.difficulty,
     this.timeMins,
     this.pricePoints,
@@ -33,7 +33,7 @@ class Recipe {
       ingredients: (json['recipe_ingredient'] as List<dynamic>?)
           ?.map((e) => Ingredient.fromJson(e))
           .toList(),
-      descriptionUrl: json['description_url'] as String,
+      description: json['description'] as String,
       difficulty: json['difficulty'] as int,
       timeMins: json['time_mins'] as int?,
       createdAt: json['created_at'] != null
@@ -49,7 +49,7 @@ class Recipe {
       'name': name,
       'video_url': videoUrl,
       'ingredients': ingredients?.map((e) => e.toJson()).toList(),
-      'description_url': descriptionUrl,
+      'description': description,
       'time_mins': timeMins,
       'created_at': createdAt?.toIso8601String(),
       'difficulty': difficulty,
@@ -92,7 +92,7 @@ class Recipe {
     id,
     name,
     video_url,
-    description_url,
+    description,
     difficulty,
     time_mins,
     created_at,

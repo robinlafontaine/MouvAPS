@@ -36,11 +36,13 @@ class _RecetteScreenState extends State<RecetteScreen> {
                   } else if (snapshot.hasData) {
                     return ExpansionTile(
                       controller: _unlockedController,
-                      title: Text('Vos recette',
+                      title: Text('Vos recettes',
                           style: ShadTheme.of(context).textTheme.h2),
+                      initiallyExpanded: true,
                       children: snapshot.data!.map((recipe) {
                         return CustomRecipeWidget(
                           title: recipe.name,
+                          description: recipe.description,
                           rating: recipe.difficulty.toDouble(),
                           time: recipe.timeMins!,
                           ingredients:
@@ -62,11 +64,12 @@ class _RecetteScreenState extends State<RecetteScreen> {
                   } else if (snapshot.hasData) {
                     return ExpansionTile(
                       controller: _lockedController,
-                      title: Text('Vos recette',
+                      title: Text('Recettes à débloquer',
                           style: ShadTheme.of(context).textTheme.h2),
                       children: snapshot.data!.map((recipe) {
                         return CustomRecipeWidget(
                           title: recipe.name,
+                          description: recipe.description,
                           rating: recipe.difficulty.toDouble(),
                           time: recipe.timeMins!,
                           ingredients:

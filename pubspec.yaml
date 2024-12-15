@@ -46,6 +46,7 @@ dependencies:
   video_player: ^2.9.2
   flick_video_player: ^0.9.0
   flutter_rating: ^2.0.2
+  flutter_markdown: ^0.7.4+3
 
 dev_dependencies:
   flutter_test:

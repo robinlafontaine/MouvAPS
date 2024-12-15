@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:logger/logger.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -9,6 +10,7 @@ import '../../constants.dart';
 
 class CustomRecipeWidget extends StatelessWidget {
   final String title;
+  final String description;
   final double rating;
   final int time;
   final List<String> ingredients;
@@ -22,6 +24,7 @@ class CustomRecipeWidget extends StatelessWidget {
     required this.ingredients,
     required this.isLocked,
     this.pricePoints,
+    required this.description,
   }) : assert(!isLocked || pricePoints != null,
             'pricePoints is required if isLocked is true');
 
@@ -156,7 +159,7 @@ class CustomRecipeWidget extends StatelessWidget {
                   builder: (context) {
                     return AlertDialog(
                       title: const Text('Recette'),
-                      content: const Text('Contenu de la recette'),
+                      content: MarkdownBody(data: description),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
