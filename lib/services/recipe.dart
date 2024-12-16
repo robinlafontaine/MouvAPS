@@ -110,7 +110,35 @@ class Recipe {
     )
   ''');
 
-    print("response: $response");
+    return response.map((json) => Recipe.fromJson(json)).toList();
+  }
+
+  static Future<List<Recipe>> getRecipeUnlockedByUserId(String userId) async {
+    final response = await _supabase
+        .from('recipes')
+        .select('''
+        id,
+        name,
+        video_url,
+        thumbnail_url,
+        description,
+        difficulty,
+        time_mins,
+        created_at,
+        price_points,
+        recipe_ingredient (
+          quantity,
+          ingredient: ingredients (
+            name
+          )
+        ),
+        user_recipe_status (
+          user_id,
+          is_unlocked
+        )
+      ''')
+        .eq('user_recipe_status.user_id', userId)
+        .eq('user_recipe_status.is_unlocked', true);
 
     return response.map((json) => Recipe.fromJson(json)).toList();
   }

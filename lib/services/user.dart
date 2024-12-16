@@ -2,7 +2,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 class User {
-  final int id;
   final String userUuid;
   final int? formId;
   final int pathoId;
@@ -10,7 +9,6 @@ class User {
   final int age;
 
   User({
-    required this.id,
     required this.userUuid,
     required this.formId,
     required this.pathoId,
@@ -20,7 +18,6 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as int,
       userUuid: json['user_uuid'] as String,
       formId: json['form_id'] as int,
       pathoId: json['pathology_id'] as int,
@@ -31,7 +28,6 @@ class User {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'user_uuid': userUuid,
       'form_id': formId,
       'patho_id': pathoId,
@@ -53,14 +49,14 @@ class User {
     final response = await _supabase
         .from('users')
         .update(toJson())
-        .eq('id', id)
+        .eq('user_uuid', userUuid)
         .select()
         .single();
     return User.fromJson(response);
   }
 
   Future<void> delete() async {
-    await _supabase.from('users').delete().eq('id', id);
+    await _supabase.from('users').delete().eq('user_uuid', userUuid);
   }
 
   static Future<User> getByUuid(String uuid) async {
@@ -71,7 +67,6 @@ class User {
 
   static User empty() {
     return User(
-      id: 0,
       userUuid: const Uuid().v4(),
       formId: 0,
       pathoId: 0,
