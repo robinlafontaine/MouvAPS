@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:mouvaps/auth/auth_router.dart';
-import 'package:mouvaps/home/home_screen.dart';
+import 'package:mouvaps/pages/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
-import 'package:mouvaps/profile/profile_screen.dart';
+import 'package:mouvaps/pages/profile/profile_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'auth/otp_screen.dart';
+import 'package:mouvaps/auth/otp_screen.dart';
 
 import 'constants.dart' as constants;
 
@@ -83,15 +83,18 @@ class MyApp extends StatelessWidget {
           backgroundColor: constants.destructiveButtonColor,
           hoverBackgroundColor: constants.destructiveButtonHoverColor,
         ),
-      ),
+
+        switchTheme: const ShadSwitchTheme(
+          checkedTrackColor: constants.primaryColor,
+        )
+    ),
       title: "Mouv'APS",
       initialRoute: '/',
       routes: {
         '/': (context) => const AuthRouter(),
         '/home': (context) => const HomeScreen(),
         '/signin': (context) => const SignInScreen(),
-        '/otp': (context) => OTPScreen(
-            email: ModalRoute.of(context)!.settings.arguments as String),
+        '/otp': (context) => OTPScreen(email: ModalRoute.of(context)!.settings.arguments as String),
         '/profile': (context) => const ProfileScreen(),
       },
     );

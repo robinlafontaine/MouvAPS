@@ -1,10 +1,10 @@
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/home/custom_flick_control_manager.dart';
+import 'package:mouvaps/pages/home/custom_flick_control_manager.dart';
 import 'package:video_player/video_player.dart';
 
-import '../services/auth.dart';
+import '../../services/auth.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   final Uri url;
