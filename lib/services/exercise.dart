@@ -5,7 +5,7 @@ class Exercise {
   final int? id;
   final String name;
   final String url;
-  final int? difficulty;
+  final String thumbnailUrl;
   final int? rewardPoints;
   final Map<String, dynamic>? tags;
   final DateTime? createdAt;
@@ -15,9 +15,9 @@ class Exercise {
     this.id,
     required this.name,
     required this.url,
+    required this.thumbnailUrl,
     this.createdAt,
     this.tags,
-    this.difficulty,
     this.rewardPoints,
   });
 
@@ -26,11 +26,11 @@ class Exercise {
       id: json['id'] as int?,
       name: json['name'] as String,
       url: json['url'] as String,
+      thumbnailUrl: json['thumbnail_url'] as String,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'].toString())
           : null,
       tags: json['tags'] as Map<String, dynamic>?,
-      difficulty: json['difficulty'] as int?,
       rewardPoints: json['price_points'] as int?,
     );
   }
@@ -40,8 +40,8 @@ class Exercise {
       'id': id,
       'name': name,
       'url': url,
+      'thumbnail_url': thumbnailUrl,
       'tags': tags,
-      'difficulty': difficulty,
       'price_points': rewardPoints,
     };
   }

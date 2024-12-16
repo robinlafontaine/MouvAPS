@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/pages/sport/sport_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/pages/admin/users/users_page.dart';
+import 'package:mouvaps/pages/exercise/exercise_screen.dart';
 
 class SelectedPage extends StatelessWidget {
   final int currentIndex;
@@ -30,7 +30,7 @@ class SelectedPage extends StatelessWidget {
       return widgets[index];
     }
     List<Widget> widgets = <Widget>[
-      const SportScreen(),
+      const ExerciseScreen(),
       Text(
         'Index 1: Recettes',
         style: ShadTheme.of(context).textTheme.h1,

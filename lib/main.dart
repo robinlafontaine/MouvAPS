@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:mouvaps/auth/auth_router.dart';
 import 'package:mouvaps/pages/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
@@ -8,8 +7,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mouvaps/auth/otp_screen.dart';
-
-import 'constants.dart' as constants;
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 Future main() async {
   await dotenv.load(fileName: ".env");
