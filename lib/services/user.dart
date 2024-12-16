@@ -1,4 +1,3 @@
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -47,7 +46,6 @@ class User {
     final response =
         await _supabase.from('users').insert(toJson()).select().single();
 
-    print('response: $response');
     return User.fromJson(response);
   }
 
@@ -66,11 +64,8 @@ class User {
   }
 
   static Future<User> getByUuid(String uuid) async {
-    print('uuid: $uuid');
     final response =
         await _supabase.from('users').select().eq('user_uuid', uuid).single();
-
-    print('response: $response');
     return User.fromJson(response);
   }
 

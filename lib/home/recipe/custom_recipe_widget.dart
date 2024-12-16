@@ -1,32 +1,22 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:logger/logger.dart';
+import 'package:mouvaps/home/recipe/recipe_details_screen.dart';
+import 'package:mouvaps/services/recipe.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../constants.dart';
 
 class CustomRecipeWidget extends StatelessWidget {
-  final String title;
-  final String description;
-  final double rating;
-  final int time;
-  final List<String> ingredients;
+  final Recipe recipe;
   final bool isLocked;
-  final int? pricePoints;
   const CustomRecipeWidget({
     super.key,
-    required this.title,
-    required this.rating,
-    required this.time,
-    required this.ingredients,
+    required this.recipe,
     required this.isLocked,
-    this.pricePoints,
-    required this.description,
-  }) : assert(!isLocked || pricePoints != null,
-            'pricePoints is required if isLocked is true');
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +26,7 @@ class CustomRecipeWidget extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            title,
+            recipe.name,
             style: ShadTheme.of(context).textTheme.h3,
           ),
           Row(
@@ -45,7 +35,7 @@ class CustomRecipeWidget extends StatelessWidget {
               Column(
                 children: [
                   StarRating(
-                    rating: rating,
+                    rating: recipe.difficulty.toDouble(),
                     color: primaryColor,
                     borderColor: Colors.grey,
                     starCount: 5,
@@ -63,7 +53,7 @@ class CustomRecipeWidget extends StatelessWidget {
                   children: [
                     const Icon(Icons.timer, color: primaryColor),
                     Text(
-                      '$time min',
+                      '${recipe.timeMins} min',
                       style: ShadTheme.of(context).textTheme.p,
                     ),
                   ],
@@ -94,10 +84,10 @@ class CustomRecipeWidget extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 10),
                                 Column(
-                                  children: ingredients
+                                  children: recipe.ingredients!
                                       .map(
                                         (ingredient) => Text(
-                                          ingredient,
+                                          ingredient.name,
                                           style:
                                               ShadTheme.of(context).textTheme.p,
                                         ),
@@ -133,7 +123,7 @@ class CustomRecipeWidget extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "Débloquer pour $pricePoints points",
+                    "Débloquer pour ${recipe.pricePoints} points",
                     style: const TextStyle(
                       fontSize: pFontSize,
                       fontWeight: pFontWeight,
@@ -153,22 +143,13 @@ class CustomRecipeWidget extends StatelessWidget {
       child: isLocked
           ? content
           : InkWell(
-              onTap: () => {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Recette'),
-                      content: MarkdownBody(data: description),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Fermer'),
-                        ),
-                      ],
-                    );
-                  },
-                )
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RecipeDetailsScreen(recipe: recipe),
+                  ),
+                );
               },
               child: content,
             ),

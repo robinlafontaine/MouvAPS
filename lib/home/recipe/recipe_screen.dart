@@ -4,7 +4,6 @@ import 'package:mouvaps/home/recipe/custom_recipe_widget.dart';
 import 'package:mouvaps/services/recipe.dart';
 import 'package:mouvaps/services/user.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../services/auth.dart';
 
@@ -54,13 +53,8 @@ class _RecetteScreenState extends State<RecetteScreen> {
                     initiallyExpanded: true,
                     children: snapshot.data!.map((recipe) {
                       return CustomRecipeWidget(
-                        title: recipe.name,
-                        description: recipe.description,
-                        rating: recipe.difficulty.toDouble(),
-                        time: recipe.timeMins!,
-                        ingredients:
-                            recipe.ingredients!.map((e) => e.name).toList(),
                         isLocked: false,
+                        recipe: recipe,
                       );
                     }).toList(),
                   );
@@ -97,14 +91,8 @@ class _RecetteScreenState extends State<RecetteScreen> {
                     ),
                     children: recipes.map((recipe) {
                       return CustomRecipeWidget(
-                        title: recipe.name,
-                        description: recipe.description,
-                        rating: recipe.difficulty.toDouble(),
-                        time: recipe.timeMins!,
-                        ingredients:
-                            recipe.ingredients!.map((e) => e.name).toList(),
+                        recipe: recipe,
                         isLocked: true,
-                        pricePoints: recipe.pricePoints,
                       );
                     }).toList(),
                   );
