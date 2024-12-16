@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ShadApp.material(
+      debugShowCheckedModeBanner: false,
       materialThemeBuilder: (context, theme) {
         return theme.copyWith(
           appBarTheme: const AppBarTheme(
@@ -42,11 +43,9 @@ class MyApp extends StatelessWidget {
         colorScheme: const ShadSlateColorScheme.light(),
         brightness: Brightness.light,
 
-
         // TYPOGRAPHY
         textTheme: ShadTextTheme(
           family: 'Poppins',
-
           h1: const TextStyle(
             fontSize: constants.h1FontSize,
             fontWeight: constants.h1FontWeight,

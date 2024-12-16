@@ -88,6 +88,7 @@ class Recipe {
   }
 
   static Future<List<Recipe>> getAll() async {
+    print('Getting all recipes');
     final response = await _supabase.from('recipes').select('''
     id,
     name,

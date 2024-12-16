@@ -34,7 +34,8 @@ class _CarouselWithIndicatorState extends State<CustomCarousel> {
                     return ClipRRect(
                       borderRadius:
                           const BorderRadius.all(Radius.circular(5.0)),
-                      child: VideoPlayerWidget(url: Uri.parse(content.url), requiresAuth: true),
+                      child: VideoPlayerWidget(
+                          url: Uri.parse(content.url), requiresAuth: true),
                     );
                   },
                 );
@@ -65,14 +66,15 @@ class _CarouselWithIndicatorState extends State<CustomCarousel> {
                         color: (Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white
                                 : Colors.black)
-                            .withValues(alpha: _current == entry.key ? 0.9 : 0.4)),
+                            .withValues(
+                                alpha: _current == entry.key ? 0.9 : 0.4)),
                   ),
                 );
               }).toList(),
             ),
           ]);
         } else {
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );
