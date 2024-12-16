@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/home/recipe/recipe_details_screen.dart';
+import 'package:mouvaps/pages/recipe/recipe_details_screen.dart';
 import 'package:mouvaps/services/recipe.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/utils/constants.dart';

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:mouvaps/auth/auth_router.dart';
-import 'package:mouvaps/home/home_screen.dart';
+import 'package:mouvaps/pages/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
-import 'package:mouvaps/profile/profile_screen.dart';
+import 'package:mouvaps/pages/profile/profile_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'auth/otp_screen.dart';
+import 'package:mouvaps/auth/otp_screen.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 
 Future main() async {
@@ -39,49 +39,51 @@ class MyApp extends StatelessWidget {
       },
       themeMode: ThemeMode.light,
       theme: ShadThemeData(
-        colorScheme: const ShadSlateColorScheme.light(),
-        brightness: Brightness.light,
+          colorScheme: const ShadSlateColorScheme.light(),
+          brightness: Brightness.light,
 
-        // TYPOGRAPHY
-        textTheme: ShadTextTheme(
-          family: 'Poppins',
-          h1: const TextStyle(
-            fontSize: constants.h1FontSize,
-            fontWeight: constants.h1FontWeight,
-            color: constants.primaryColor,
+          // TYPOGRAPHY
+          textTheme: ShadTextTheme(
+            family: 'Poppins',
+            h1: const TextStyle(
+              fontSize: constants.h1FontSize,
+              fontWeight: constants.h1FontWeight,
+              color: constants.primaryColor,
+            ),
+            h2: const TextStyle(
+              fontSize: constants.h2FontSize,
+              fontWeight: constants.h2FontWeight,
+              decoration: TextDecoration.underline,
+              color: constants.secondaryColor,
+            ),
+            h3: const TextStyle(
+              fontSize: constants.h3FontSize,
+              fontWeight: constants.h3FontWeight,
+              color: constants.textColor,
+            ),
+            p: const TextStyle(
+              fontSize: constants.pFontSize,
+              fontWeight: constants.pFontWeight,
+              color: constants.textColor,
+            ),
+            small: const TextStyle(
+              fontSize: constants.smallFontSize,
+              fontWeight: constants.smallFontWeight,
+              color: constants.textColor,
+            ),
           ),
-          h2: const TextStyle(
-            fontSize: constants.h2FontSize,
-            fontWeight: constants.h2FontWeight,
-            decoration: TextDecoration.underline,
-            color: constants.secondaryColor,
-          ),
-          h3: const TextStyle(
-            fontSize: constants.h3FontSize,
-            fontWeight: constants.h3FontWeight,
-            color: constants.textColor,
-          ),
-          p: const TextStyle(
-            fontSize: constants.pFontSize,
-            fontWeight: constants.pFontWeight,
-            color: constants.textColor,
-          ),
-          small: const TextStyle(
-            fontSize: constants.smallFontSize,
-            fontWeight: constants.smallFontWeight,
-            color: constants.textColor,
-          ),
-        ),
 
-        // BUTTONS
-        primaryButtonTheme: const ShadButtonTheme(
-          backgroundColor: constants.primaryColor,
-        ),
-        destructiveButtonTheme: const ShadButtonTheme(
-          backgroundColor: constants.destructiveButtonColor,
-          hoverBackgroundColor: constants.destructiveButtonHoverColor,
-        ),
-      ),
+          // BUTTONS
+          primaryButtonTheme: const ShadButtonTheme(
+            backgroundColor: constants.primaryColor,
+          ),
+          destructiveButtonTheme: const ShadButtonTheme(
+            backgroundColor: constants.destructiveButtonColor,
+            hoverBackgroundColor: constants.destructiveButtonHoverColor,
+          ),
+          switchTheme: const ShadSwitchTheme(
+            checkedTrackColor: constants.primaryColor,
+          )),
       title: "Mouv'APS",
       initialRoute: '/',
       routes: {

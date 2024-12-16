@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/home/recipe/custom_recipe_widget.dart';
+import 'package:mouvaps/pages/recipe/custom_recipe_widget.dart';
 import 'package:mouvaps/services/recipe.dart';
 import 'package:mouvaps/services/user.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../services/auth.dart';
 
-class RecetteScreen extends StatefulWidget {
-  const RecetteScreen({super.key});
+class RecipeScreen extends StatefulWidget {
+  const RecipeScreen({super.key});
 
   @override
-  State<RecetteScreen> createState() => _RecetteScreenState();
+  State<RecipeScreen> createState() => _RecipeScreenState();
 }
 
-class _RecetteScreenState extends State<RecetteScreen> {
+class _RecipeScreenState extends State<RecipeScreen> {
   Logger logger = Logger();
   final ExpansionTileController _unlockedController = ExpansionTileController();
   final ExpansionTileController _lockedController = ExpansionTileController();

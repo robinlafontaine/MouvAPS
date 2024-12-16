@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/home/player_widget.dart';
+import 'package:mouvaps/widgets/player_widget.dart';
 import 'package:mouvaps/services/exercise.dart';
 
 class CustomCarousel extends StatefulWidget {
@@ -25,7 +25,6 @@ class _CarouselWithIndicatorState extends State<CustomCarousel> {
       future: _exercises,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          logger.i(snapshot.data);
           return Column(children: [
             CarouselSlider(
               items: snapshot.data!.map((content) {
