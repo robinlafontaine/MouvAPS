@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/home/sport_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class SelectedPage extends StatelessWidget {
+class SelectedTitle extends StatelessWidget {
   final int currentIndex;
   final bool isAdmin;
 
-  const SelectedPage({
+  const SelectedTitle({
     super.key,
     required this.currentIndex,
     required this.isAdmin,
@@ -21,28 +20,31 @@ class SelectedPage extends StatelessWidget {
       }
       List<Widget> widgets = <Widget>[
         Text(
-          'Index 0: Utilisateurs',
+          'Utilisateurs',
           style: ShadTheme.of(context).textTheme.h1,
         ),
         Text(
-          'Index 1: Contenus',
+          'Contenus',
           style: ShadTheme.of(context).textTheme.h1,
         ),
       ];
       return widgets[index];
     }
     List<Widget> widgets = <Widget>[
-      SportScreen(),
       Text(
-        'Index 1: Recettes',
+        'Séances',
         style: ShadTheme.of(context).textTheme.h1,
       ),
       Text(
-        'Index 2: Infos',
+        'Recettes',
         style: ShadTheme.of(context).textTheme.h1,
       ),
       Text(
-        'Index 3: Chat',
+        'Infos',
+        style: ShadTheme.of(context).textTheme.h1,
+      ),
+      Text(
+        'Chat',
         style: ShadTheme.of(context).textTheme.h1,
       ),
     ];

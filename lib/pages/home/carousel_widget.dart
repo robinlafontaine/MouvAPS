@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/home/player_widget.dart';
+import 'package:mouvaps/pages/home/player_widget.dart';
 import 'package:mouvaps/services/exercise.dart';
 
 class CustomCarousel extends StatefulWidget {

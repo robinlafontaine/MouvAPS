@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/home/custom_bottom_navigation.dart';
-import 'package:mouvaps/home/selected_page/selected_title.dart';
+import 'package:mouvaps/pages/home/custom_bottom_navigation.dart';
+import 'package:mouvaps/pages/home/selected_page/selected_title.dart';
 import 'package:mouvaps/constants.dart';
 import 'package:mouvaps/globals/globals.dart' as globals;
-import 'package:mouvaps/home/selected_page/selected_content.dart';
-import 'package:mouvaps/profile/profile_screen.dart';
+import 'package:mouvaps/pages/home/selected_page/selected_content.dart';
+import 'package:mouvaps/pages/profile/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -65,9 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Center(
-        child: SelectedPage(currentIndex: _selectedIndex, isAdmin: globals.isAdmin),
-      ),
+      body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
+            child: SelectedPage(currentIndex: _selectedIndex, isAdmin: globals.isAdmin),
+          ),
+        ),
       bottomNavigationBar: CustomBottomNavigationBar(currentIndex: _selectedIndex, onTap: _onItemTapped, primaryColor: primaryColor, isAdmin: globals.isAdmin),
     );
   }

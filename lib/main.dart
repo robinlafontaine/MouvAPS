@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:mouvaps/auth/auth_router.dart';
-import 'package:mouvaps/home/home_screen.dart';
+import 'package:mouvaps/pages/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
-import 'package:mouvaps/profile/profile_screen.dart';
+import 'package:mouvaps/pages/profile/profile_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
