@@ -34,7 +34,7 @@ class Exercise {
           ? DateTime.parse(json['created_at'].toString())
           : null,
       tags: json['tags'] as Map<String, dynamic>?,
-      rewardPoints: json['price_points'] as int,
+      rewardPoints: json['reward_points'] as int,
     );
   }
 
