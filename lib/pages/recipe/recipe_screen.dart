@@ -96,6 +96,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       .where((recipe) =>
                           !unlockedRecipes.map((e) => e.id).contains(recipe.id))
                       .toList();
+                  logger.i('Locked recipes: $lockedRecipes');
                   return ExpansionTile(
                     controller: _lockedController,
                     title: Text(

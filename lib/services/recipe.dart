@@ -140,7 +140,13 @@ class Recipe {
         .eq('user_recipe_status.user_id', userId)
         .eq('user_recipe_status.is_unlocked', true);
 
-    return response.map((json) => Recipe.fromJson(json)).toList();
+    // If attribute 'user_recipe_status' is empty, the recipe is removed from the unlocked list
+    final filteredResponse = response.where((element) {
+      return element['user_recipe_status'] != null &&
+          element['user_recipe_status'].isNotEmpty;
+    }).toList();
+
+    return filteredResponse.map((json) => Recipe.fromJson(json)).toList();
   }
 
   Future<void> delete() async {
