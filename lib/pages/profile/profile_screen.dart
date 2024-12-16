@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/colors.dart';
 import 'package:mouvaps/services/auth.dart';
 import 'package:mouvaps/pages/profile/profile_switch.dart';
+
+import '../../utils/constants.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

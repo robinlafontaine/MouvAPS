@@ -31,12 +31,29 @@ const FontWeight pFontWeight = FontWeight.w400;
 const double smallFontSize = 12;
 const FontWeight smallFontWeight = FontWeight.w400;
 
-const double formLabelFontSize = 16;
-const FontWeight formLabelFontWeight = FontWeight.w400;
+const double form_label_font_size = 17;
+const FontWeight form_label_font_weight = FontWeight.w400;
 
 const double buttonTextFontSize = 18;
 const FontWeight buttonTextFontWeight = FontWeight.w500;
 
+
+
+
+// form contents
+
+final genres = {
+  'homme': 'Homme',
+  'femme': 'Femme',
+  'null': 'Ne préfère pas répondre',
+};
+
+final family_situations = {
+  'celibataire': 'Célibataire',
+  'marie': 'Marié(e)',
+  'divorce': 'Divorcé(e)',
+  'veuf': 'Veuf(ve)',
+};
 
 // TODO: sizes for different screen sizes
 
