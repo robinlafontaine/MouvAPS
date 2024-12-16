@@ -12,6 +12,10 @@ class ExerciseCard extends StatefulWidget {
     return _ExerciseCardState();
   }
 }
+//TODO: Resize the image to fit the card
+//TODO: Add Duration to card
+//TODO: Add Difficulty (depending on pathology) to card
+//TODO: Add pop-up for precautions
 
 class _ExerciseCardState extends State<ExerciseCard> {
   Logger logger = Logger();

@@ -7,31 +7,34 @@ class Exercise {
   final String url;
   final String thumbnailUrl;
   final int? rewardPoints;
+  final Duration? duration;
   final Map<String, dynamic>? tags;
   final DateTime? createdAt;
   Logger logger = Logger();
 
   Exercise({
-    this.id,
+    required this.id,
     required this.name,
     required this.url,
     required this.thumbnailUrl,
-    this.createdAt,
+    required this.duration,
+    required this.rewardPoints,
     this.tags,
-    this.rewardPoints,
+    this.createdAt,
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
     return Exercise(
-      id: json['id'] as int?,
+      id: json['id'] as int,
       name: json['name'] as String,
       url: json['url'] as String,
       thumbnailUrl: json['thumbnail_url'] as String,
+      duration: Duration(seconds: json['duration']),
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'].toString())
           : null,
       tags: json['tags'] as Map<String, dynamic>?,
-      rewardPoints: json['price_points'] as int?,
+      rewardPoints: json['price_points'] as int,
     );
   }
 
@@ -40,6 +43,7 @@ class Exercise {
       'id': id,
       'name': name,
       'url': url,
+      'duration': duration,
       'thumbnail_url': thumbnailUrl,
       'tags': tags,
       'price_points': rewardPoints,
