@@ -5,9 +5,10 @@ class Recipe {
   final int? id;
   final String name;
   final String videoUrl;
+  final String imageUrl;
   final List<Ingredient>? ingredients;
   final String description;
-  final int difficulty;
+  final double difficulty;
   final int? timeMins;
   final int? pricePoints;
   final DateTime? createdAt;
@@ -17,6 +18,7 @@ class Recipe {
     this.id,
     required this.name,
     required this.videoUrl,
+    required this.imageUrl,
     required this.ingredients,
     required this.description,
     required this.difficulty,
@@ -30,11 +32,12 @@ class Recipe {
       id: json['id'] as int?,
       name: json['name'] as String,
       videoUrl: json['video_url'] as String,
+      imageUrl: json['thumbnail_url'] as String,
       ingredients: (json['recipe_ingredient'] as List<dynamic>?)
           ?.map((e) => Ingredient.fromJson(e))
           .toList(),
       description: json['description'] as String,
-      difficulty: json['difficulty'] as int,
+      difficulty: json['difficulty'] as double,
       timeMins: json['time_mins'] as int?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'].toString())
@@ -48,6 +51,7 @@ class Recipe {
       'id': id,
       'name': name,
       'video_url': videoUrl,
+      'thumbnail_url': imageUrl,
       'ingredients': ingredients?.map((e) => e.toJson()).toList(),
       'description': description,
       'time_mins': timeMins,
@@ -92,6 +96,7 @@ class Recipe {
     id,
     name,
     video_url,
+    thumbnail_url,
     description,
     difficulty,
     time_mins,
@@ -104,6 +109,8 @@ class Recipe {
       )
     )
   ''');
+
+    print("response: $response");
 
     return response.map((json) => Recipe.fromJson(json)).toList();
   }

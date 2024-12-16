@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import '../../services/auth.dart';
 import '../../services/recipe.dart';
 
 class RecipeDetailsScreen extends StatelessWidget {
@@ -15,7 +15,10 @@ class RecipeDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(recipe.name, style: ShadTheme.of(context).textTheme.h1),
       ),
-      body: Center(child: Text(Auth.instance.getUserEmail() ?? '')),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(child: MarkdownBody(data: recipe.description)),
+      ),
     );
   }
 }

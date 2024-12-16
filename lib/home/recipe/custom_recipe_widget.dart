@@ -1,13 +1,13 @@
 import 'dart:core';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/home/recipe/recipe_details_screen.dart';
 import 'package:mouvaps/services/recipe.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-
-import '../../constants.dart';
+import 'package:mouvaps/utils/constants.dart';
 
 class CustomRecipeWidget extends StatelessWidget {
   final Recipe recipe;
@@ -32,13 +32,23 @@ class CustomRecipeWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Image.network(
+                  recipe.imageUrl,
+                  width: 100,
+                ),
+              ),
               Column(
                 children: [
                   StarRating(
                     rating: recipe.difficulty.toDouble(),
                     color: primaryColor,
-                    borderColor: Colors.grey,
-                    starCount: 5,
+                    emptyIcon: CupertinoIcons.circle,
+                    filledIcon: CupertinoIcons.circle_fill,
+                    halfFilledIcon: CupertinoIcons.circle_lefthalf_fill,
+                    borderColor: primaryColor,
+                    starCount: 3,
                     size: 20,
                   ),
                   Text(
@@ -47,17 +57,14 @@ class CustomRecipeWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              Container(
-                margin: const EdgeInsets.only(right: 59.0),
-                child: Row(
-                  children: [
-                    const Icon(Icons.timer, color: primaryColor),
-                    Text(
-                      '${recipe.timeMins} min',
-                      style: ShadTheme.of(context).textTheme.p,
-                    ),
-                  ],
-                ),
+              Row(
+                children: [
+                  const Icon(Icons.timer, color: primaryColor),
+                  Text(
+                    '${recipe.timeMins} min',
+                    style: ShadTheme.of(context).textTheme.p,
+                  ),
+                ],
               ),
               Material(
                 color: primaryColor,

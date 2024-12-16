@@ -7,8 +7,8 @@ class RatingWidget extends StatelessWidget {
   const RatingWidget({
     super.key,
     required this.filledSteps,
-    this.totalSteps = 5, // Total number of steps
-  });
+    this.totalSteps = 3, // Total number of steps
+  }) : assert(filledSteps <= totalSteps);
 
   @override
   Widget build(BuildContext context) {

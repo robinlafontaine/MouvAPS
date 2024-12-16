@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mouvaps/home/recipe/recipe_screen.dart';
 import 'package:mouvaps/home/sport_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:mouvaps/constants.dart';
+import 'package:mouvaps/utils/constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
