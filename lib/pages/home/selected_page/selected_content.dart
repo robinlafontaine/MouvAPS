@@ -21,7 +21,7 @@ class SelectedPage extends StatelessWidget {
         index = 0;
       }
       List<Widget> widgets = <Widget>[
-        UsersPage(),
+        const UsersPage(),
         Text(
           'Index 1: Contenus',
           style: ShadTheme.of(context).textTheme.h1,
@@ -30,7 +30,7 @@ class SelectedPage extends StatelessWidget {
       return widgets[index];
     }
     List<Widget> widgets = <Widget>[
-      SportScreen(),
+      const SportScreen(),
       Text(
         'Index 1: Recettes',
         style: ShadTheme.of(context).textTheme.h1,
