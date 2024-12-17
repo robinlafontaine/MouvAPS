@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/pages/recipe/recipe_screen.dart';
+//import 'package:mouvaps/pages/recipe/recipe_screen.dart';
 import 'package:mouvaps/pages/recipe/recipe_screen_accordion.dart';
 import 'package:mouvaps/pages/sport/sport_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';

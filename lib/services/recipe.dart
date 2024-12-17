@@ -1,6 +1,8 @@
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'ingredient.dart';
+
 class Recipe {
   final int? id;
   final String name;
@@ -168,28 +170,4 @@ class Recipe {
   }
 
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
-}
-
-class Ingredient {
-  final String name;
-  final int quantity;
-
-  Ingredient({
-    required this.name,
-    required this.quantity,
-  });
-
-  factory Ingredient.fromJson(Map<String, dynamic> json) {
-    return Ingredient(
-      name: json['ingredient']['name'] as String,
-      quantity: json['quantity'] as int,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'quantity': quantity,
-    };
-  }
 }
