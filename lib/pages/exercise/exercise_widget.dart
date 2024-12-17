@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/services/exercise.dart';
+import 'package:mouvaps/services/video_controller.dart';
 
 class ExerciseCard extends StatefulWidget {
   final Exercise exercise;
@@ -22,7 +23,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: AspectRatio(
-          aspectRatio: 4 / 2.5,
+          aspectRatio: 16 / 9,
           child: Image(
             image: NetworkImage(widget.exercise.thumbnailUrl),
             fit: BoxFit.cover,
@@ -68,7 +69,9 @@ class _ExerciseCardState extends State<ExerciseCard> {
     },
     ),
     onTap: () {
-    //TODO: Handle tap (play video)
+      VideoController(
+        videoUrl: widget.exercise.url,
+      ).openFullscreenVideo(context);
     },
     );
   }
