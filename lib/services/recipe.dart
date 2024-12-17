@@ -37,7 +37,9 @@ class Recipe {
           ?.map((e) => Ingredient.fromJson(e))
           .toList(),
       description: json['description'] as String,
-      difficulty: json['difficulty'] as double,
+      difficulty: json['difficulty'] is int
+          ? (json['difficulty'] as int).toDouble()
+          : json['difficulty'] as double,
       timeMins: json['time_mins'] as int?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'].toString())

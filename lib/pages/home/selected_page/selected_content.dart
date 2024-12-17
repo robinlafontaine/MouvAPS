@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/pages/recipe/recipe_screen.dart';
+import 'package:mouvaps/pages/recipe/recipe_screen_accordion.dart';
 import 'package:mouvaps/pages/sport/sport_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/pages/admin/users/users_page.dart';
@@ -32,7 +33,7 @@ class SelectedPage extends StatelessWidget {
     }
     List<Widget> widgets = <Widget>[
       const SportScreen(),
-      const RecipeScreen(),
+      const RecipeScreenAccordion(),
       Text(
         'Index 2: Infos',
         style: ShadTheme.of(context).textTheme.h1,
