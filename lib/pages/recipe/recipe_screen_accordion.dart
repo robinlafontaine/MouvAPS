@@ -72,34 +72,40 @@ class _RecipeScreenAccordionState extends State<RecipeScreenAccordion> {
                   .where((recipe) =>
                       !unlockedRecipes.map((e) => e.id).contains(recipe.id))
                   .toList();
-              logger.i('Locked recipes: $lockedRecipes');
 
+              // Create the accordion details
               final details = [
                 (
                   title: 'Vos recettes',
                   content: Column(
                     children: unlockedRecipes.map((recipe) {
                       return CustomRecipeWidget(
-                        isLocked: false,
                         recipe: recipe,
+                        user: _user,
+                        isLocked: false,
                       );
                     }).toList(),
                   ),
                 ),
                 (
-                  title: 'Recettes à débloquer (${user.points} points)',
+                  title: 'Recettes à débloquer (${user.points} points dispo)',
                   content: Column(
                     children: lockedRecipes.map((recipe) {
                       return CustomRecipeWidget(
                         recipe: recipe,
+                        user: _user,
                         isLocked: true,
                       );
                     }).toList(),
                   ),
                 ),
               ];
+
               return ShadAccordion<({Column content, String title})>.multiple(
-                initialValue: [details[0]],
+                initialValue: [
+                  details[0],
+                  details[1]
+                ], // CHANGE TO [details[0]] WHEN FINISHED
                 children: details.map(
                   (detail) => ShadAccordionItem(
                     value: detail,

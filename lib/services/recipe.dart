@@ -169,5 +169,17 @@ class Recipe {
     return response.map((json) => Recipe.fromJson(json)).toList();
   }
 
+  Future<void> unlockRecipe(String userId) async {
+    if (id == null) {
+      throw Exception('Content ID is required for unlocking');
+    }
+
+    await _supabase.from('user_recipe_status').upsert({
+      'user_id': userId,
+      'recipe_id': id,
+      'is_unlocked': true,
+    });
+  }
+
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }

@@ -55,6 +55,17 @@ class User {
     return User.fromJson(response);
   }
 
+  // Update the user's points
+  Future<User> updatePoints(int points) async {
+    final response = await _supabase
+        .from('users')
+        .update({'points': points})
+        .eq('user_uuid', userUuid)
+        .select()
+        .single();
+    return User.fromJson(response);
+  }
+
   Future<void> delete() async {
     await _supabase.from('users').delete().eq('user_uuid', userUuid);
   }

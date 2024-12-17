@@ -57,6 +57,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       return CustomRecipeWidget(
                         isLocked: false,
                         recipe: recipe,
+                        user: _user,
                       );
                     }).toList(),
                   );
@@ -106,6 +107,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                     children: lockedRecipes.map((recipe) {
                       return CustomRecipeWidget(
                         recipe: recipe,
+                        user: _user,
                         isLocked: true,
                       );
                     }).toList(),
