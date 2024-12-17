@@ -15,6 +15,7 @@ class ExerciseCard extends StatefulWidget {
 }
 
 class _ExerciseCardState extends State<ExerciseCard> {
+  bool watched = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,9 +70,18 @@ class _ExerciseCardState extends State<ExerciseCard> {
     },
     ),
     onTap: () {
-      VideoController(
+      VideoController video = VideoController(
         videoUrl: widget.exercise.url,
-      ).openFullscreenVideo(context);
+      );
+      video.openFullscreenVideo(context);
+      video.listenToEnd(() {
+        if (!watched) {
+          Exercise.watched(widget.exercise);
+          setState(() {
+            watched = true;
+          });
+        }
+      });
     },
     );
   }

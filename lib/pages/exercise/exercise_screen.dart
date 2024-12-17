@@ -43,7 +43,7 @@ class ExerciseScreen extends StatelessWidget {
                   shrinkWrap: true,
                   itemCount: (snapshot.data!.length),
                   itemBuilder: (context, index) {
-                    return ExerciseCard(exercise: snapshot.data![index]);
+                    return ExerciseCard(exercise: snapshot.data![index], isEnabled: snapshot.data![index].isUnlocked);
                   },
                   separatorBuilder: (context, index) {
                     return const Divider(indent: 15, endIndent: 15,);

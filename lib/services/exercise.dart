@@ -1,5 +1,6 @@
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'auth.dart';
 
 class Exercise {
   final int? id;
@@ -8,6 +9,7 @@ class Exercise {
   final String thumbnailUrl;
   final int? rewardPoints;
   final Duration? duration;
+  bool isUnlocked = true;
   final Map<String, dynamic>? tags;
   final DateTime? createdAt;
   Logger logger = Logger();
@@ -52,6 +54,10 @@ class Exercise {
 
   static final _supabase = Supabase.instance.client;
 
+  void setIsUnlocked(bool value) {
+    isUnlocked = value;
+  }
+
   Future<Exercise> create() async {
     final response = await _supabase
         .from('exercises')
@@ -88,10 +94,26 @@ class Exercise {
 
   static Future<List<Exercise>> getAll() async {
     final response = await _supabase
-        .from('exercises')
-        .select();
+        .from('user_exercise_playlist')
+        .select('''
+          is_unlocked,
+          exercises (
+            id,
+            name,
+            url,
+            thumbnail_url,
+            duration,
+            reward_points,
+            tags,
+            created_at
+          )
+        ''').order('playlist_order', ascending: true);
 
-    return response.map((json) => Exercise.fromJson(json)).toList();
+    return (response as List).map((json) {
+      final exercise = Exercise.fromJson(json['exercises']);
+      exercise.setIsUnlocked(json['is_unlocked']);
+      return exercise;
+    }).toList();
   }
 
   Future<void> delete() async {
@@ -113,9 +135,29 @@ class Exercise {
         'name.ilike.%$query%,'
             'tags->contains.{"search_key": "$query"}'
     );
-
     return response.map((json) => Exercise.fromJson(json)).toList();
   }
 
+  static Future<void> watched(Exercise exercise) async {
+    try {
+      final userId = Auth.instance.getUUID();
+
+      //TODO: fix backend function
+      await _supabase.rpc('update_playlist_progress', params: {
+        'p_user_id': userId,
+        'p_current_exercise_id': exercise.id,
+      });
+
+      final response = await _supabase.rpc('increment_user_points', params: {
+        'p_user_id': userId,
+        'p_points_to_add': exercise.rewardPoints,
+      });
+
+      print('User points updated to: ${response} points');
+
+      } catch (error) {
+       print('Error completing exercise: $error');
+    }
+  }
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }
