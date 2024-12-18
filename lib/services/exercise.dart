@@ -139,25 +139,33 @@ class Exercise {
   }
 
   static Future<void> watched(Exercise exercise) async {
-    try {
+      Logger logger = Logger();
       final userId = Auth.instance.getUUID();
 
-      //TODO: fix backend function
-      await _supabase.rpc('update_playlist_progress', params: {
+      if (userId == null) {
+        throw Exception('User not logged in');
+      }
+
+      final response = await _supabase.rpc('update_playlist_progress', params: {
         'p_user_id': userId,
         'p_current_exercise_id': exercise.id,
       });
 
-      final response = await _supabase.rpc('increment_user_points', params: {
+      final nextExerciseId = response;
+
+      if (nextExerciseId != null) {
+        logger.i('Next exercise unlocked: $nextExerciseId');
+      } else {
+        logger.i('No more exercises in the playlist');
+      }
+
+      final pointsResponse = await _supabase.rpc('increment_user_points', params: {
         'p_user_id': userId,
         'p_points_to_add': exercise.rewardPoints,
       });
 
-      print('User points updated to: ${response} points');
+      logger.i('User points updated to: $pointsResponse points');
 
-      } catch (error) {
-       print('Error completing exercise: $error');
-    }
   }
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }
