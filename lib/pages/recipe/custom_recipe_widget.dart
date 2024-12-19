@@ -3,9 +3,7 @@ import 'dart:core';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
-import 'package:logger/logger.dart';
 import 'package:mouvaps/pages/recipe/recipe_details_screen.dart';
-import 'package:mouvaps/services/auth.dart';
 import 'package:mouvaps/services/recipe.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/utils/constants.dart';
@@ -16,17 +14,17 @@ class CustomRecipeWidget extends StatelessWidget {
   final Recipe recipe;
   final Future<User> user;
   final bool isLocked;
+  final VoidCallback onRecipeUnlocked;
   const CustomRecipeWidget({
     super.key,
     required this.recipe,
     required this.isLocked,
     required this.user,
+    required this.onRecipeUnlocked,
   });
 
   @override
   Widget build(BuildContext context) {
-    Logger logger = Logger();
-
     // Define the content of the recipe widget
     Widget content = Padding(
       padding: const EdgeInsets.all(8.0),
@@ -156,111 +154,70 @@ class CustomRecipeWidget extends StatelessWidget {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Material(
-                        color: primaryColor,
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: () => {
-                            if (userData.points >= (recipe.pricePoints ?? 0))
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
+                      ShadButton(
+                        onPressed: () async {
+                          if (userData.points >= (recipe.pricePoints ?? 0)) {
+                            bool? result = await showDialog<bool>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  elevation: 5.0,
+                                  backgroundColor: Colors.white,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'Déverrouiller ${recipe.name} pour ${recipe.pricePoints} pts ?',
+                                          style:
+                                              ShadTheme.of(context).textTheme.p,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            ShadButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop(true);
+                                              },
+                                              child: const Text('Oui'),
+                                            ),
+                                            ShadButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(false);
+                                              },
+                                              child: const Text('Annuler'),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                    elevation: 5.0,
-                                    backgroundColor: Colors.white,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            'Déverrouiller ${recipe.name} pour ${recipe.pricePoints} pts ?',
-                                            style: ShadTheme.of(context)
-                                                .textTheme
-                                                .p,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(height: 20),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              ShadButton(
-                                                onPressed: () async {
-                                                  await recipe.unlockRecipe(
-                                                      userData.userUuid);
-                                                  await userData.updatePoints(
-                                                      userData.points -
-                                                          (recipe.pricePoints ??
-                                                              0));
-                                                  (context as Element)
-                                                      .markNeedsBuild();
-                                                },
-                                                child: const Text('Oui'),
-                                              ),
-                                              ShadButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text('Annuler'),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              )
-                            else
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                    elevation: 5.0,
-                                    backgroundColor: Colors.white,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            'Vous n\'avez pas assez de points pour déverrouiller cette recette',
-                                            style: ShadTheme.of(context)
-                                                .textTheme
-                                                .p,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(height: 20),
-                                          ShadButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Ok'),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              )
-                          },
-                          borderRadius: BorderRadius.circular(20),
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Icon(Icons.lock_open, color: lightColor),
-                          ),
-                        ),
+                                  ),
+                                );
+                              },
+                            );
+
+                            if (result == true) {
+                              await recipe.unlockRecipe(userData.userUuid);
+                              await userData.updatePoints(
+                                  userData.points - (recipe.pricePoints ?? 0));
+                              if (context.mounted) {
+                                onRecipeUnlocked();
+                              }
+                            }
+                          }
+                        },
+                        enabled: userData.points >= (recipe.pricePoints ?? 0),
+                        icon: const Icon(Icons.lock_open, color: lightColor),
                       ),
                     ],
                   );
