@@ -32,10 +32,6 @@ class SelectedPage extends StatelessWidget {
     }
     List<Widget> widgets = <Widget>[
       const ExerciseScreen(),
-      Text(
-        'Index 1: Recettes',
-        style: ShadTheme.of(context).textTheme.h1,
-      ),
       const RecipeScreen(),
       Text(
         'Index 2: Infos',

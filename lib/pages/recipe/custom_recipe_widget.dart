@@ -230,22 +230,25 @@ class CustomRecipeWidget extends StatelessWidget {
       ),
     );
 
-    return Material(
-      color: lightColor,
-      borderRadius: BorderRadius.circular(20),
-      child: isLocked
-          ? content
-          : InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RecipeDetailsScreen(recipe: recipe),
-                  ),
-                );
-              },
-              child: content,
-            ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Material(
+        color: lightColor,
+        borderRadius: BorderRadius.circular(20),
+        child: isLocked
+            ? content
+            : InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecipeDetailsScreen(recipe: recipe),
+                    ),
+                  );
+                },
+                child: content,
+              ),
+      ),
     );
   }
 }
