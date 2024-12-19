@@ -107,7 +107,7 @@ class Exercise {
             tags,
             created_at
           )
-        ''').order('playlist_order', ascending: true);
+        ''').eq('user_id', Auth.instance.getUUID() as String).order('playlist_order', ascending: true);
 
     return (response as List).map((json) {
       final exercise = Exercise.fromJson(json['exercises']);

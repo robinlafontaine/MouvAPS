@@ -43,6 +43,7 @@ Future<void> openFullscreenVideo(BuildContext context) async {
         icon: const Icon(Icons.arrow_back),
         onPressed: () {
           navigator.pop();
+          _chewieController.dispose();
         },
       ),
     ),

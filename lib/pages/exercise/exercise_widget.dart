@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mouvaps/pages/exercise/precaution_dialog.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:mouvaps/services/video_controller.dart';
 
@@ -69,21 +70,29 @@ class _ExerciseCardState extends State<ExerciseCard> {
     }
     },
     ),
-    onTap: () {
-      VideoController video = VideoController(
-        videoUrl: widget.exercise.url,
-      );
-      video.openFullscreenVideo(context);
-      video.listenToEnd(() {
-        if (!watched) {
-          Exercise.watched(widget.exercise);
-          setState(() {
-            watched = true;
-          });
-        }
-      });
+    onTap: () async {
+      final bool confirmed = await showPrecautionDialog(context);
+      if (confirmed) {
+        _openVideo();
+      }
+
     },
     );
+  }
+
+  void _openVideo() {
+    VideoController video = VideoController(
+      videoUrl: widget.exercise.url,
+    );
+    video.openFullscreenVideo(context);
+    video.listenToEnd(() {
+      if (!watched) {
+        Exercise.watched(widget.exercise);
+        setState(() {
+          watched = true;
+        });
+      }
+    });
   }
 
   Widget _buildInfoRow({required IconData icon, required String text}) {
