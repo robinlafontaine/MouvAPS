@@ -22,6 +22,9 @@ class _ExerciseCardState extends State<ExerciseCard> {
   Widget build(BuildContext context) {
     return ListTile(
       enabled: widget.isEnabled,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: AspectRatio(

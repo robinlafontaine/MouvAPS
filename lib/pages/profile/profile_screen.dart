@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/colors.dart';
 import 'package:mouvaps/services/auth.dart';
 import 'package:mouvaps/pages/profile/profile_switch.dart';
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -13,7 +13,7 @@ class ProfileScreen extends StatelessWidget {
         title: const Text(
           'Profile',
           style: TextStyle(
-            color: primaryColor,
+            color: constants.primaryColor,
             fontSize: 32,
             fontWeight: FontWeight.bold,
           ),
