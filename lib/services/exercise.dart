@@ -1,37 +1,42 @@
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'auth.dart';
 
 class Exercise {
   final int? id;
   final String name;
   final String url;
-  final int? difficulty;
+  final String thumbnailUrl;
   final int? rewardPoints;
+  final Duration? duration;
+  bool isUnlocked = true;
   final Map<String, dynamic>? tags;
   final DateTime? createdAt;
   Logger logger = Logger();
 
   Exercise({
-    this.id,
+    required this.id,
     required this.name,
     required this.url,
-    this.createdAt,
+    required this.thumbnailUrl,
+    required this.duration,
+    required this.rewardPoints,
     this.tags,
-    this.difficulty,
-    this.rewardPoints,
+    this.createdAt,
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
     return Exercise(
-      id: json['id'] as int?,
+      id: json['id'] as int,
       name: json['name'] as String,
       url: json['url'] as String,
+      thumbnailUrl: json['thumbnail_url'] as String,
+      duration: Duration(seconds: json['duration']),
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'].toString())
           : null,
       tags: json['tags'] as Map<String, dynamic>?,
-      difficulty: json['difficulty'] as int?,
-      rewardPoints: json['price_points'] as int?,
+      rewardPoints: json['reward_points'] as int,
     );
   }
 
@@ -40,13 +45,18 @@ class Exercise {
       'id': id,
       'name': name,
       'url': url,
+      'duration': duration,
+      'thumbnail_url': thumbnailUrl,
       'tags': tags,
-      'difficulty': difficulty,
       'price_points': rewardPoints,
     };
   }
 
   static final _supabase = Supabase.instance.client;
+
+  void setIsUnlocked(bool value) {
+    isUnlocked = value;
+  }
 
   Future<Exercise> create() async {
     final response = await _supabase
@@ -84,10 +94,26 @@ class Exercise {
 
   static Future<List<Exercise>> getAll() async {
     final response = await _supabase
-        .from('exercises')
-        .select();
+        .from('user_exercise_playlist')
+        .select('''
+          is_unlocked,
+          exercises (
+            id,
+            name,
+            url,
+            thumbnail_url,
+            duration,
+            reward_points,
+            tags,
+            created_at
+          )
+        ''').order('playlist_order', ascending: true);
 
-    return response.map((json) => Exercise.fromJson(json)).toList();
+    return (response as List).map((json) {
+      final exercise = Exercise.fromJson(json['exercises']);
+      exercise.setIsUnlocked(json['is_unlocked']);
+      return exercise;
+    }).toList();
   }
 
   Future<void> delete() async {
@@ -109,9 +135,37 @@ class Exercise {
         'name.ilike.%$query%,'
             'tags->contains.{"search_key": "$query"}'
     );
-
     return response.map((json) => Exercise.fromJson(json)).toList();
   }
 
+  static Future<void> watched(Exercise exercise) async {
+      Logger logger = Logger();
+      final userId = Auth.instance.getUUID();
+
+      if (userId == null) {
+        throw Exception('User not logged in');
+      }
+
+      final response = await _supabase.rpc('update_playlist_progress', params: {
+        'p_user_id': userId,
+        'p_current_exercise_id': exercise.id,
+      });
+
+      final nextExerciseId = response;
+
+      if (nextExerciseId != null) {
+        logger.i('Next exercise unlocked: $nextExerciseId');
+      } else {
+        logger.i('No more exercises in the playlist');
+      }
+
+      final pointsResponse = await _supabase.rpc('increment_user_points', params: {
+        'p_user_id': userId,
+        'p_points_to_add': exercise.rewardPoints,
+      });
+
+      logger.i('User points updated to: $pointsResponse points');
+
+  }
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }

@@ -25,6 +25,10 @@ class Auth {
     return supabase.auth.currentSession?.accessToken;
   }
 
+  String? getUUID() {
+    return supabase.auth.currentUser?.id;
+  }
+
   Future<void> signOut() async {
     await supabase.auth.signOut();
   }

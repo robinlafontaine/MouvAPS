@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:mouvaps/auth/auth_router.dart';
 import 'package:mouvaps/pages/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
