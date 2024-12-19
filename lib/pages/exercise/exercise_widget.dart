@@ -62,13 +62,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
       ),
       trailing: IconButton(
     icon: Icon(widget.isAdmin ? Icons.edit_outlined : Icons.download_outlined, size: 30),
-    onPressed: () {
-    if (widget.isAdmin) {
-    //TODO: Handle edit
-    } else {
-    //TODO: Handle download
-    }
-    },
+    onPressed: widget.isEnabled ? _handleButtonPress : null,
     ),
     onTap: () async {
       final bool confirmed = await showPrecautionDialog(context);
@@ -78,6 +72,14 @@ class _ExerciseCardState extends State<ExerciseCard> {
 
     },
     );
+  }
+
+  void _handleButtonPress() {
+    if (widget.isAdmin) {
+      //TODO: Handle edit
+    } else {
+      //TODO: Handle download
+    }
   }
 
   void _openVideo() {
