@@ -27,7 +27,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
       if (user != null) {
         _recipes = Recipe.getAll();
         _unlockedRecipes = Recipe.getRecipeUnlockedByUserId(user.id);
-        _user = User.getByUuid(user.id);
+        _user = User.getUserByUuid(user.id);
       } else {
         _recipes = Future.value([]);
         _unlockedRecipes = Future.value([]);
@@ -43,7 +43,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
     if (user != null) {
       _recipes = Recipe.getAll();
       _unlockedRecipes = Recipe.getRecipeUnlockedByUserId(user.id);
-      _user = User.getByUuid(user.id);
+      _user = User.getUserByUuid(user.id);
     } else {
       _recipes = Future.value([]);
       _unlockedRecipes = Future.value([]);
@@ -65,10 +65,6 @@ class _RecipeScreenState extends State<RecipeScreen> {
             _unlockedRecipes.catchError((error) {
               logger.e('Error fetching unlocked recipes: $error');
               return <Recipe>[];
-            }),
-            _user.catchError((error) {
-              logger.e('Error fetching user: $error');
-              return User.empty();
             })
           ]),
           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -80,7 +76,6 @@ class _RecipeScreenState extends State<RecipeScreen> {
             } else if (snapshot.hasData) {
               final recipes = snapshot.data![0] as List<Recipe>;
               final unlockedRecipes = snapshot.data![1] as List<Recipe>;
-              final user = snapshot.data![2] as User;
 
               // Filter out the recipes that are already unlocked
               final lockedRecipes = recipes
@@ -104,7 +99,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   ),
                 ),
                 (
-                  title: 'Recettes à débloquer (${user.points} points dispo)',
+                  title: 'Recettes à débloquer',
                   content: Column(
                     children: lockedRecipes.map((recipe) {
                       return CustomRecipeWidget(
@@ -127,6 +122,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   (detail) => ShadAccordionItem(
                     value: detail,
                     title: Text(detail.title),
+                    titleStyle: ShadTheme.of(context).textTheme.h2,
                     child: detail.content,
                   ),
                 ),

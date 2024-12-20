@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:mouvaps/pages/recipe/recipe_details_screen.dart';
 import 'package:mouvaps/services/recipe.dart';
+import 'package:provider/provider.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/utils/constants.dart';
 
 import '../../services/user.dart';
+import '../../notifiers/user_points_notifier.dart';
 
 class CustomRecipeWidget extends StatelessWidget {
   final Recipe recipe;
@@ -210,9 +212,11 @@ class CustomRecipeWidget extends StatelessWidget {
                               await recipe.unlockRecipe(userData.userUuid);
                               await userData.updatePoints(
                                   userData.points - (recipe.pricePoints ?? 0));
-                              if (context.mounted) {
-                                onRecipeUnlocked();
-                              }
+                              if (!context.mounted) return;
+                              Provider.of<UserPointsNotifier>(context,
+                                      listen: false)
+                                  .addPoints(-(recipe.pricePoints ?? 0));
+                              onRecipeUnlocked();
                             }
                           }
                         },

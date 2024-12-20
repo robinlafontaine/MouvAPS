@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/pages/home/custom_bottom_navigation.dart';
+import 'package:mouvaps/pages/home/selected_page/selected_content.dart';
 import 'package:mouvaps/pages/home/selected_page/selected_title.dart';
 import 'package:mouvaps/utils/constants.dart';
 import 'package:mouvaps/globals/globals.dart' as globals;
-import 'package:mouvaps/pages/home/selected_page/selected_content.dart';
 import 'package:mouvaps/pages/profile/profile_screen.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:provider/provider.dart';
+
+import '../../notifiers/user_points_notifier.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,12 +27,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    final userPointsNotifier =
+        Provider.of<UserPointsNotifier>(context, listen: false);
+    userPointsNotifier.fetchUserPoints();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: SelectedTitle(
             currentIndex: _selectedIndex, isAdmin: globals.isAdmin),
         actions: [
+          Consumer<UserPointsNotifier>(
+            builder: (context, userPointsNotifier, child) {
+              return Text(
+                '${userPointsNotifier.points} points',
+                style: ShadTheme.of(context).textTheme.h3,
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(
               Icons.account_circle,
