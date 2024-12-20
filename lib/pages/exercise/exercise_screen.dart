@@ -16,23 +16,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObse
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _exercisesFuture = Exercise.getAll();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      setState(() {
-        _exercisesFuture = Exercise.getAll();
-      });
-    }
   }
 
   @override
@@ -55,7 +44,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObse
                   shrinkWrap: true,
                   itemCount: (snapshot.data!.length),
                   itemBuilder: (context, index) {
-                    return ExerciseCard(exercise: snapshot.data![index], isEnabled: snapshot.data![index].isUnlocked);
+                    return ExerciseCard(exercise: snapshot.data![index], isEnabled: snapshot.data![index].isUnlocked, onWatchedCallback: _refresh);
                   },
                   separatorBuilder: (context, index) {
                     return const Divider(indent: 15, endIndent: 15,);
@@ -68,5 +57,11 @@ class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObse
         }
       },
     );
+  }
+
+  void _refresh() async {
+    setState(() {
+      _exercisesFuture = Exercise.getAll();
+    });
   }
 }

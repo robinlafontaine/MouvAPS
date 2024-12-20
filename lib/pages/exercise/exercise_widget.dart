@@ -7,7 +7,8 @@ class ExerciseCard extends StatefulWidget {
   final Exercise exercise;
   final bool isEnabled;
   final bool isAdmin;
-  const ExerciseCard({super.key, required this.exercise, this.isEnabled = true, this.isAdmin = false});
+  final VoidCallback onWatchedCallback;
+  const ExerciseCard({super.key, required this.exercise, this.isEnabled = true, this.isAdmin = false, required this.onWatchedCallback});
 
   @override
   State<StatefulWidget> createState() {
@@ -92,10 +93,12 @@ class _ExerciseCardState extends State<ExerciseCard> {
     video.openFullscreenVideo(context);
     video.listenToEnd(() {
       if (!watched) {
-        Exercise.watched(widget.exercise);
-        setState(() {
-          watched = true;
-        });
+        Exercise.watched(widget.exercise).then((value) {
+          setState(() {
+            watched = true;
+          });
+          widget.onWatchedCallback();
+          });
       }
     });
   }
