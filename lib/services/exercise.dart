@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
+import 'package:mouvaps/services/db.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth.dart';
 
@@ -11,8 +16,6 @@ class Exercise {
   final Duration? duration;
   bool isUnlocked = true;
   final Map<String, dynamic>? tags;
-  final DateTime? createdAt;
-  Logger logger = Logger();
 
   Exercise({
     required this.id,
@@ -22,7 +25,6 @@ class Exercise {
     required this.duration,
     required this.rewardPoints,
     this.tags,
-    this.createdAt,
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
@@ -32,9 +34,6 @@ class Exercise {
       url: json['url'] as String,
       thumbnailUrl: json['thumbnail_url'] as String,
       duration: Duration(seconds: json['duration']),
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'].toString())
-          : null,
       tags: json['tags'] as Map<String, dynamic>?,
       rewardPoints: json['reward_points'] as int,
     );
@@ -53,9 +52,32 @@ class Exercise {
   }
 
   static final _supabase = Supabase.instance.client;
+  static final _db = ContentDatabase.instance;
+  static Logger logger = Logger();
 
   void setIsUnlocked(bool value) {
     isUnlocked = value;
+  }
+
+  Exercise copyWith({
+    int? id,
+    String? name,
+    String? url,
+    String? thumbnailUrl,
+    int? rewardPoints,
+    Duration? duration,
+    bool? isUnlocked,
+    Map<String, dynamic>? tags,
+  }) {
+    return Exercise(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      url: url ?? this.url,
+      thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
+      duration: duration ?? this.duration,
+      rewardPoints: rewardPoints ?? this.rewardPoints,
+      tags: tags ?? this.tags,
+    );
   }
 
   Future<Exercise> create() async {
@@ -139,7 +161,6 @@ class Exercise {
   }
 
   static Future<void> watched(Exercise exercise) async {
-      Logger logger = Logger();
       final userId = Auth.instance.getUUID();
 
       if (userId == null) {
@@ -166,6 +187,28 @@ class Exercise {
 
       logger.i('User points updated to: $pointsResponse points');
 
+  }
+
+  static Future<Exercise> saveLocalExercise(Exercise exercise, String localUrl, String localThumbnailUrl) async {
+    try {
+      Exercise localExercise = exercise.copyWith(url: localUrl, thumbnailUrl: localThumbnailUrl);
+      await _db.insert('exercises', localExercise.toJson());
+      logger.i('Local exercise saved');
+      return localExercise;
+    } catch (e) {
+      logger.e('Error saving local exercise: $e');
+      return exercise;
+    }
+  }
+
+  static Future<List<Exercise>> getLocalExercises() async {
+    try {
+      var rows = await _db.queryAllRows('exercises');
+      return rows.map((row) => Exercise.fromJson(row)).toList();
+    } catch (e) {
+      logger.e('Error getting local exercises: $e');
+      return [];
+    }
   }
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }

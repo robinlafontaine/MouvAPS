@@ -46,6 +46,9 @@ dependencies:
   video_player: ^2.9.2
   flick_video_player: ^0.9.0
   chewie: ^1.8.5
+  path_provider: ^2.1.5
+  sqflite: ^2.4.1
+  dio: ^5.7.0
 
 dev_dependencies:
   flutter_test:

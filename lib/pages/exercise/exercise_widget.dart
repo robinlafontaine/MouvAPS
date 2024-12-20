@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:mouvaps/pages/exercise/exercise_download.dart';
 import 'package:mouvaps/pages/exercise/precaution_dialog.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:mouvaps/services/video_controller.dart';
@@ -6,9 +8,9 @@ import 'package:mouvaps/services/video_controller.dart';
 class ExerciseCard extends StatefulWidget {
   final Exercise exercise;
   final bool isEnabled;
-  final bool isAdmin;
+  final bool isOffline;
   final VoidCallback onWatchedCallback;
-  const ExerciseCard({super.key, required this.exercise, this.isEnabled = true, this.isAdmin = false, required this.onWatchedCallback});
+  const ExerciseCard({super.key, required this.exercise, this.isEnabled = true, this.isOffline = false, required this.onWatchedCallback});
 
   @override
   State<StatefulWidget> createState() {
@@ -31,15 +33,17 @@ class _ExerciseCardState extends State<ExerciseCard> {
         child: AspectRatio(
           aspectRatio: 16 / 9,
           child: Image(
-            image: NetworkImage(widget.exercise.thumbnailUrl),
-            fit: BoxFit.cover,
-            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-              return Image.asset(
-                'assets/images/default_exercise_image.jpg',
-                fit: BoxFit.cover,
-              );
-            },
-          ),
+          image: widget.isOffline
+              ? FileImage(File(widget.exercise.thumbnailUrl)) as ImageProvider
+                : NetworkImage(widget.exercise.thumbnailUrl) as ImageProvider,
+          fit: BoxFit.cover,
+          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+            return Image.asset(
+              'assets/images/default_exercise_image.jpg',
+              fit: BoxFit.cover,
+          );
+        },
+      ),
         ),
       ),
       title: Text(
@@ -64,28 +68,16 @@ class _ExerciseCardState extends State<ExerciseCard> {
           ),
         ],
       ),
-      trailing: IconButton(
-    icon: Icon(widget.isAdmin ? Icons.edit_outlined : Icons.download_outlined, size: 30),
-    onPressed: widget.isEnabled ? _handleButtonPress : null,
-    ),
-    onTap: () async {
-      final bool confirmed = await showPrecautionDialog(context);
-      if (confirmed) {
-        _openVideo();
-      }
+      trailing: widget.isOffline ? const Icon(Icons.check_circle_outline) : DownloadButton(exercise: widget.exercise, onDownloadComplete: _onDownloadComplete),
+      onTap: () async {
+        final bool confirmed = await showPrecautionDialog(context);
+        if (confirmed) {
+          _openVideo();
+        }
 
-    },
+      },
     );
   }
-
-  void _handleButtonPress() {
-    if (widget.isAdmin) {
-      //TODO: Handle edit
-    } else {
-      //TODO: Handle download
-    }
-  }
-
   void _openVideo() {
     VideoController video = VideoController(
       videoUrl: widget.exercise.url,
@@ -101,6 +93,10 @@ class _ExerciseCardState extends State<ExerciseCard> {
           });
       }
     });
+  }
+
+  void _onDownloadComplete(Exercise exercise) {
+    print('!!!!!!!!!!!!!!!!Download complete');
   }
 
   Widget _buildInfoRow({required IconData icon, required String text}) {
