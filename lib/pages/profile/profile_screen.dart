@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/services/auth.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/pages/profile/profile_switch.dart';
-import 'package:mouvaps/utils/constants.dart' as constants;
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -10,23 +10,15 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Profile',
-          style: TextStyle(
-            color: constants.primaryColor,
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text('Profile', style: ShadTheme.of(context).textTheme.h1),
       ),
-      body: Center(child:
-      Column(
+      body: Center(
+          child: Column(
         children: [
           Text(Auth.instance.getUserEmail() ?? ''),
           const ProfileSwitch()
         ],
-      )
-      ),
+      )),
     );
   }
 }

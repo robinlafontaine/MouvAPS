@@ -15,9 +15,9 @@ class SelectedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(isAdmin) {
+    if (isAdmin) {
       int index = currentIndex;
-      if(currentIndex > 1) {
+      if (currentIndex > 1) {
         index = 0;
       }
       List<Widget> widgets = <Widget>[
