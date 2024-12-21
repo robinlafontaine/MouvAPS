@@ -29,26 +29,26 @@ class ContentDatabase {
   Future<void> _createDatabase(Database db, int version) async {
     return await db.execute('''        
         CREATE TABLE exercises (
-          id BIGINT PRIMARY KEY AUTOINCREMENT,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           url TEXT NOT NULL,
           thumbnail_url TEXT NOT NULL,
-          duration BIGINT NOT NULL,
+          duration INTEGER NOT NULL,
           reward_points INTEGER NOT NULL,
-          is_unlocked BOOLEAN NOT NULL,
-          tags JSONB,
+          is_unlocked INTEGER NOT NULL,
+          tags JSONB
         );
         
         CREATE TABLE recipes (
-          id BIGINT PRIMARY KEY AUTOINCREMENT,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           description TEXT,
           video_url TEXT NOT NULL,
           thumbnail_url TEXT NOT NULL,
-          time_mins SMALLINT NOT NULL,
+          time_mins INTEGER NOT NULL,
           price_points INTEGER NOT NULL,
           difficulty REAL NOT NULL,
-          tags TEXT,
+          tags TEXT
         );
       ''');
   }

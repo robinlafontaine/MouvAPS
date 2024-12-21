@@ -2,14 +2,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class DownloadButton extends StatefulWidget {
   final Exercise exercise;
+  final bool isEnabled;
   final Function(Exercise) onDownloadComplete;
 
   const DownloadButton({
     super.key,
     required this.exercise,
+    this.isEnabled = true,
     required this.onDownloadComplete,
   });
 
@@ -37,8 +40,8 @@ class _DownloadButtonState extends State<DownloadButton> {
       var thumbnailPath = '${tempDir.path}/${widget.exercise.name}_t.${widget.exercise.thumbnailUrl.split('.').last}';
 
       await dio.download(
-          widget.exercise.url,
-          videoPath,
+          widget.exercise.thumbnailUrl,
+          thumbnailPath,
           onReceiveProgress: (received, total) {
             setState(() {
               _progress = (received / total) * (1 / _totalSteps);
@@ -47,8 +50,8 @@ class _DownloadButtonState extends State<DownloadButton> {
       );
 
       await dio.download(
-          widget.exercise.thumbnailUrl,
-          thumbnailPath,
+          widget.exercise.url,
+          videoPath,
           onReceiveProgress: (received, total) {
             setState(() {
               _progress = (1 / _totalSteps) + (received / total) * (1 / _totalSteps);
@@ -71,7 +74,7 @@ class _DownloadButtonState extends State<DownloadButton> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Download failed: ${e.toString()}')),
+          const SnackBar(content: Text('Echec du téléchargement !')),
         );
       }
     }
@@ -83,18 +86,21 @@ class _DownloadButtonState extends State<DownloadButton> {
       width: 48,
       height: 48,
       child: IconButton(
-        onPressed: _isDownloading ? null : _startDownload,
+        onPressed: (_isDownloading || !widget.isEnabled) ? null : _startDownload,
         icon: Stack(
           alignment: Alignment.center,
           children: [
             if (_isDownloading)
               CircularProgressIndicator(
                 value: _progress,
+                color: constants.primaryColor,
+                backgroundColor: constants.unselectedColor,
               ),
             Icon(
               _isDownloading ? Icons.download_done : Icons.download,
-              color: _isDownloading ? Colors.white : null,
+              color: _isDownloading ? Colors.white : constants.primaryColor,
             ),
+            //TODO: Fix showing download_done icon when done
           ],
         ),
       ),

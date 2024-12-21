@@ -1,9 +1,5 @@
-import 'dart:io';
-
-import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/services/db.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth.dart';
 
@@ -44,10 +40,11 @@ class Exercise {
       'id': id,
       'name': name,
       'url': url,
-      'duration': duration,
       'thumbnail_url': thumbnailUrl,
+      'duration': duration!.inSeconds,
+      'is_unlocked': isUnlocked ? 1 : 0,
       'tags': tags,
-      'price_points': rewardPoints,
+      'reward_points': rewardPoints,
     };
   }
 
