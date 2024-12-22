@@ -109,7 +109,8 @@ class Recipe {
     recipe_ingredient (
       quantity,
       ingredient: ingredients (
-        name
+        name,
+        image_url
       )
     )
   ''');
@@ -133,7 +134,8 @@ class Recipe {
         recipe_ingredient (
           quantity,
           ingredient: ingredients (
-            name
+            name,
+            image_url
           )
         ),
         user_recipe_status (

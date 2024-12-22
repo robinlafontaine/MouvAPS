@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/pages/recipe/custom_recipe_widget.dart';
+import 'package:mouvaps/pages/recipe/recipe_widget.dart';
 import 'package:mouvaps/services/recipe.dart';
 import 'package:mouvaps/services/user.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -88,7 +88,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                 content: Column(
                   children: [
                     for (var recipe in unlockedRecipes) ...[
-                      CustomRecipeWidget(
+                      RecipeWidget(
                         recipe: recipe,
                         user: _user,
                         isLocked: false,
@@ -104,7 +104,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                 content: Column(
                   children: [
                     for (var recipe in lockedRecipes) ...[
-                      CustomRecipeWidget(
+                      RecipeWidget(
                         recipe: recipe,
                         user: _user,
                         isLocked: true,

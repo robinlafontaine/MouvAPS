@@ -12,13 +12,13 @@ import 'package:mouvaps/utils/constants.dart';
 import '../../services/user.dart';
 import '../../notifiers/user_points_notifier.dart';
 
-class CustomRecipeWidget extends StatefulWidget {
+class RecipeWidget extends StatefulWidget {
   final Recipe recipe;
   final Future<User> user;
   final bool isLocked;
   final VoidCallback onRecipeUnlocked;
 
-  const CustomRecipeWidget({
+  const RecipeWidget({
     super.key,
     required this.recipe,
     required this.isLocked,
@@ -27,10 +27,10 @@ class CustomRecipeWidget extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _CustomRecipeWidgetState();
+  State<StatefulWidget> createState() => _RecipeWidgetState();
 }
 
-class _CustomRecipeWidgetState extends State<CustomRecipeWidget> {
+class _RecipeWidgetState extends State<RecipeWidget> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
