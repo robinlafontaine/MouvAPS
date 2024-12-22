@@ -35,7 +35,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: const EdgeInsets.all(8),
+      contentPadding: const EdgeInsets.all(0),
       enabled: !widget.isLocked,
       tileColor: Colors.white,
       leading: _buildRecipeImage(),
@@ -54,7 +54,8 @@ class _RecipeWidgetState extends State<RecipeWidget> {
         child: Image(
           image: NetworkImage(widget.recipe.imageUrl),
           fit: BoxFit.cover,
-          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+          errorBuilder:
+              (BuildContext context, Object exception, StackTrace? stackTrace) {
             return Image.asset(
               'assets/images/default_exercise_image.jpg',
               fit: BoxFit.cover,
@@ -95,8 +96,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
           starCount: 3,
           size: 20,
         ),
-        text: "Difficulté"
-    );
+        text: "Difficulté");
   }
 
   Widget _buildDurationInfo() {
@@ -121,7 +121,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (widget.isLocked) _buildUnlockButton(),
-        _ingredientButton(),
+        if (widget.isLocked) _ingredientButton(),
         if (!widget.isOffline && !widget.isLocked) _buildDownloadButton(),
         if (widget.isOffline) _buildOfflineIndicator(),
       ],
@@ -222,7 +222,8 @@ class _RecipeWidgetState extends State<RecipeWidget> {
 
   Future<void> _processUnlock(User userData) async {
     await widget.recipe.unlockRecipe(userData.userUuid);
-    await userData.updatePoints(userData.points - (widget.recipe.pricePoints ?? 0));
+    await userData
+        .updatePoints(userData.points - (widget.recipe.pricePoints ?? 0));
     if (!mounted) return;
     Provider.of<UserPointsNotifier>(context, listen: false)
         .addPoints(-(widget.recipe.pricePoints ?? 0));
@@ -287,9 +288,9 @@ class _RecipeWidgetState extends State<RecipeWidget> {
             Column(
               children: widget.recipe.ingredients!
                   .map((ingredient) => Text(
-                ingredient.name,
-                style: ShadTheme.of(context).textTheme.p,
-              ))
+                        ingredient.name,
+                        style: ShadTheme.of(context).textTheme.p,
+                      ))
                   .toList(),
             ),
           ],
