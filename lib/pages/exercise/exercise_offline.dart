@@ -38,7 +38,7 @@ class _ExerciseOfflineState extends State<ExerciseOffline> with WidgetsBindingOb
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const H2(content: 'Séances'),
+              const H2(content: 'Séances téléchargées'),
               if (snapshot.data!.isNotEmpty)
                 ListView.separated(
                   shrinkWrap: true,

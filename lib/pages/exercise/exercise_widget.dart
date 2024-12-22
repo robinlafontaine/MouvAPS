@@ -20,6 +20,13 @@ class ExerciseCard extends StatefulWidget {
 
 class _ExerciseCardState extends State<ExerciseCard> {
   bool watched = false;
+  bool _isDisposed = false;
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,13 +95,15 @@ class _ExerciseCardState extends State<ExerciseCard> {
     );
     video.openFullscreenVideo(context);
     video.listenToEnd(() {
-      if (!watched && widget.isEnabled && !widget.isOffline) {
+      if (!_isDisposed && !watched && widget.isEnabled && !widget.isOffline) {
         Exercise.watched(widget.exercise).then((value) {
-          setState(() {
-            watched = true;
-          });
-          widget.onWatchedCallback();
-          });
+          if (!_isDisposed) {
+            setState(() {
+              watched = true;
+            });
+            widget.onWatchedCallback();
+          }
+        });
       }
     });
   }
