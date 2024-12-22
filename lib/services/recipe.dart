@@ -1,6 +1,7 @@
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'db.dart';
 import 'ingredient.dart';
 
 class Recipe {
@@ -14,7 +15,6 @@ class Recipe {
   final int? timeMins;
   final int? pricePoints;
   final DateTime? createdAt;
-  Logger logger = Logger();
 
   Recipe({
     this.id,
@@ -66,6 +66,34 @@ class Recipe {
   }
 
   static final _supabase = Supabase.instance.client;
+  static final _db = ContentDatabase.instance;
+  static Logger logger = Logger();
+
+  Recipe copyWith({
+    int? id,
+    String? name,
+    String? videoUrl,
+    String? imageUrl,
+    List<Ingredient>? ingredients,
+    String? description,
+    double? difficulty,
+    int? timeMins,
+    int? pricePoints,
+    DateTime? createdAt,
+  }) {
+    return Recipe(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      videoUrl: videoUrl ?? this.videoUrl,
+      imageUrl: imageUrl ?? this.imageUrl,
+      ingredients: ingredients ?? this.ingredients,
+      description: description ?? this.description,
+      difficulty: difficulty ?? this.difficulty,
+      timeMins: timeMins ?? this.timeMins,
+      pricePoints: pricePoints ?? this.pricePoints,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 
   Future<Recipe> create() async {
     final response =
@@ -182,6 +210,30 @@ class Recipe {
       'is_unlocked': true,
     });
   }
+
+  static Future<Recipe> saveLocalRecipe(Recipe recipe, String localUrl, String localThumbnailUrl) async {
+    try {
+      Recipe localRecipe = recipe.copyWith(videoUrl: localUrl, imageUrl: localThumbnailUrl);
+      await _db.insert('recipes', localRecipe.toJson());
+      logger.i('Local recipe saved');
+      return localRecipe;
+    } catch (e) {
+      logger.e('Error saving local recipe: $e');
+      return recipe;
+    }
+  }
+
+  static Future<List<Recipe>> getLocalRecipes() async {
+    try {
+      var rows = await _db.queryAllRows('recipes');
+      return rows.map((row) => Recipe.fromJson(row)).toList();
+    } catch (e) {
+      logger.e('Error getting local recipes: $e');
+      return [];
+    }
+  }
+
+
 
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }

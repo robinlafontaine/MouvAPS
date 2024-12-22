@@ -78,7 +78,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
             ),
           ],
         ),
-        trailing: widget.isOffline ? const Icon(Icons.check_circle_outline) : DownloadButton(exercise: widget.exercise, isEnabled: widget.isEnabled, onDownloadComplete: _onDownloadComplete),
+        trailing: widget.isOffline ? const Icon(Icons.check_circle_outline) : ExerciseDownloadButton(exercise: widget.exercise, isEnabled: widget.isEnabled, onDownloadComplete: _onDownloadComplete),
         onTap: widget.isEnabled ? () async {
           final bool confirmed = await showPrecautionDialog(context);
           if (confirmed) {

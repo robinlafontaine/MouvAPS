@@ -7,8 +7,7 @@ import 'package:mouvaps/globals/globals.dart' as globals;
 import 'package:mouvaps/pages/profile/profile_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:provider/provider.dart';
-
-import '../../notifiers/user_points_notifier.dart';
+import 'package:mouvaps/notifiers/user_points_notifier.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
