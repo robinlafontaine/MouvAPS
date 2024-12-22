@@ -4,6 +4,8 @@ import 'package:mouvaps/services/exercise.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 
+//TODO: Fix download persistence
+
 class ExerciseDownloadButton extends StatefulWidget {
   final Exercise exercise;
   final bool isEnabled;
@@ -23,7 +25,7 @@ class ExerciseDownloadButton extends StatefulWidget {
 class _ExerciseDownloadButtonState extends State<ExerciseDownloadButton> {
   bool _isDownloading = false;
   double _progress = 0;
-  final double _totalSteps = 4;
+  final double _totalSteps = 2;
 
   Future<void> _startDownload() async {
     if (_isDownloading) return;
@@ -100,7 +102,6 @@ class _ExerciseDownloadButtonState extends State<ExerciseDownloadButton> {
               _isDownloading ? Icons.download_done : Icons.download,
               color: _isDownloading ? Colors.white : constants.primaryColor,
             ),
-            //TODO: Fix showing download_done icon when done
           ],
         ),
       ),

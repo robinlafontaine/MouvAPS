@@ -29,7 +29,9 @@ class ContentDatabase {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''
+    Batch batch = db.batch();
+
+    batch.execute('''
         CREATE TABLE exercises (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
@@ -42,7 +44,7 @@ class ContentDatabase {
         )
     ''');
 
-    await db.execute('''
+    batch.execute('''
         CREATE TABLE recipes (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,

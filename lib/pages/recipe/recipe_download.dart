@@ -23,7 +23,7 @@ class RecipeDownloadButton extends StatefulWidget {
 class _RecipeDownloadButtonState extends State<RecipeDownloadButton> {
   bool _isDownloading = false;
   double _progress = 0;
-  final double _totalSteps = 4;
+  final double _totalSteps = 2;
 
   Future<void> _startDownload() async {
     if (_isDownloading) return;
