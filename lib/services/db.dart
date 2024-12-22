@@ -21,18 +21,15 @@ class ContentDatabase {
     final path = '$databasePath/content.db';
     return await openDatabase(
       path,
-      version: 1,
-      onCreate: _createDatabase,
+      //join(await getDatabasesPath(), 'content.db'),
+      version: 2,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
-  Future<void> _createDatabase(Database db, int version) async {
-    Batch batch = db.batch();
-
-    batch.execute("DROP TABLE IF EXISTS exercises");
-    batch.execute("DROP TABLE IF EXISTS recipes");
-
-    batch.execute('''        
+  Future<void> _onCreate(Database db, int version) async {
+    await db.execute('''
         CREATE TABLE exercises (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
@@ -41,11 +38,11 @@ class ContentDatabase {
           duration INTEGER NOT NULL,
           reward_points INTEGER NOT NULL,
           is_unlocked INTEGER NOT NULL,
-          tags JSONB
+          tags TEXT
         )
     ''');
 
-    batch.execute('''
+    await db.execute('''
         CREATE TABLE recipes (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
@@ -56,10 +53,22 @@ class ContentDatabase {
           time_mins INTEGER NOT NULL,
           price_points INTEGER NOT NULL,
           difficulty REAL NOT NULL,
-          tags JSONB,
           created_at TEXT
         )
     ''');
+  }
+
+  _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < newVersion) {
+      await db.execute('''
+        DROP TABLE IF EXISTS exercises
+      ''');
+
+      await db.execute('''
+        DROP TABLE IF EXISTS recipes
+      ''');
+      await _onCreate(db, newVersion);
+    }
   }
 
   Future<void> insert(String table, Map<String, dynamic> data) async {
@@ -71,5 +80,4 @@ class ContentDatabase {
     final db = await instance.database;
     return await db.query(table);
   }
-
 }
