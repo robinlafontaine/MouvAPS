@@ -126,6 +126,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   value: detail,
                   title: Text(detail.title),
                   titleStyle: ShadTheme.of(context).textTheme.h2,
+                  separator: const Divider(indent: 15, endIndent: 15),
                   child: detail.content,
                 ),
               ),

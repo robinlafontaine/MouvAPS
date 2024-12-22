@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -56,7 +58,7 @@ class Recipe {
       'name': name,
       'video_url': videoUrl,
       'thumbnail_url': imageUrl,
-      'ingredients': ingredients?.map((e) => e.toJson()).toList(),
+      'ingredients': jsonEncode(ingredients?.map((e) => e.toJson()).toList()),
       'description': description,
       'time_mins': timeMins,
       'created_at': createdAt?.toIso8601String(),

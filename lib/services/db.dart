@@ -27,7 +27,12 @@ class ContentDatabase {
   }
 
   Future<void> _createDatabase(Database db, int version) async {
-    return await db.execute('''        
+    Batch batch = db.batch();
+
+    batch.execute("DROP TABLE IF EXISTS exercises");
+    batch.execute("DROP TABLE IF EXISTS recipes");
+
+    batch.execute('''        
         CREATE TABLE exercises (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
@@ -37,20 +42,24 @@ class ContentDatabase {
           reward_points INTEGER NOT NULL,
           is_unlocked INTEGER NOT NULL,
           tags JSONB
-        );
-        
+        )
+    ''');
+
+    batch.execute('''
         CREATE TABLE recipes (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           description TEXT,
+          ingredients TEXT NOT NULL,
           video_url TEXT NOT NULL,
           thumbnail_url TEXT NOT NULL,
           time_mins INTEGER NOT NULL,
           price_points INTEGER NOT NULL,
           difficulty REAL NOT NULL,
-          tags TEXT
-        );
-      ''');
+          tags JSONB,
+          created_at TEXT
+        )
+    ''');
   }
 
   Future<void> insert(String table, Map<String, dynamic> data) async {

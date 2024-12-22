@@ -37,7 +37,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
     return ListTile(
       contentPadding: const EdgeInsets.all(8),
       enabled: !widget.isLocked,
-      tileColor: lightColor,
+      tileColor: Colors.white,
       leading: _buildRecipeImage(),
       title: _buildRecipeTitle(),
       subtitle: _buildRecipeSubtitle(),

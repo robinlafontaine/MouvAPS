@@ -38,7 +38,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObse
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const H2(content: 'Séances'),
+              const H2(content: 'Séances hebdomadaires'),
               if (snapshot.data!.isNotEmpty)
                 ListView.separated(
                   shrinkWrap: true,

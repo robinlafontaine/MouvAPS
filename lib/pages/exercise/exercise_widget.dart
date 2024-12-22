@@ -4,6 +4,8 @@ import 'package:mouvaps/pages/exercise/exercise_download.dart';
 import 'package:mouvaps/pages/exercise/precaution_dialog.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:mouvaps/services/video.dart';
+import 'package:mouvaps/utils/constants.dart' as constants;
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class ExerciseCard extends StatefulWidget {
   final Exercise exercise;
@@ -57,11 +59,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
         ),
         title: Text(
           widget.exercise.name,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-            color: widget.isEnabled ? Colors.black : Colors.grey,
-          ),
+          style: ShadTheme.of(context).textTheme.h3,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
@@ -69,11 +67,11 @@ class _ExerciseCardState extends State<ExerciseCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildInfoRow(
-              icon: Icons.timer_outlined,
+              icon: Icons.timer,
               text: '${widget.exercise.duration?.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(widget.exercise.duration?.inSeconds.remainder(60)).toString().padLeft(2, '0')}',
             ),
             _buildInfoRow(
-              icon: Icons.stars_outlined,
+              icon: Icons.payments,
               text: '${widget.exercise.rewardPoints} points',
             ),
           ],
@@ -109,19 +107,21 @@ class _ExerciseCardState extends State<ExerciseCard> {
   }
 
   void _onDownloadComplete(Exercise exercise) {
-    print('!!!!!!!!!!!!!!!!Download complete');
+    if (!_isDisposed) {
+      setState(() {
+        watched = true;
+      });
+    }
   }
 
   Widget _buildInfoRow({required IconData icon, required String text}) {
     return Row(
       children: [
-        Icon(icon, color: Colors.black, size: 18),
+        Icon(icon, color: constants.primaryColor, size: 20),
         const SizedBox(width: 5),
         Text(
           text,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontSize: 14,
-          ),
+          style: ShadTheme.of(context).textTheme.p,
         ),
       ],
     );
