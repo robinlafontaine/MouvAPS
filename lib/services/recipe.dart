@@ -1,6 +1,8 @@
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'ingredient.dart';
+
 class Recipe {
   final int? id;
   final String name;
@@ -37,7 +39,9 @@ class Recipe {
           ?.map((e) => Ingredient.fromJson(e))
           .toList(),
       description: json['description'] as String,
-      difficulty: json['difficulty'] as double,
+      difficulty: json['difficulty'] is int
+          ? (json['difficulty'] as int).toDouble()
+          : json['difficulty'] as double,
       timeMins: json['time_mins'] as int?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'].toString())
@@ -105,7 +109,8 @@ class Recipe {
     recipe_ingredient (
       quantity,
       ingredient: ingredients (
-        name
+        name,
+        image_url
       )
     )
   ''');
@@ -129,7 +134,8 @@ class Recipe {
         recipe_ingredient (
           quantity,
           ingredient: ingredients (
-            name
+            name,
+            image_url
           )
         ),
         user_recipe_status (
@@ -140,7 +146,13 @@ class Recipe {
         .eq('user_recipe_status.user_id', userId)
         .eq('user_recipe_status.is_unlocked', true);
 
-    return response.map((json) => Recipe.fromJson(json)).toList();
+    // If attribute 'user_recipe_status' is empty, the recipe is removed from the unlocked list
+    final filteredResponse = response.where((element) {
+      return element['user_recipe_status'] != null &&
+          element['user_recipe_status'].isNotEmpty;
+    }).toList();
+
+    return filteredResponse.map((json) => Recipe.fromJson(json)).toList();
   }
 
   Future<void> delete() async {
@@ -159,29 +171,17 @@ class Recipe {
     return response.map((json) => Recipe.fromJson(json)).toList();
   }
 
+  Future<void> unlockRecipe(String userId) async {
+    if (id == null) {
+      throw Exception('Content ID is required for unlocking');
+    }
+
+    await _supabase.from('user_recipe_status').upsert({
+      'user_id': userId,
+      'recipe_id': id,
+      'is_unlocked': true,
+    });
+  }
+
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
-}
-
-class Ingredient {
-  final String name;
-  final int quantity;
-
-  Ingredient({
-    required this.name,
-    required this.quantity,
-  });
-
-  factory Ingredient.fromJson(Map<String, dynamic> json) {
-    return Ingredient(
-      name: json['ingredient']['name'] as String,
-      quantity: json['quantity'] as int,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'quantity': quantity,
-    };
-  }
 }

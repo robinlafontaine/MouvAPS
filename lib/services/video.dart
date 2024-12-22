@@ -12,6 +12,7 @@ class VideoController {
     required String videoUrl,
     required bool isOffline,
     bool requiresAuth = false,
+    bool autoPlay = true,
   }) {
     VideoPlayerController videoPlayerController;
 
@@ -20,14 +21,16 @@ class VideoController {
     } else {
       videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(videoUrl),
-        httpHeaders: requiresAuth ? {'Authorization': 'Bearer ${Auth.instance.getJwt()}'} : {},
+        httpHeaders: requiresAuth
+            ? {'Authorization': 'Bearer ${Auth.instance.getJwt()}'}
+            : {},
       );
     }
 
     _chewieController = ChewieController(
       videoPlayerController: videoPlayerController,
       aspectRatio: 16 / 9,
-      autoPlay: true,
+      autoPlay: autoPlay,
       looping: false,
       showControls: true,
     );
@@ -37,7 +40,8 @@ class VideoController {
 
   void listenToEnd(VoidCallback callback) {
     _chewieController.videoPlayerController.addListener(() {
-      if (_chewieController.videoPlayerController.value.position.inSeconds > 0) {
+      if (_chewieController.videoPlayerController.value.position.inSeconds >
+          0) {
         if (_chewieController.videoPlayerController.value.position >=
             _chewieController.videoPlayerController.value.duration) {
           callback();

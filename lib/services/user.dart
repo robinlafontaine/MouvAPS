@@ -55,11 +55,42 @@ class User {
     return User.fromJson(response);
   }
 
+  // Update the user's points
+  Future<User> updatePoints(int points) async {
+    final response = await _supabase
+        .from('users')
+        .update({'points': points})
+        .eq('user_uuid', userUuid)
+        .select()
+        .single();
+    return User.fromJson(response);
+  }
+
+  // Get user's points
+  Future<int> getPoints() async {
+    final response = await _supabase
+        .from('users')
+        .select('points')
+        .eq('user_uuid', userUuid)
+        .single();
+    return response['points'] as int;
+  }
+
+  // Get user's points by user uuid
+  static Future<int> getPointsByUuid(String uuid) async {
+    final response = await _supabase
+        .from('users')
+        .select('points')
+        .eq('user_uuid', uuid)
+        .single();
+    return response['points'] as int;
+  }
+
   Future<void> delete() async {
     await _supabase.from('users').delete().eq('user_uuid', userUuid);
   }
 
-  static Future<User> getByUuid(String uuid) async {
+  static Future<User> getUserByUuid(String uuid) async {
     final response =
         await _supabase.from('users').select().eq('user_uuid', uuid).single();
     return User.fromJson(response);
