@@ -3,20 +3,20 @@ import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:mouvaps/pages/exercise/exercise_widget.dart';
 
-class ExerciseScreen extends StatefulWidget {
-  const ExerciseScreen({super.key});
+class ExerciseOffline extends StatefulWidget {
+  const ExerciseOffline({super.key});
 
   @override
-  State<ExerciseScreen> createState() => _ExerciseScreenState();
+  State<ExerciseOffline> createState() => _ExerciseOfflineState();
 }
 
-class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObserver {
+class _ExerciseOfflineState extends State<ExerciseOffline> with WidgetsBindingObserver {
   late Future<List<Exercise>> _exercisesFuture;
 
   @override
   void initState() {
     super.initState();
-    _exercisesFuture = Exercise.getAll();
+    _exercisesFuture = Exercise.getLocalExercises();
   }
 
   @override
@@ -44,14 +44,14 @@ class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObse
                   shrinkWrap: true,
                   itemCount: (snapshot.data!.length),
                   itemBuilder: (context, index) {
-                    return ExerciseCard(exercise: snapshot.data![index], isEnabled: snapshot.data![index].isUnlocked, onWatchedCallback: _refresh);
+                    return ExerciseCard(exercise: snapshot.data![index], isOffline: true, onWatchedCallback: _refresh);
                   },
                   separatorBuilder: (context, index) {
                     return const Divider(indent: 15, endIndent: 15,);
                   },
                 )
               else
-                const Center(child: P(content: 'Aucune séance disponible pour le moment.'))
+                const Center(child: P(content: 'Aucune séance téléchargée pour le moment.'))
             ],
           );
         }
@@ -61,7 +61,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObse
 
   void _refresh() async {
     setState(() {
-      _exercisesFuture = Exercise.getAll();
+      _exercisesFuture = Exercise.getLocalExercises();
     });
   }
 }

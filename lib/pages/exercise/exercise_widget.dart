@@ -1,17 +1,21 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:mouvaps/pages/exercise/exercise_download.dart';
+import 'package:mouvaps/pages/exercise/precaution_dialog.dart';
 import 'package:mouvaps/services/exercise.dart';
-import 'package:mouvaps/services/video_controller.dart';
-import 'package:mouvaps/utils/constants.dart';
+import 'package:mouvaps/services/video.dart';
 
 class ExerciseCard extends StatefulWidget {
   final Exercise exercise;
   final bool isEnabled;
-  final bool isAdmin;
+  final bool isOffline;
+  final VoidCallback onWatchedCallback;
   const ExerciseCard(
       {super.key,
       required this.exercise,
       this.isEnabled = true,
-      this.isAdmin = false});
+      this.isOffline = false,
+      required this.onWatchedCallback});
 
   @override
   State<StatefulWidget> createState() {
@@ -24,76 +28,94 @@ class _ExerciseCardState extends State<ExerciseCard> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      enabled: widget.isEnabled,
-      tileColor: lightColor,
-      leading: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: AspectRatio(
-          aspectRatio: 16 / 9,
-          child: Image(
-            image: NetworkImage(widget.exercise.thumbnailUrl),
-            fit: BoxFit.cover,
-            errorBuilder: (BuildContext context, Object exception,
-                StackTrace? stackTrace) {
-              return Image.asset(
-                'assets/images/default_exercise_image.jpg',
-                fit: BoxFit.cover,
-              );
-            },
+    return Opacity(
+      opacity: widget.isEnabled ? 1.0 : 0.6,
+      child: ListTile(
+        enabled: widget.isEnabled,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Image(
+              image: widget.isOffline
+                  ? FileImage(File(widget.exercise.thumbnailUrl))
+                  : NetworkImage(widget.exercise.thumbnailUrl),
+              fit: BoxFit.cover,
+              errorBuilder: (BuildContext context, Object exception,
+                  StackTrace? stackTrace) {
+                return Image.asset(
+                  'assets/images/default_exercise_image.jpg',
+                  fit: BoxFit.cover,
+                );
+              },
+            ),
           ),
         ),
-      ),
-      title: Text(
-        widget.exercise.name,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
+        title: Text(
+          widget.exercise.name,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: widget.isEnabled ? Colors.black : Colors.grey,
+              ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildInfoRow(
+              icon: Icons.timer_outlined,
+              text:
+                  '${widget.exercise.duration?.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(widget.exercise.duration?.inSeconds.remainder(60)).toString().padLeft(2, '0')}',
             ),
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
+            _buildInfoRow(
+              icon: Icons.stars_outlined,
+              text: '${widget.exercise.rewardPoints} points',
+            ),
+          ],
+        ),
+        trailing: widget.isOffline
+            ? const Icon(Icons.check_circle_outline)
+            : DownloadButton(
+                exercise: widget.exercise,
+                isEnabled: widget.isEnabled,
+                onDownloadComplete: _onDownloadComplete),
+        onTap: widget.isEnabled
+            ? () async {
+                final bool confirmed = await showPrecautionDialog(context);
+                if (confirmed) {
+                  _openVideo();
+                }
+              }
+            : null,
       ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildInfoRow(
-            icon: Icons.timer_outlined,
-            text:
-                '${widget.exercise.duration?.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(widget.exercise.duration?.inSeconds.remainder(60)).toString().padLeft(2, '0')}',
-          ),
-          _buildInfoRow(
-            icon: Icons.stars_outlined,
-            text: '${widget.exercise.rewardPoints} points',
-          ),
-        ],
-      ),
-      trailing: IconButton(
-        icon: Icon(
-            widget.isAdmin ? Icons.edit_outlined : Icons.download_outlined,
-            size: 30),
-        onPressed: () {
-          if (widget.isAdmin) {
-            //TODO: Handle edit
-          } else {
-            //TODO: Handle download
-          }
-        },
-      ),
-      onTap: () {
-        VideoController video = VideoController(
-          videoUrl: widget.exercise.url,
-        );
-        video.openFullscreenVideo(context);
-        video.listenToEnd(() {
-          if (!watched) {
-            Exercise.watched(widget.exercise);
-            setState(() {
-              watched = true;
-            });
-          }
-        });
-      },
     );
+  }
+
+  void _openVideo() {
+    VideoController video = VideoController(
+      videoUrl: widget.exercise.url,
+      isOffline: widget.isOffline,
+    );
+    video.openFullscreenVideo(context);
+    video.listenToEnd(() {
+      if (!watched && widget.isEnabled && !widget.isOffline) {
+        Exercise.watched(widget.exercise).then((value) {
+          setState(() {
+            watched = true;
+          });
+          widget.onWatchedCallback();
+        });
+      }
+    });
+  }
+
+  void _onDownloadComplete(Exercise exercise) {
+    print('!!!!!!!!!!!!!!!!Download complete');
   }
 
   Widget _buildInfoRow({required IconData icon, required String text}) {
