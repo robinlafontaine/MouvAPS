@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:mouvaps/services/video_controller.dart';
+import 'package:mouvaps/utils/constants.dart';
 
 class ExerciseCard extends StatefulWidget {
   final Exercise exercise;
   final bool isEnabled;
   final bool isAdmin;
-  const ExerciseCard({super.key, required this.exercise, this.isEnabled = true, this.isAdmin = false});
+  const ExerciseCard(
+      {super.key,
+      required this.exercise,
+      this.isEnabled = true,
+      this.isAdmin = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -21,6 +26,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
   Widget build(BuildContext context) {
     return ListTile(
       enabled: widget.isEnabled,
+      tileColor: lightColor,
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: AspectRatio(
@@ -28,7 +34,8 @@ class _ExerciseCardState extends State<ExerciseCard> {
           child: Image(
             image: NetworkImage(widget.exercise.thumbnailUrl),
             fit: BoxFit.cover,
-            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+            errorBuilder: (BuildContext context, Object exception,
+                StackTrace? stackTrace) {
               return Image.asset(
                 'assets/images/default_exercise_image.jpg',
                 fit: BoxFit.cover,
@@ -40,9 +47,9 @@ class _ExerciseCardState extends State<ExerciseCard> {
       title: Text(
         widget.exercise.name,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-          fontSize: 16,
-        ),
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
@@ -51,7 +58,8 @@ class _ExerciseCardState extends State<ExerciseCard> {
         children: [
           _buildInfoRow(
             icon: Icons.timer_outlined,
-            text: '${widget.exercise.duration?.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(widget.exercise.duration?.inSeconds.remainder(60)).toString().padLeft(2, '0')}',
+            text:
+                '${widget.exercise.duration?.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(widget.exercise.duration?.inSeconds.remainder(60)).toString().padLeft(2, '0')}',
           ),
           _buildInfoRow(
             icon: Icons.stars_outlined,
@@ -60,29 +68,31 @@ class _ExerciseCardState extends State<ExerciseCard> {
         ],
       ),
       trailing: IconButton(
-    icon: Icon(widget.isAdmin ? Icons.edit_outlined : Icons.download_outlined, size: 30),
-    onPressed: () {
-    if (widget.isAdmin) {
-    //TODO: Handle edit
-    } else {
-    //TODO: Handle download
-    }
-    },
-    ),
-    onTap: () {
-      VideoController video = VideoController(
-        videoUrl: widget.exercise.url,
-      );
-      video.openFullscreenVideo(context);
-      video.listenToEnd(() {
-        if (!watched) {
-          Exercise.watched(widget.exercise);
-          setState(() {
-            watched = true;
-          });
-        }
-      });
-    },
+        icon: Icon(
+            widget.isAdmin ? Icons.edit_outlined : Icons.download_outlined,
+            size: 30),
+        onPressed: () {
+          if (widget.isAdmin) {
+            //TODO: Handle edit
+          } else {
+            //TODO: Handle download
+          }
+        },
+      ),
+      onTap: () {
+        VideoController video = VideoController(
+          videoUrl: widget.exercise.url,
+        );
+        video.openFullscreenVideo(context);
+        video.listenToEnd(() {
+          if (!watched) {
+            Exercise.watched(widget.exercise);
+            setState(() {
+              watched = true;
+            });
+          }
+        });
+      },
     );
   }
 
@@ -94,8 +104,8 @@ class _ExerciseCardState extends State<ExerciseCard> {
         Text(
           text,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontSize: 14,
-          ),
+                fontSize: 14,
+              ),
         ),
       ],
     );

@@ -12,11 +12,12 @@ import 'package:mouvaps/utils/constants.dart';
 import '../../services/user.dart';
 import '../../notifiers/user_points_notifier.dart';
 
-class CustomRecipeWidget extends StatelessWidget {
+class CustomRecipeWidget extends StatefulWidget {
   final Recipe recipe;
   final Future<User> user;
   final bool isLocked;
   final VoidCallback onRecipeUnlocked;
+
   const CustomRecipeWidget({
     super.key,
     required this.recipe,
@@ -26,126 +27,70 @@ class CustomRecipeWidget extends StatelessWidget {
   });
 
   @override
+  State<StatefulWidget> createState() => _CustomRecipeWidgetState();
+}
+
+class _CustomRecipeWidgetState extends State<CustomRecipeWidget> {
+  @override
   Widget build(BuildContext context) {
-    // Define the content of the recipe widget
-    Widget content = Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
+    return ListTile(
+      contentPadding: const EdgeInsets.all(8),
+      enabled: !widget.isLocked,
+      tileColor: lightColor,
+      leading: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: Image(
+            image: NetworkImage(widget.recipe.imageUrl),
+            fit: BoxFit.cover,
+            errorBuilder: (BuildContext context, Object exception,
+                StackTrace? stackTrace) {
+              return Image.asset(
+                'assets/images/default_exercise_image.jpg',
+                fit: BoxFit.cover,
+              );
+            },
+          ),
+        ),
+      ),
+      title: Text(
+        widget.recipe.name,
+        style: ShadTheme.of(context).textTheme.h3,
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            children: [
-              Center(
-                child: Text(
-                  recipe.name,
-                  style: ShadTheme.of(context).textTheme.h3,
-                ),
-              ),
-              if (isLocked)
-                (Positioned(
-                  right: 0,
-                  child: Text(
-                    '${recipe.pricePoints} pts',
-                    style: ShadTheme.of(context).textTheme.h4,
-                  ),
-                ))
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: Image.network(
-                  recipe.imageUrl,
-                  width: 100,
-                ),
-              ),
-              Column(
-                children: [
-                  StarRating(
-                    rating: recipe.difficulty.toDouble(),
-                    color: primaryColor,
-                    emptyIcon: CupertinoIcons.circle,
-                    filledIcon: CupertinoIcons.circle_fill,
-                    halfFilledIcon: CupertinoIcons.circle_lefthalf_fill,
-                    borderColor: primaryColor,
-                    starCount: 3,
-                    size: 20,
-                  ),
-                  Text(
-                    'Difficulté',
-                    style: ShadTheme.of(context).textTheme.p,
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  const Icon(Icons.timer, color: primaryColor),
-                  Text(
-                    recipe.timeMins! >= 60
-                        ? '${(recipe.timeMins! ~/ 60)}h${(recipe.timeMins! % 60 > 0 ? ' ${(recipe.timeMins! % 60)} min' : '')}'
-                        : '${recipe.timeMins} min',
-                    style: ShadTheme.of(context).textTheme.p,
-                  ),
-                ],
-              ),
-              Material(
+          _buildInfoRow(
+              widget: StarRating(
+                rating: widget.recipe.difficulty.toDouble(),
                 color: primaryColor,
-                borderRadius: BorderRadius.circular(20),
-                child: InkWell(
-                  onTap: () => {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Dialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          elevation: 5.0,
-                          backgroundColor: Colors.white,
-                          child: Container(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Ingrédients',
-                                  style: ShadTheme.of(context).textTheme.h3,
-                                ),
-                                const SizedBox(height: 10),
-                                Column(
-                                  children: recipe.ingredients!
-                                      .map(
-                                        (ingredient) => Text(
-                                          ingredient.name,
-                                          style:
-                                              ShadTheme.of(context).textTheme.p,
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  },
-                  borderRadius: BorderRadius.circular(20),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.menu_book,
-                      color: lightColor,
-                    ),
-                  ),
-                ),
+                emptyIcon: CupertinoIcons.circle,
+                filledIcon: CupertinoIcons.circle_fill,
+                halfFilledIcon: CupertinoIcons.circle_lefthalf_fill,
+                borderColor: primaryColor,
+                starCount: 3,
+                size: 20,
               ),
-            ],
+              text: "Difficulté"),
+          _buildInfoRow(
+            icon: Icons.timer,
+            text: widget.recipe.timeMins! >= 60
+                ? '${(widget.recipe.timeMins! ~/ 60)}h${(widget.recipe.timeMins! % 60 > 0 ? ' ${(widget.recipe.timeMins! % 60)} min' : '')}'
+                : '${widget.recipe.timeMins} min',
           ),
-          if (isLocked)
+          _buildInfoRow(
+            icon: Icons.payments,
+            text: '${widget.recipe.pricePoints} points',
+          ),
+        ],
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (widget.isLocked)
             FutureBuilder<User>(
-              future: user,
+              future: widget.user,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
@@ -153,12 +98,11 @@ class CustomRecipeWidget extends StatelessWidget {
                   return Text('Error: ${snapshot.error}');
                 } else if (snapshot.hasData) {
                   User userData = snapshot.data!;
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ShadButton(
-                        onPressed: () async {
-                          if (userData.points >= (recipe.pricePoints ?? 0)) {
+                  bool canUnlock =
+                      userData.points >= (widget.recipe.pricePoints ?? 0);
+                  return IconButton(
+                    onPressed: canUnlock
+                        ? () async {
                             bool? result = await showDialog<bool>(
                               context: context,
                               builder: (BuildContext context) {
@@ -176,7 +120,7 @@ class CustomRecipeWidget extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          'Déverrouiller ${recipe.name} pour ${recipe.pricePoints} pts ?',
+                                          'Déverrouiller ${widget.recipe.name} pour ${widget.recipe.pricePoints} pts ?',
                                           style:
                                               ShadTheme.of(context).textTheme.p,
                                           textAlign: TextAlign.center,
@@ -209,50 +153,100 @@ class CustomRecipeWidget extends StatelessWidget {
                             );
 
                             if (result == true) {
-                              await recipe.unlockRecipe(userData.userUuid);
-                              await userData.updatePoints(
-                                  userData.points - (recipe.pricePoints ?? 0));
+                              await widget.recipe
+                                  .unlockRecipe(userData.userUuid);
+                              await userData.updatePoints(userData.points -
+                                  (widget.recipe.pricePoints ?? 0));
                               if (!context.mounted) return;
                               Provider.of<UserPointsNotifier>(context,
                                       listen: false)
-                                  .addPoints(-(recipe.pricePoints ?? 0));
-                              onRecipeUnlocked();
+                                  .addPoints(-(widget.recipe.pricePoints ?? 0));
+                              widget.onRecipeUnlocked();
                             }
                           }
-                        },
-                        enabled: userData.points >= (recipe.pricePoints ?? 0),
-                        icon: const Icon(Icons.lock_open, color: lightColor),
-                      ),
-                    ],
+                        : null,
+                    icon: Icon(
+                      Icons.lock_open,
+                      color: canUnlock ? primaryColor : Colors.grey,
+                    ),
                   );
                 } else {
                   return Container();
                 }
               },
-            )
-        ],
-      ),
-    );
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Material(
-        color: lightColor,
-        borderRadius: BorderRadius.circular(20),
-        child: isLocked
-            ? content
-            : InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RecipeDetailsScreen(recipe: recipe),
+            ),
+          IconButton(
+            onPressed: () => {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    elevation: 5.0,
+                    backgroundColor: Colors.white,
+                    child: Container(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Ingrédients',
+                            style: ShadTheme.of(context).textTheme.h3,
+                          ),
+                          const SizedBox(height: 10),
+                          Column(
+                            children: widget.recipe.ingredients!
+                                .map(
+                                  (ingredient) => Text(
+                                    ingredient.name,
+                                    style: ShadTheme.of(context).textTheme.p,
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
-                child: content,
-              ),
+              )
+            },
+            icon: const Icon(
+              Icons.menu_book,
+              color: primaryColor,
+            ),
+          )
+        ],
       ),
+      onTap: () {
+        widget.isLocked
+            ? null
+            : {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RecipeDetailsScreen(
+                      recipe: widget.recipe,
+                    ),
+                  ),
+                )
+              };
+      },
+    );
+  }
+
+  Widget _buildInfoRow({IconData? icon, Widget? widget, required String text}) {
+    return Row(
+      children: [
+        if (icon != null) Icon(icon, color: primaryColor, size: 20),
+        if (widget != null) widget,
+        const SizedBox(width: 5),
+        Text(
+          text,
+          style: ShadTheme.of(context).textTheme.p,
+        ),
+      ],
     );
   }
 }
