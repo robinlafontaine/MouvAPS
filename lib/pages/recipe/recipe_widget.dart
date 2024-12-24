@@ -3,13 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:mouvaps/pages/recipe/recipe_details_screen.dart';
-import 'package:mouvaps/pages/recipe/recipe_download.dart';
 import 'package:mouvaps/services/recipe.dart';
 import 'package:provider/provider.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/utils/constants.dart';
 import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/notifiers/user_points_notifier.dart';
+import 'package:mouvaps/services/download.dart';
+import 'package:mouvaps/widgets/download_button.dart';
 
 class RecipeWidget extends StatefulWidget {
   final Recipe recipe;
@@ -231,12 +232,27 @@ class _RecipeWidgetState extends State<RecipeWidget> {
   }
 
   Widget _buildDownloadButton() {
-    return RecipeDownloadButton(
-      recipe: widget.recipe,
-      onDownloadComplete: (Recipe recipe) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Recette téléchargée !')),
-        );
+    return DownloadButton<Recipe>(
+      item: widget.recipe,
+      isEnabled: !widget.isLocked && !widget.isOffline,
+      downloadRequests: [
+        DownloadRequest(
+          url: widget.recipe.imageUrl,
+          filename: 'r_${widget.recipe.name}_i',
+          fileExtension: widget.recipe.imageUrl.split('.').last,
+        ),
+        DownloadRequest(
+          url: widget.recipe.videoUrl,
+          filename: 'r_${widget.recipe.name}_v',
+          fileExtension: widget.recipe.videoUrl.split('.').last,
+        ),
+      ],
+      onSave: (paths) async {
+        await Recipe.saveLocalRecipe(widget.recipe, paths[1], paths[0]);
+      },
+      onDownloadComplete: (recipe) {
+        if (!mounted) return;
+        setState(() {});
       },
     );
   }
