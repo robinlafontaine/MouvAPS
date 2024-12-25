@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:mouvaps/pages/exercise/exercise_download.dart';
 import 'package:mouvaps/pages/exercise/precaution_dialog.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:mouvaps/services/video.dart';
-import 'package:mouvaps/utils/constants.dart' as constants;
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:mouvaps/services/download.dart';
+import 'package:mouvaps/widgets/download_button.dart';
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class ExerciseCard extends StatefulWidget {
   final Exercise exercise;
@@ -76,7 +77,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
             ),
           ],
         ),
-        trailing: widget.isOffline ? const Icon(Icons.check_circle_outline) : ExerciseDownloadButton(exercise: widget.exercise, isEnabled: widget.isEnabled, onDownloadComplete: _onDownloadComplete),
+        trailing: widget.isOffline ? const Icon(Icons.check_circle_outline) : _buildDownloadButton(),
         onTap: widget.isEnabled ? () async {
           final bool confirmed = await showPrecautionDialog(context);
           if (confirmed) {
@@ -108,9 +109,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
 
   void _onDownloadComplete(Exercise exercise) {
     if (!_isDisposed) {
-      setState(() {
-        watched = true;
-      });
+      setState(() {});
     }
   }
 
@@ -124,6 +123,30 @@ class _ExerciseCardState extends State<ExerciseCard> {
           style: ShadTheme.of(context).textTheme.p,
         ),
       ],
+    );
+  }
+
+  Widget _buildDownloadButton() {
+    return DownloadButton<Exercise>(
+      item: widget.exercise,
+      itemId: widget.exercise.id!,
+      isEnabled: widget.isEnabled && !widget.isOffline,
+      downloadRequests: [
+        DownloadRequest(
+          url: widget.exercise.thumbnailUrl,
+          filename: 'e_${widget.exercise.name}_t',
+          fileExtension: widget.exercise.thumbnailUrl.split('.').last,
+        ),
+        DownloadRequest(
+          url: widget.exercise.url,
+          filename: 'e_${widget.exercise.name}_v',
+          fileExtension: widget.exercise.url.split('.').last,
+        ),
+      ],
+      onSave: (paths) async {
+        await Exercise.saveLocalExercise(widget.exercise, paths[1], paths[0]);
+      },
+      onDownloadComplete: _onDownloadComplete,
     );
   }
 }
