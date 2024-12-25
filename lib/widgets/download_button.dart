@@ -27,6 +27,7 @@ class _DownloadButtonState<T> extends State<DownloadButton<T>> {
   final DownloadManager _downloadManager = DownloadManager();
   late final String _itemId;
   bool _isDownloading = false;
+  bool isCompleted = false;
   double _progress = 0;
   StreamSubscription<double>? _progressSubscription;
 
@@ -92,6 +93,7 @@ class _DownloadButtonState<T> extends State<DownloadButton<T>> {
       final paths = await downloadFuture;
 
       await widget.onSave(paths);
+      isCompleted = true;
       widget.onDownloadComplete(widget.item);
 
       if (mounted) {
@@ -144,7 +146,7 @@ class _DownloadButtonState<T> extends State<DownloadButton<T>> {
                 backgroundColor: constants.unselectedColor,
               ),
             Icon(
-              _isDownloading ? Icons.close : Icons.download,
+              _isDownloading ? Icons.close : (isCompleted ? Icons.check_circle_outlined : Icons.download),
               color: constants.primaryColor,
             ),
           ],
