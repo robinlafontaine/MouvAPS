@@ -129,6 +129,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
   Widget _buildDownloadButton() {
     return DownloadButton<Exercise>(
       item: widget.exercise,
+      itemId: widget.exercise.id!,
       isEnabled: widget.isEnabled && !widget.isOffline,
       downloadRequests: [
         DownloadRequest(

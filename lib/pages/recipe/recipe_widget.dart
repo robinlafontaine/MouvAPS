@@ -234,6 +234,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
   Widget _buildDownloadButton() {
     return DownloadButton<Recipe>(
       item: widget.recipe,
+      itemId: widget.recipe.id!,
       isEnabled: !widget.isLocked && !widget.isOffline,
       downloadRequests: [
         DownloadRequest(

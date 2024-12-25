@@ -5,6 +5,7 @@ import 'package:mouvaps/utils/constants.dart' as constants;
 
 class DownloadButton<T> extends StatefulWidget {
   final T item;
+  final int itemId;
   final List<DownloadRequest> downloadRequests;
   final Future<void> Function(List<String> paths) onSave;
   final Function(T) onDownloadComplete;
@@ -13,6 +14,7 @@ class DownloadButton<T> extends StatefulWidget {
   const DownloadButton({
     super.key,
     required this.item,
+    required this.itemId,
     required this.downloadRequests,
     required this.onSave,
     required this.onDownloadComplete,
@@ -34,7 +36,7 @@ class _DownloadButtonState<T> extends State<DownloadButton<T>> {
   @override
   void initState() {
     super.initState();
-    _itemId = widget.item.toString();
+    _itemId = "${T.toString()}_${widget.itemId}";
     _checkDownloadState();
   }
 
