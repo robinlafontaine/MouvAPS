@@ -71,6 +71,11 @@ class Recipe {
   static final _db = ContentDatabase.instance;
   static Logger logger = Logger();
 
+  @override
+  String toString() {
+    return "Recipe_$id";
+  }
+
   Recipe copyWith({
     int? id,
     String? name,

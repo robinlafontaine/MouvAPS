@@ -52,6 +52,11 @@ class Exercise {
   static final _db = ContentDatabase.instance;
   static Logger logger = Logger();
 
+  @override
+  String toString() {
+    return "Exercise_$id";
+  }
+
   void setIsUnlocked(bool value) {
     isUnlocked = value;
   }

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:mouvaps/services/download.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 
@@ -26,83 +25,69 @@ class DownloadButton<T> extends StatefulWidget {
 
 class _DownloadButtonState<T> extends State<DownloadButton<T>> {
   final DownloadManager _downloadManager = DownloadManager();
-  String _itemId = '';
+  late final String _itemId;
   bool _isDownloading = false;
   double _progress = 0;
   StreamSubscription<double>? _progressSubscription;
-  final Logger _logger = Logger(printer: SimplePrinter());
 
   @override
   void initState() {
     super.initState();
-    _initializeItemId();
-    _restoreDownloadState();
+    _itemId = widget.item.toString();
+    _checkDownloadState();
   }
 
   @override
-  void didUpdateWidget(covariant DownloadButton<T> oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.item != widget.item) {
-      _initializeItemId();
-      _restoreDownloadState();
-    }
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkDownloadState();
   }
 
   @override
   void dispose() {
-    _cleanupSubscription();
+    _progressSubscription?.cancel();
     super.dispose();
   }
 
-  void _initializeItemId() {
-    try {
-      _itemId = widget.item.hashCode.toString();
-    } catch (e) {
-      _itemId = DateTime.now().millisecondsSinceEpoch.toString();
+  void _checkDownloadState() {
+    if (_downloadManager.isDownloading(_itemId)) {
+      _initializeDownload();
     }
   }
 
-  void _restoreDownloadState() {
-    if (_itemId.isEmpty) {
-      _logger.e('Cannot restore download state', error: 'Empty _itemId');
-      return;
-    }
+  void _initializeDownload() {
+    final currentProgress = _downloadManager.getCurrentProgress(_itemId);
+    _updateState(true, currentProgress);
+    _subscribeToProgress();
+  }
 
-    if (_downloadManager.isDownloading(_itemId)) {
-      _updateDownloadState(
-        isDownloading: true,
-        progress: _downloadManager.getCurrentProgress(_itemId),
+  void _subscribeToProgress() {
+    _progressSubscription?.cancel();
+
+    final stream = _downloadManager.getProgress(_itemId);
+    if (stream != null) {
+      _progressSubscription = stream.listen(
+            (progress) => _updateState(true, progress),
+        onError: (_) => _resetState(),
+        onDone: () => _checkDownloadState(),
       );
-      _setupProgressSubscription();
-    } else {
-      _resetDownloadState();
     }
   }
 
   Future<void> _handleDownload() async {
-    if (_itemId.isEmpty) {
-      _logger.e('Cannot start download', error: 'Empty _itemId');
-      return;
-    }
-
     if (_isDownloading) {
       await _cancelDownload();
       return;
     }
 
-    await _startNewDownload();
-  }
-
-  Future<void> _startNewDownload() async {
-    _updateDownloadState(isDownloading: true, progress: 0);
-
+    _updateState(true, 0);
     try {
       final downloadFuture = _downloadManager.downloadFiles(
-          widget.downloadRequests,
-          _itemId
+        widget.downloadRequests,
+        _itemId,
       );
 
-      _setupProgressSubscription();
+      _subscribeToProgress();
 
       final paths = await downloadFuture;
 
@@ -110,79 +95,35 @@ class _DownloadButtonState<T> extends State<DownloadButton<T>> {
       widget.onDownloadComplete(widget.item);
 
       if (mounted) {
-        _updateDownloadState(isDownloading: false, progress: 1.0);
+        _updateState(false, 1.0);
       }
     } catch (e) {
-      _logger.e('Download error', error: e);
       if (mounted) {
-        _handleDownloadError();
+        _showError();
+        _resetState();
       }
     }
   }
 
   Future<void> _cancelDownload() async {
-    _cleanupSubscription();
     _downloadManager.cancelDownload(_itemId);
-    _resetDownloadState();
+    _resetState();
   }
 
-  void _setupProgressSubscription() {
-    _cleanupSubscription();
-
-    final stream = _downloadManager.getProgress(_itemId);
-    if (stream != null && mounted) {
-      _progressSubscription = stream.listen(
-        _handleProgressUpdate,
-        onError: _handleProgressError,
-        onDone: _handleProgressComplete,
-      );
-    } else {
-      _logger.e('Failed to set up progress subscription for $_itemId');
-    }
-  }
-
-  void _handleProgressUpdate(double progress) {
-      _updateDownloadState(isDownloading: true, progress: progress);
-  }
-
-  void _handleProgressError(dynamic error) {
+  void _updateState(bool isDownloading, double progress) {
     if (mounted) {
-      _resetDownloadState();
+      setState(() {
+        _isDownloading = isDownloading;
+        _progress = progress;
+      });
     }
   }
 
-  void _handleProgressComplete() {
-    if (mounted && _progress < 1.0) {
-      _resetDownloadState();
-    }
-  }
+  void _resetState() => _updateState(false, 0);
 
-  void _updateDownloadState({required bool isDownloading, required double progress}) {
-    setState(() {
-      _isDownloading = isDownloading;
-      _progress = progress;
-    });
-  }
-
-  void _resetDownloadState() {
-    _updateDownloadState(isDownloading: false, progress: 0);
-  }
-
-  void _handleDownloadError() {
-    _resetDownloadState();
-    _showErrorMessage();
-  }
-
-  void _cleanupSubscription() {
-    if (_progressSubscription != null) {
-      _progressSubscription?.cancel();
-      _progressSubscription = null;
-    }
-  }
-
-  void _showErrorMessage() {
+  void _showError() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Download failed!')),
+      const SnackBar(content: Text('Une erreur est survenue lors du téléchargement')),
     );
   }
 
@@ -193,26 +134,22 @@ class _DownloadButtonState<T> extends State<DownloadButton<T>> {
       height: 48,
       child: IconButton(
         onPressed: widget.isEnabled ? _handleDownload : null,
-        icon: _buildButtonIcon(),
-      ),
-    );
-  }
-
-  Widget _buildButtonIcon() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        if (_isDownloading)
-          CircularProgressIndicator(
-            value: _progress,
-            color: constants.primaryColor,
-            backgroundColor: constants.unselectedColor,
-          ),
-        Icon(
-          _isDownloading ? Icons.close : Icons.download,
-          color: constants.primaryColor,
+        icon: Stack(
+          alignment: Alignment.center,
+          children: [
+            if (_isDownloading)
+              CircularProgressIndicator(
+                value: _progress,
+                color: constants.primaryColor,
+                backgroundColor: constants.unselectedColor,
+              ),
+            Icon(
+              _isDownloading ? Icons.close : Icons.download,
+              color: constants.primaryColor,
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
