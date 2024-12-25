@@ -42,8 +42,10 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text(widget.recipe.name, style: ShadTheme.of(context).textTheme.h1),
+        title: Text(
+          widget.recipe.name,
+          style: ShadTheme.of(context).textTheme.h1,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -91,8 +93,10 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
               const SizedBox(height: 8),
               GridView.builder(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
+                  // Grid axis count based on screen size
+                  crossAxisCount: 2,
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
                 ),
@@ -109,7 +113,9 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: MarkdownBody(data: widget.recipe.description),
+                child: MarkdownBody(
+                  data: widget.recipe.description,
+                ),
               ),
             ],
           ),
@@ -134,7 +140,7 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
 
   Widget _buildIngredientCard(Ingredient ingredient) {
     return ShadCard(
-      padding: const EdgeInsets.all(3),
+      padding: const EdgeInsets.all(0),
       title: Center(
         child: Text(
           ingredient.name,
@@ -156,9 +162,9 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
             fit: BoxFit.contain,
             errorBuilder: (BuildContext context, Object exception,
                 StackTrace? stackTrace) {
-              return Image.asset(
-                'assets/images/default_exercise_image.jpg',
-                fit: BoxFit.contain,
+              return const Icon(
+                Icons.image_not_supported,
+                size: 30,
               );
             },
           ),

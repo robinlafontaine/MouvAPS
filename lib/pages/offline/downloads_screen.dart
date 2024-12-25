@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/pages/recipe/recipe_widget.dart';
-import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:mouvaps/pages/exercise/exercise_widget.dart';
 import 'package:mouvaps/services/recipe.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class DownloadsScreen extends StatefulWidget {
   const DownloadsScreen({super.key});
@@ -12,7 +12,8 @@ class DownloadsScreen extends StatefulWidget {
   State<DownloadsScreen> createState() => _DownloadsScreenState();
 }
 
-class _DownloadsScreenState extends State<DownloadsScreen> with WidgetsBindingObserver {
+class _DownloadsScreenState extends State<DownloadsScreen>
+    with WidgetsBindingObserver {
   late Future<List<Exercise>> _exercisesFuture;
   late Future<List<Recipe>> _recipesFuture;
 
@@ -31,9 +32,14 @@ class _DownloadsScreenState extends State<DownloadsScreen> with WidgetsBindingOb
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Téléchargements')),
-      body:
-        FutureBuilder(
+      appBar: AppBar(
+          title: Text(
+        'Téléchargements',
+        style: ShadTheme.of(context).textTheme.h1,
+      )),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FutureBuilder(
           future: Future.wait([_exercisesFuture, _recipesFuture]),
           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -44,42 +50,75 @@ class _DownloadsScreenState extends State<DownloadsScreen> with WidgetsBindingOb
               final exercises = snapshot.data![0] as List<Exercise>;
               final recipes = snapshot.data![1] as List<Recipe>;
 
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const H2(content: 'Séances téléchargées'),
-                    if (exercises.isNotEmpty)
-                      ExpansionTile(
-                        title: const Text('Exercises'),
-                        children: exercises.map((exercise) {
-                          return ExerciseCard(
-                            exercise: exercise,
-                            isOffline: true,
-                            onWatchedCallback: _refresh,
-                          );
-                        }).toList(),
-                      )
-                    else
-                      const Center(child: P(content: 'Aucune séance téléchargée pour le moment.')),
+              final details = [
+                (
+                  title: 'Séances téléchargées',
+                  content: exercises.isEmpty
+                      ? Column(
+                          children: [
+                            Center(
+                              child: Text(
+                                "Aucune séances téléchargées",
+                                style: ShadTheme.of(context).textTheme.p,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          children: exercises.map((exercise) {
+                            return ExerciseCard(
+                              exercise: exercise,
+                              isOffline: true,
+                              onWatchedCallback: _refresh,
+                            );
+                          }).toList(),
+                        ),
+                ),
+                (
+                  title: 'Recettes téléchargées',
+                  content: recipes.isEmpty
+                      ? Column(
+                          children: [
+                            Center(
+                              child: Text(
+                                "Aucune recettes téléchargées",
+                                style: ShadTheme.of(context).textTheme.p,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          children: recipes.map((recipe) {
+                            return RecipeWidget(
+                              recipe: recipe,
+                              isLocked: false,
+                              isOffline: true,
+                              onRecipeStateChanged: _refresh,
+                            );
+                          }).toList(),
+                        ),
+                ),
+              ];
 
-                    const H2(content: 'Recettes téléchargées'),
-                    if (recipes.isNotEmpty)
-                      ExpansionTile(
-                        title: const Text('Recipes'),
-                        children: recipes.map((recipe) {
-                          return RecipeWidget(recipe: recipe, isLocked: false, isOffline: true, onRecipeUnlocked: _refresh);
-                        }).toList(),
-                      )
-                    else
-                      const Center(child: P(content: 'Aucune recette téléchargée pour le moment.')),
-                  ],
+              return ShadAccordion<({Column content, String title})>.multiple(
+                initialValue: [
+                  details[0],
+                  details[1],
+                ],
+                children: details.map(
+                  (detail) => ShadAccordionItem(
+                    value: detail,
+                    title: Text(detail.title),
+                    titleStyle: ShadTheme.of(context).textTheme.h2,
+                    separator: const Divider(indent: 15, endIndent: 15),
+                    child: detail.content,
+                  ),
                 ),
               );
             }
           },
         ),
+      ),
     );
   }
 

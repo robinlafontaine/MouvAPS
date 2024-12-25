@@ -6,14 +6,19 @@ import 'package:mouvaps/services/video.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/download.dart';
 import 'package:mouvaps/widgets/download_button.dart';
-import 'package:mouvaps/utils/constants.dart' as constants;
+import 'package:mouvaps/utils/constants.dart';
 
 class ExerciseCard extends StatefulWidget {
   final Exercise exercise;
   final bool isEnabled;
   final bool isOffline;
   final VoidCallback onWatchedCallback;
-  const ExerciseCard({super.key, required this.exercise, this.isEnabled = true, this.isOffline = false, required this.onWatchedCallback});
+  const ExerciseCard(
+      {super.key,
+      required this.exercise,
+      this.isEnabled = true,
+      this.isOffline = false,
+      required this.onWatchedCallback});
 
   @override
   State<StatefulWidget> createState() {
@@ -49,7 +54,8 @@ class _ExerciseCardState extends State<ExerciseCard> {
                   ? FileImage(File(widget.exercise.thumbnailUrl))
                   : NetworkImage(widget.exercise.thumbnailUrl),
               fit: BoxFit.cover,
-              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+              errorBuilder: (BuildContext context, Object exception,
+                  StackTrace? stackTrace) {
                 return Image.asset(
                   'assets/images/default_exercise_image.jpg',
                   fit: BoxFit.cover,
@@ -69,7 +75,8 @@ class _ExerciseCardState extends State<ExerciseCard> {
           children: [
             _buildInfoRow(
               icon: Icons.timer,
-              text: '${widget.exercise.duration?.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(widget.exercise.duration?.inSeconds.remainder(60)).toString().padLeft(2, '0')}',
+              text:
+                  '${widget.exercise.duration?.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(widget.exercise.duration?.inSeconds.remainder(60)).toString().padLeft(2, '0')}',
             ),
             _buildInfoRow(
               icon: Icons.payments,
@@ -77,16 +84,24 @@ class _ExerciseCardState extends State<ExerciseCard> {
             ),
           ],
         ),
-        trailing: widget.isOffline ? const Icon(Icons.check_circle_outline) : _buildDownloadButton(),
-        onTap: widget.isEnabled ? () async {
-          final bool confirmed = await showPrecautionDialog(context);
-          if (confirmed) {
-            _openVideo();
-          }
-        } : null,
+        trailing: widget.isOffline
+            ? const Icon(
+                Icons.check_circle_outline,
+                color: primaryColor,
+              )
+            : _buildDownloadButton(),
+        onTap: widget.isEnabled
+            ? () async {
+                final bool confirmed = await showPrecautionDialog(context);
+                if (confirmed) {
+                  _openVideo();
+                }
+              }
+            : null,
       ),
     );
   }
+
   void _openVideo() {
     VideoController video = VideoController(
       videoUrl: widget.exercise.url,
@@ -116,7 +131,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
   Widget _buildInfoRow({required IconData icon, required String text}) {
     return Row(
       children: [
-        Icon(icon, color: constants.primaryColor, size: 20),
+        Icon(icon, color: primaryColor, size: 20),
         const SizedBox(width: 5),
         Text(
           text,

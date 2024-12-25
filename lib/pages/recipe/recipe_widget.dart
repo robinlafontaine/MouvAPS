@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
@@ -17,7 +18,7 @@ class RecipeWidget extends StatefulWidget {
   final Future<User>? user;
   final bool isLocked;
   final bool isOffline;
-  final VoidCallback onRecipeUnlocked;
+  final VoidCallback onRecipeStateChanged;
 
   const RecipeWidget({
     super.key,
@@ -25,7 +26,7 @@ class RecipeWidget extends StatefulWidget {
     required this.isLocked,
     this.user,
     this.isOffline = false,
-    required this.onRecipeUnlocked,
+    required this.onRecipeStateChanged,
   });
 
   @override
@@ -53,13 +54,15 @@ class _RecipeWidgetState extends State<RecipeWidget> {
       child: AspectRatio(
         aspectRatio: 16 / 9,
         child: Image(
-          image: NetworkImage(widget.recipe.imageUrl),
+          image: widget.isOffline
+              ? FileImage(File(widget.recipe.imageUrl))
+              : NetworkImage(widget.recipe.imageUrl),
           fit: BoxFit.cover,
           errorBuilder:
               (BuildContext context, Object exception, StackTrace? stackTrace) {
-            return Image.asset(
-              'assets/images/default_exercise_image.jpg',
-              fit: BoxFit.cover,
+            return const Icon(
+              Icons.image_not_supported,
+              size: 30,
             );
           },
         ),
@@ -228,7 +231,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
     if (!mounted) return;
     Provider.of<UserPointsNotifier>(context, listen: false)
         .addPoints(-(widget.recipe.pricePoints ?? 0));
-    widget.onRecipeUnlocked();
+    widget.onRecipeStateChanged();
   }
 
   Widget _buildDownloadButton() {

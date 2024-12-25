@@ -92,7 +92,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                         recipe: recipe,
                         user: _user,
                         isLocked: false,
-                        onRecipeUnlocked: _refreshRecipes,
+                        onRecipeStateChanged: _refreshRecipes,
                       ),
                       const SizedBox(height: 8.0), // Add space between tiles
                     ],
@@ -108,7 +108,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                         recipe: recipe,
                         user: _user,
                         isLocked: true,
-                        onRecipeUnlocked: _refreshRecipes,
+                        onRecipeStateChanged: _refreshRecipes,
                       ),
                       const SizedBox(height: 8.0), // Add space between tiles
                     ],
