@@ -3,6 +3,7 @@ import 'package:mouvaps/auth/auth_router.dart';
 import 'package:mouvaps/pages/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
 import 'package:mouvaps/pages/profile/profile_screen.dart';
+import 'package:mouvaps/services/db.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,7 +21,7 @@ Future main() async {
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
-
+  await ContentDatabase.instance.database;
   runApp(const MyApp());
 }
 

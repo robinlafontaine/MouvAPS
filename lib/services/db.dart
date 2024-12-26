@@ -21,7 +21,6 @@ class ContentDatabase {
     final path = '$databasePath/content.db';
     return await openDatabase(
       path,
-      //join(await getDatabasesPath(), 'content.db'),
       version: 2,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
@@ -29,10 +28,9 @@ class ContentDatabase {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    Batch batch = db.batch();
 
-    batch.execute('''
-        CREATE TABLE exercises (
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS exercises (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           url TEXT NOT NULL,
@@ -44,8 +42,8 @@ class ContentDatabase {
         )
     ''');
 
-    batch.execute('''
-        CREATE TABLE recipes (
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS recipes (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
           description TEXT,
