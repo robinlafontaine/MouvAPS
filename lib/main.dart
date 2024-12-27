@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mouvaps/auth/auth_router.dart';
 import 'package:mouvaps/pages/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
+import 'package:mouvaps/pages/offline/downloads_screen.dart';
 import 'package:mouvaps/pages/profile/profile_screen.dart';
 import 'package:mouvaps/services/db.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -96,6 +97,7 @@ class MyApp extends StatelessWidget {
           '/otp': (context) => OTPScreen(
               email: ModalRoute.of(context)!.settings.arguments as String),
           '/profile': (context) => const ProfileScreen(),
+          '/offline': (context) => const DownloadsScreen(),
         },
       ),
     );

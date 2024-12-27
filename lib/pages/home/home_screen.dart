@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mouvaps/pages/home/custom_bottom_navigation.dart';
 import 'package:mouvaps/pages/home/selected_page/selected_content.dart';
 import 'package:mouvaps/pages/home/selected_page/selected_title.dart';
+import 'package:mouvaps/pages/offline/downloads_screen.dart';
 import 'package:mouvaps/utils/constants.dart';
 import 'package:mouvaps/globals/globals.dart' as globals;
 import 'package:mouvaps/pages/profile/profile_screen.dart';
@@ -48,6 +49,36 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const DownloadsScreen(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      var begin = const Offset(1.0, 0.0);
+                      var end = Offset.zero;
+                      var curve = Curves.ease;
+
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+
+                      return SlideTransition(
+                        position: animation.drive(tween),
+                        child: child,
+                      );
+                    },
+                  ),
+                ).then((_) {
+                  setState(() {});
+                });
+              },
+              icon: const Icon(
+                Icons.download,
+                color: primaryColor,
+              )),
           IconButton(
             icon: const Icon(
               Icons.account_circle,
