@@ -58,7 +58,7 @@ class _DownloadsScreenState extends State<DownloadsScreen>
                           children: [
                             Center(
                               child: Text(
-                                "Aucune séances téléchargées",
+                                "Aucune séance téléchargée",
                                 style: ShadTheme.of(context).textTheme.p,
                               ),
                             ),
@@ -81,7 +81,7 @@ class _DownloadsScreenState extends State<DownloadsScreen>
                           children: [
                             Center(
                               child: Text(
-                                "Aucune recettes téléchargées",
+                                "Aucune recette téléchargée",
                                 style: ShadTheme.of(context).textTheme.p,
                               ),
                             ),
