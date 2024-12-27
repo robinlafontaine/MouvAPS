@@ -32,7 +32,7 @@ class _SignInScreenState extends State<SignInScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const ShadImage(
-                  'https://avatars.githubusercontent.com/u/124599?v=4',
+                  'assets/images/icon.png',
                   height: 100,
                 ),
                 const SizedBox(height: 16),
