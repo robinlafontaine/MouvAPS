@@ -27,6 +27,3 @@ jobs:
       
       - name: Analyze source
         run: flutter analyze --fatal-warnings
-
-#      - name: Run tests
-#        run: flutter test
