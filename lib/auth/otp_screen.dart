@@ -133,7 +133,7 @@ class _OTPScreenState extends State<OTPScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const ShadImage(
-              'https://avatars.githubusercontent.com/u/124599?v=4',
+              'assets/images/icon.png',
               height: 100,
             ),
             const SizedBox(height: 16),
