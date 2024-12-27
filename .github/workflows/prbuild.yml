@@ -12,7 +12,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'      
+          flutter-version: 3.27.0
+          channel: 'stable'
+
       - name: Get dependencies
         run: flutter pub get
              
@@ -27,6 +29,3 @@ jobs:
       
       - name: Analyze source
         run: flutter analyze --fatal-warnings
-
-#      - name: Run tests
-#        run: flutter test
