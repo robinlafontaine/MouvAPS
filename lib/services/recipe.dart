@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import 'db.dart';
 import 'ingredient.dart';
 
@@ -58,7 +55,7 @@ class Recipe {
       'name': name,
       'video_url': videoUrl,
       'thumbnail_url': imageUrl,
-      'ingredients': jsonEncode(ingredients?.map((e) => e.toJson()).toList()),
+      'ingredients': ingredients?.map((e) => e.toJson()).toList(),
       'description': description,
       'time_mins': timeMins,
       'created_at': createdAt?.toIso8601String(),
@@ -68,34 +65,16 @@ class Recipe {
   }
 
   static final _supabase = Supabase.instance.client;
-  static final _db = ContentDatabase.instance;
   static Logger logger = Logger();
 
-  Recipe copyWith({
-    int? id,
-    String? name,
-    String? videoUrl,
-    String? imageUrl,
-    List<Ingredient>? ingredients,
-    String? description,
-    double? difficulty,
-    int? timeMins,
-    int? pricePoints,
-    DateTime? createdAt,
-  }) {
-    return Recipe(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      videoUrl: videoUrl ?? this.videoUrl,
-      imageUrl: imageUrl ?? this.imageUrl,
-      ingredients: ingredients ?? this.ingredients,
-      description: description ?? this.description,
-      difficulty: difficulty ?? this.difficulty,
-      timeMins: timeMins ?? this.timeMins,
-      pricePoints: pricePoints ?? this.pricePoints,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
+  static const _ingredientQuery = '''
+    SELECT 
+      i.*,
+      ri.quantity
+    FROM recipe_ingredient ri
+    JOIN ingredients i ON i.id = ri.ingredient_id
+    WHERE ri.recipe_id = ?
+  ''';
 
   Future<Recipe> create() async {
     final response =
@@ -176,7 +155,6 @@ class Recipe {
         .eq('user_recipe_status.user_id', userId)
         .eq('user_recipe_status.is_unlocked', true);
 
-    // If attribute 'user_recipe_status' is empty, the recipe is removed from the unlocked list
     final filteredResponse = response.where((element) {
       return element['user_recipe_status'] != null &&
           element['user_recipe_status'].isNotEmpty;
@@ -213,28 +191,161 @@ class Recipe {
     });
   }
 
-  static Future<Recipe> saveLocalRecipe(Recipe recipe, String localUrl, String localThumbnailUrl) async {
+  Map<String, dynamic> _toLocalMap(String localUrl, String localThumbnailUrl) {
+    return {
+      'id': id,
+      'name': name,
+      'video_url': localUrl,
+      'thumbnail_url': localThumbnailUrl,
+      'description': description,
+      'time_mins': timeMins,
+      'created_at': createdAt?.toIso8601String(),
+      'difficulty': difficulty,
+      'price_points': pricePoints,
+    };
+  }
+
+  static Future<Recipe> saveLocalRecipe(Recipe recipe, String localUrl, String localThumbnailUrl, List<String> ingredientThumbnailUrls) async {
     try {
-      Recipe localRecipe = recipe.copyWith(videoUrl: localUrl, imageUrl: localThumbnailUrl);
-      await _db.insert('recipes', localRecipe.toJson());
-      logger.i('Local recipe saved');
-      return localRecipe;
+      final db = await ContentDatabase.instance.database;
+
+      await db.transaction((txn) async {
+        final recipeMap = recipe._toLocalMap(localUrl, localThumbnailUrl);
+
+        final existingRecipe = await txn.query(
+          'recipes',
+          where: 'id = ?',
+          whereArgs: [recipe.id],
+        );
+
+        if (existingRecipe.isNotEmpty) {
+          await txn.update(
+            'recipes',
+            recipeMap,
+            where: 'id = ?',
+            whereArgs: [recipe.id],
+          );
+        } else {
+          await txn.insert('recipes', recipeMap);
+        }
+
+        await txn.delete(
+          'recipe_ingredient',
+          where: 'recipe_id = ?',
+          whereArgs: [recipe.id],
+        );
+
+        if (recipe.ingredients != null) {
+          await Future.wait(
+            recipe.ingredients!.asMap().entries.map((entry) async {
+              final i = entry.key;
+              final ingredient = entry.value;
+
+              int ingredientId;
+              final existingIngredient = await txn.query(
+                'ingredients',
+                where: 'name = ?',
+                whereArgs: [ingredient.name],
+              );
+
+              if (existingIngredient.isNotEmpty) {
+                ingredientId = existingIngredient.first['id'] as int;
+                await txn.update(
+                  'ingredients',
+                  {
+                    'name': ingredient.name,
+                    'image_url': ingredientThumbnailUrls[i],
+                  },
+                  where: 'id = ?',
+                  whereArgs: [ingredientId],
+                );
+              } else {
+                ingredientId = await txn.insert('ingredients', {
+                  'name': ingredient.name,
+                  'image_url': ingredientThumbnailUrls[i],
+                });
+              }
+
+              return txn.insert('recipe_ingredient', {
+                'recipe_id': recipe.id,
+                'ingredient_id': ingredientId,
+                'quantity': ingredient.quantity,
+              });
+            }),
+          );
+        }
+      });
+
+      logger.i('Local recipe saved successfully');
+      return await getLocalRecipeById(recipe.id ?? 0);
     } catch (e) {
       logger.e('Error saving local recipe: $e');
-      return recipe;
+      rethrow;
+    }
+  }
+
+  static Future<Recipe> getLocalRecipeById(int id) async {
+    try {
+      final db = await ContentDatabase.instance.database;
+
+      final recipes = await db.query(
+        'recipes',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      if (recipes.isEmpty) {
+        throw Exception('Recipe not found');
+      }
+
+      final recipeData = Map<String, dynamic>.from(recipes.first);
+      final ingredients = await db.rawQuery(_ingredientQuery, [id]);
+
+      recipeData['recipe_ingredient'] = ingredients.map((ri) =>
+      Map<String, dynamic>.from({
+        'quantity': ri['quantity'],
+        'ingredient': {
+          'name': ri['name'],
+          'image_url': ri['image_url'],
+        }
+      })
+      ).toList();
+
+      return Recipe.fromJson(recipeData);
+    } catch (e) {
+      logger.e('Error getting local recipe: $e');
+      rethrow;
     }
   }
 
   static Future<List<Recipe>> getLocalRecipes() async {
     try {
-      var rows = await _db.queryAllRows('recipes');
-      return rows.map((row) => Recipe.fromJson(row)).toList();
+      final db = await ContentDatabase.instance.database;
+      final recipes = await db.query('recipes');
+
+      return await Future.wait(
+        recipes.map((recipeRow) async {
+          final recipeData = Map<String, dynamic>.from(recipeRow);
+          final ingredients = await db.rawQuery(_ingredientQuery, [recipeData['id']]);
+
+          recipeData['recipe_ingredient'] = ingredients.map((ri) =>
+          Map<String, dynamic>.from({
+            'quantity': ri['quantity'],
+            'ingredient': {
+              'name': ri['name'],
+              'image_url': ri['image_url'],
+            }
+          })
+          ).toList();
+
+          return Recipe.fromJson(recipeData);
+        }),
+      );
     } catch (e) {
       logger.e('Error getting local recipes: $e');
       return [];
     }
   }
-
 
 
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)

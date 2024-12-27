@@ -24,4 +24,16 @@ class Ingredient {
       'image_url': imageUrl,
     };
   }
+
+  Ingredient copyWith({
+    String? name,
+    int? quantity,
+    String? imageUrl,
+  }) {
+    return Ingredient(
+      name: name ?? this.name,
+      quantity: quantity ?? this.quantity,
+      imageUrl: imageUrl ?? this.imageUrl,
+    );
+  }
 }

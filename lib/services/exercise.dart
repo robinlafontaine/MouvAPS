@@ -56,27 +56,6 @@ class Exercise {
     isUnlocked = value;
   }
 
-  Exercise copyWith({
-    int? id,
-    String? name,
-    String? url,
-    String? thumbnailUrl,
-    int? rewardPoints,
-    Duration? duration,
-    bool? isUnlocked,
-    Map<String, dynamic>? tags,
-  }) {
-    return Exercise(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      url: url ?? this.url,
-      thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
-      duration: duration ?? this.duration,
-      rewardPoints: rewardPoints ?? this.rewardPoints,
-      tags: tags ?? this.tags,
-    );
-  }
-
   Future<Exercise> create() async {
     final response = await _supabase
         .from('exercises')
@@ -186,15 +165,38 @@ class Exercise {
 
   }
 
+  Map<String, dynamic> _toLocalMap(String localUrl, String localThumbnailUrl) {
+    return {
+      'id': id,
+      'name': name,
+      'url': localUrl,
+      'thumbnail_url': localThumbnailUrl,
+      'duration': duration!.inSeconds,
+      'is_unlocked': isUnlocked ? 1 : 0,
+      'tags': tags,
+      'reward_points': rewardPoints,
+    };
+  }
+
   static Future<Exercise> saveLocalExercise(Exercise exercise, String localUrl, String localThumbnailUrl) async {
     try {
-      Exercise localExercise = exercise.copyWith(url: localUrl, thumbnailUrl: localThumbnailUrl);
-      await _db.insert('exercises', localExercise.toJson());
+      final localExercise = exercise._toLocalMap(localUrl, localThumbnailUrl);
+      await _db.insert('exercises', localExercise);
       logger.i('Local exercise saved');
-      return localExercise;
+      return await getLocalExercise(exercise.id!);
     } catch (e) {
       logger.e('Error saving local exercise: $e');
       return exercise;
+    }
+  }
+
+  static Future<Exercise> getLocalExercise(int id) async {
+    try {
+      final row = await _db.queryRow('exercises', id);
+      return Exercise.fromJson(row);
+    } catch (e) {
+      logger.e('Error getting local exercise: $e');
+      return Exercise.fromJson({});
     }
   }
 
