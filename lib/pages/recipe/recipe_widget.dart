@@ -344,6 +344,7 @@ Widget _buildDownloadButton() {
         MaterialPageRoute(
           builder: (context) => RecipeDetailsScreen(
             recipe: widget.recipe,
+            isOffline: widget.isOffline,
           ),
         ),
       );

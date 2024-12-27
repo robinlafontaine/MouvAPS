@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,15 +6,15 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:mouvaps/services/video.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-
-import '../../services/ingredient.dart';
-import '../../services/recipe.dart';
-import '../../utils/constants.dart';
+import 'package:mouvaps/services/ingredient.dart';
+import 'package:mouvaps/services/recipe.dart';
+import 'package:mouvaps/utils/constants.dart';
 
 class RecipeDetailsScreen extends StatefulWidget {
   final Recipe recipe;
+  final bool isOffline;
 
-  const RecipeDetailsScreen({super.key, required this.recipe});
+  const RecipeDetailsScreen({super.key, required this.recipe, this.isOffline = false});
 
   @override
   State<RecipeDetailsScreen> createState() => _RecipeDetailsScreenState();
@@ -157,8 +158,11 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
       child: ClipRRect(
         child: AspectRatio(
           aspectRatio: 16 / 9,
+
           child: Image(
-            image: NetworkImage(ingredient.imageUrl),
+            image: widget.isOffline
+                ? FileImage(File(ingredient.imageUrl))
+                : NetworkImage(ingredient.imageUrl),
             fit: BoxFit.contain,
             errorBuilder: (BuildContext context, Object exception,
                 StackTrace? stackTrace) {
