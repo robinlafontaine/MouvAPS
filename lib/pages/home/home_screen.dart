@@ -76,8 +76,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               icon: const Icon(
-                Icons.download,
+                Icons.download_for_offline,
                 color: primaryColor,
+                size: 36,
               )),
           IconButton(
             icon: const Icon(
