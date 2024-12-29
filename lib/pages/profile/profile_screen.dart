@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mouvaps/services/auth.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/pages/profile/profile_switch.dart';
+import 'package:mouvaps/widgets/upload/upload_button.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -16,7 +17,8 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
         children: [
           Text(Auth.instance.getUserEmail() ?? ''),
-          const ProfileSwitch()
+          const ProfileSwitch(),
+          const UserUploadButton(),
         ],
       )),
     );
