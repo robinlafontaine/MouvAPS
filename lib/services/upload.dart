@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:mime/mime.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'auth.dart';
 
 class UploadRequest {
   final File file;
@@ -45,11 +44,10 @@ class UploadManager {
     required this.bucketName,
   });
 
-  void setFile(PlatformFile file, [String? filename]) {
-    final f = filename != null ? '$filename.${file.extension}' : file.name;
+  void setFile(PlatformFile file, String filePath) {
     _currentRequest = UploadRequest(
       file: File(file.path!),
-      fileName: bucketName == 'user-data' ? '${Auth.instance.getUUID()}/$f' : f
+      fileName: filePath,
     );
   }
 

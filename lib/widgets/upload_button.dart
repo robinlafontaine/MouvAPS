@@ -4,6 +4,8 @@ import 'package:mouvaps/services/upload.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 
+import '../services/auth.dart';
+
 class UserUploadButton extends StatefulWidget {
   final String? filename;
   final VoidCallback? onUploadComplete;
@@ -22,30 +24,18 @@ class _UserUploadButtonState extends State<UserUploadButton> {
   final UploadManager uploadManager = UploadManager(bucketName: 'user-data');
   bool _wasSuccessful = false;
 
-  Future<void> _pickImage(BuildContext context) async {
+  Future<void> _pickFile(BuildContext context, {FileType type = FileType.custom, List<String>? allowedExtensions}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
+      type: type,
+      allowedExtensions: allowedExtensions,
       allowMultiple: false,
     );
 
     if (result != null) {
-      uploadManager.setFile(result.files.first, widget.filename);
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
-      _startUpload();
-    }
-  }
+      final file = result.files.first;
+      final userFilepath = '${Auth.instance.getUUID()}/${widget.filename != null ? '${widget.filename}.${file.extension}' : file.name}';
 
-  Future<void> _pickFile(BuildContext context) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-      allowMultiple: false,
-    );
-
-    if (result != null) {
-      uploadManager.setFile(result.files.first, widget.filename);
+      uploadManager.setFile(file, userFilepath);
       if (context.mounted) {
         Navigator.pop(context);
       }
@@ -101,14 +91,14 @@ class _UserUploadButtonState extends State<UserUploadButton> {
             leading: const Icon(Icons.image, color: constants.primaryColor),
             title: const Text('Envoyer une Image'),
             subtitle: const Text('Choisissez une image de votre appareil'),
-            onTap: () => _pickImage(context),
+            onTap: () => _pickFile(context, type: FileType.image),
           ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.picture_as_pdf, color: constants.primaryColor),
             title: const Text('Envoyer un PDF'),
             subtitle: const Text('Choisissez un fichier PDF de votre appareil'),
-            onTap: () => _pickFile(context),
+            onTap: () => _pickFile(context, type: FileType.custom, allowedExtensions: ['pdf']),
           ),
           const SizedBox(height: 20),
         ],
