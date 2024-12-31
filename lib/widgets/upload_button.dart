@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:mouvaps/services/upload.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:mouvaps/services/auth.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
-
-import '../services/auth.dart';
 
 class UserUploadButton extends StatefulWidget {
   final String? filename;
@@ -54,10 +53,12 @@ class _UserUploadButtonState extends State<UserUploadButton> {
       if (response) {
         widget.onUploadComplete?.call();
       } else {
-        const ShadAlert.destructive(
-            iconSrc: LucideIcons.circleAlert,
-            title: Text('Erreur'),
-            description: Text('Une erreur est survenue lors de l\'envoi du fichier'),
+        ShadToaster.of(context).show(
+          const ShadToast.destructive(
+            title: Text('Mince !'),
+            description:
+            Text('Echec lors de l\'envoi du fichier'),
+          ),
         );
       }
     }
