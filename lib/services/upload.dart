@@ -53,21 +53,21 @@ class UploadManager {
     );
   }
 
-  Future<Map<String, dynamic>> uploadFile() async {
+  Future<bool> uploadFile() async {
     if (_currentRequest == null) {
-      return {'success': false, 'message': 'Aucun fichier à envoyer'};
+      return false;
     }
 
     _isUploading = true;
 
     try {
-      await supabase.storage
+      final response = await supabase.storage
           .from(bucketName)
           .upload(_currentRequest!.fileName, _currentRequest!.file);
 
-      return {'success': true, 'message': 'Fichier envoyé avec succès'};
+      return response.isNotEmpty;
     } catch (e) {
-      return {'success': false, 'message': e.toString()};
+      return false;
     } finally {
       _isUploading = false;
       _currentRequest = null;

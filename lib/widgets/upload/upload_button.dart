@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:mouvaps/services/upload.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class UserUploadButton extends StatefulWidget {
   final String? filename;
@@ -53,14 +54,14 @@ class _UserUploadButtonState extends State<UserUploadButton> {
   }
 
   Future<void> _startUpload() async {
-    final response = await uploadManager.uploadFile();
+    final bool response = await uploadManager.uploadFile();
 
     if (mounted) {
       setState(() {
-        _wasSuccessful = response['success'];
+        _wasSuccessful = response;
       });
 
-      if (response['success']) {
+      if (response) {
         widget.onUploadComplete?.call();
       } else {
         const ShadAlert.destructive(
@@ -97,14 +98,14 @@ class _UserUploadButtonState extends State<UserUploadButton> {
           ),
           const SizedBox(height: 20),
           ListTile(
-            leading: const Icon(Icons.image),
+            leading: const Icon(Icons.image, color: constants.primaryColor),
             title: const Text('Envoyer une Image'),
             subtitle: const Text('Choisissez une image de votre appareil'),
             onTap: () => _pickImage(context),
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.picture_as_pdf),
+            leading: const Icon(Icons.picture_as_pdf, color: constants.primaryColor),
             title: const Text('Envoyer un PDF'),
             subtitle: const Text('Choisissez un fichier PDF de votre appareil'),
             onTap: () => _pickFile(context),
