@@ -91,9 +91,10 @@ class Exercise {
   }
 
   static Future<List<Exercise>> getAll() async {
-    final response = await _supabase
-        .from('user_exercise_playlist')
-        .select('''
+    try {
+      final response = await _supabase
+          .from('user_exercise_playlist')
+          .select('''
           is_unlocked,
           exercises (
             id,
@@ -105,13 +106,23 @@ class Exercise {
             tags,
             created_at
           )
-        ''').eq('user_id', Auth.instance.getUUID() as String).order('playlist_order', ascending: true);
+        ''').eq('user_id', Auth.instance.getUUID() as String).order(
+          'playlist_order', ascending: true);
 
-    return (response as List).map((json) {
-      final exercise = Exercise.fromJson(json['exercises']);
-      exercise.setIsUnlocked(json['is_unlocked']);
-      return exercise;
-    }).toList();
+      if (response.isEmpty) {
+        return [];
+      }
+
+      return (response as List).map((json) {
+        final exercise = Exercise.fromJson(json['exercises']);
+        exercise.setIsUnlocked(json['is_unlocked']);
+        return exercise;
+      }).toList();
+
+    } catch(e){
+      logger.e('Error getting exercises: $e');
+      return [];
+    }
   }
 
   Future<void> delete() async {
