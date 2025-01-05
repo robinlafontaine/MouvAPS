@@ -4,14 +4,14 @@ import 'package:uuid/uuid.dart';
 class User {
   final String userUuid;
   final int? formId;
-  final int pathoId;
+  final List<int>? pathologies;
   final int points;
   final int age;
 
   User({
     required this.userUuid,
     required this.formId,
-    required this.pathoId,
+    required this.pathologies,
     required this.points,
     required this.age,
   });
@@ -20,7 +20,9 @@ class User {
     return User(
       userUuid: json['user_uuid'] as String,
       formId: json['form_id'] as int,
-      pathoId: json['pathology_id'] as int,
+      pathologies: (json['user_pathologie'] as List<dynamic>?)
+          ?.map((e) => e['pathologie_id'] as int)
+          .toList(),
       points: json['points'] as int,
       age: json['age'] as int,
     );
@@ -30,7 +32,7 @@ class User {
     return {
       'user_uuid': userUuid,
       'form_id': formId,
-      'patho_id': pathoId,
+      'user_pathologie': pathologies?.map((e) => {'pathologie_id': e}).toList(),
       'points': points,
       'age': age,
     };
@@ -77,7 +79,12 @@ class User {
   }
 
   // Get user's points by user uuid
-  static Future<int> getPointsByUuid(String uuid) async {
+  static Future<int> getPointsByUuid(String? uuid) async {
+
+    if (uuid == null) {
+      return 0;
+    }
+
     final response = await _supabase
         .from('users')
         .select('points')
@@ -90,9 +97,24 @@ class User {
     await _supabase.from('users').delete().eq('user_uuid', userUuid);
   }
 
-  static Future<User> getUserByUuid(String uuid) async {
+  static Future<User> getUserByUuid(String? uuid) async {
+
+    if (uuid == null) {
+      return empty();
+    }
+
     final response =
-        await _supabase.from('users').select().eq('user_uuid', uuid).single();
+        await _supabase.from('users')
+            .select('''
+            user_uuid,
+            form_id,
+            points,
+            age,
+            user_pathologie (
+              pathologie_id
+            )
+          ''')
+            .eq('user_uuid', uuid).single();
     return User.fromJson(response);
   }
 
@@ -100,7 +122,7 @@ class User {
     return User(
       userUuid: const Uuid().v4(),
       formId: 0,
-      pathoId: 0,
+      pathologies: [],
       points: 0,
       age: 0,
     );
