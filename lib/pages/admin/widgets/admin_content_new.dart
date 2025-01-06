@@ -15,7 +15,11 @@ class AdminNewContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "New Content",
+          recipe != null
+              ? recipe!.name
+              : exercise != null
+                  ? exercise!.name
+                  : 'New Content',
           style: ShadTheme.of(context).textTheme.h1,
         ),
       ),

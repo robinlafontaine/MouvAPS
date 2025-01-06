@@ -24,7 +24,15 @@ class _ContentListAdminState extends State<ContentListAdmin> {
         shrinkWrap: true,
         itemCount: widget.exercises!.length,
         itemBuilder: (context, index) {
-          return _buildTitleButton(widget.exercises![index].name, () {});
+          return _buildTitleButton(widget.exercises![index].name, () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => AdminNewContent(
+                  exercise: widget.exercises![index],
+                ),
+              ),
+            );
+          });
         },
         separatorBuilder: (context, index) {
           return const Divider(indent: 15, endIndent: 15);
@@ -38,7 +46,9 @@ class _ContentListAdminState extends State<ContentListAdmin> {
           return _buildTitleButton(widget.recipes![index].name, () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => const AdminNewContent(),
+                builder: (context) => AdminNewContent(
+                  recipe: widget.recipes![index],
+                ),
               ),
             );
           });
