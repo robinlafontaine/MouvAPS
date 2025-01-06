@@ -6,7 +6,6 @@ import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
 import 'package:mouvaps/utils/text_utils.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-
 import 'package:mouvaps/utils/constants.dart' as constants;
 
 class DietFormScreen extends StatefulWidget {
@@ -21,10 +20,47 @@ class DietFormScreen extends StatefulWidget {
 class DietFormScreenState extends State<DietFormScreen> {
   final formKey = GlobalKey<ShadFormState>();
   final Future<List<Pathology>> pathologies = Pathology.getAll();
+  var logger = Logger(printer: SimplePrinter());
+
+  Future<void> _handleFormSubmission() async {
+    if (formKey.currentState!.saveAndValidate()) {
+      logger.d('Validation succeeded with ${formKey.currentState!.value}');
+      try {
+        final bool success = await widget.formAnswers.insert();
+
+        if (success) {
+          logger.d('Form answers inserted successfully');
+          if (mounted) {
+            Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Échec de l\'enregistrement des réponses. Veuillez réessayer.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        logger.e('Failed to insert form answers: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Une erreur est survenue: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } else {
+      logger.e('Validation failed with ${formKey.currentState!.value}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    var logger = Logger(printer: SimplePrinter());
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -62,14 +98,12 @@ class DietFormScreenState extends State<DietFormScreen> {
                               return "Merci de répondre à la question";
                             },
                           ),
-                          //TODO: systeme avec mots clés pour les allergies
                           const SizedBox(height: 16),
                           const Text(
                               'Avez-vous des pathologies?',
                               style: labelTextStyle),
                           _buildPathologySelect(),
                           const SizedBox(height: 16),
-
                           ShadInputFormField(
                             id: 'allergies',
                             label: const Text(
@@ -125,13 +159,7 @@ class DietFormScreenState extends State<DietFormScreen> {
                           ),
                           const SizedBox(height: 16),
                           ShadButton(
-                            onPressed: () {
-                              if (formKey.currentState!.saveAndValidate()) {
-                                logger.d(
-                                    'Validation succeeded with ${formKey.currentState!.value}');
-                              //   TODO: envoyer les données
-                              } else {}
-                            },
+                            onPressed: _handleFormSubmission,
                             child: const Text("Envoyer",
                                 style: primaryButtonTextStyle),
                           )
@@ -154,15 +182,16 @@ class DietFormScreenState extends State<DietFormScreen> {
             allowDeselection: true,
             closeOnSelect: false,
             placeholder: const Text('Sélectionnez vos pathologies'),
-            options: [
-              ...snapshot.data!.map(
-                    (e) => ShadOption(
-                  value: e,
-                  child: Text(e.name.capitalize()),
-                ),
-              )
-            ],
-            selectedOptionsBuilder: (context, values) => Text(values.where((e) => e != null).map((e) => e).join(', ')),          );
+            initialValues: [snapshot.data!.first],
+            options: snapshot.data!.map((e) => ShadOption(
+              value: e,
+              child: Text(e.name.capitalize()),
+            )).toList(),
+            selectedOptionsBuilder: (context, values) {
+              widget.formAnswers.pathologies = values.cast<Pathology>();
+              return Text(values.map((e) => e.name).join(', '));
+            },
+          );
         }
         return const CircularProgressIndicator();
       },
