@@ -16,7 +16,7 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
         children: [
           Text(Auth.instance.getUserEmail() ?? ''),
-          const ProfileSwitch()
+          const ProfileSwitch(),
         ],
       )),
     );

@@ -55,4 +55,29 @@ class Auth {
       return false;
     }
   }
+
+  Future<List<String>> getRoles() async {
+    final String? uuid = getUUID();
+
+    if (uuid == null) {
+      return [];
+    }
+
+    try {
+      final response = await supabase
+          .from('roles')
+          .select('name, user_role!inner()')
+          .eq('user_role.user_uuid', uuid);
+
+      return (response as List).map((role) => role['name'] as String).toList();
+    } catch (e) {
+      logger.e('Error fetching roles: $e');
+      return [];
+    }
+  }
+
+  Future<bool> hasRole(String role) async {
+    final roles = await getRoles();
+    return roles.contains(role);
+  }
 }

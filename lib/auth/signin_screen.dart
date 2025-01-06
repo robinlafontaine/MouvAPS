@@ -59,9 +59,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     decoration: const ShadDecoration(
                         color: constants.textFieldColor,
-                        border: ShadBorder(
-                          top: BorderSide(color: constants.textFieldColor),
-                        )
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
