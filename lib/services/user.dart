@@ -110,7 +110,20 @@ class User {
   static Future<List<User>> getAll() async {
     final response = await _supabase
         .from('users')
-        .select();
+        .select('''
+            user_uuid,
+            form_id,
+            points,
+            age,
+            first_name,
+            last_name,
+            user_pathologie (
+              pathologies (
+                id,
+                name
+              )
+            )
+          ''');
     return response.map((json) => User.fromJson(json)).toList();
   }
 
