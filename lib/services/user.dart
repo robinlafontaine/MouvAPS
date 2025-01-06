@@ -157,7 +157,6 @@ class User {
             )
           ''')
             .eq('user_uuid', uuid).single();
-    print(response);
     return User.fromJson(response);
   }
 
