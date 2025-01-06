@@ -129,6 +129,7 @@ class User {
   }
 
   static Future<bool> exists(String? uuid) async {
+    try {
     if (uuid == null) {
       return false;
     }
@@ -138,6 +139,10 @@ class User {
         .select('user_uuid')
         .eq('user_uuid', uuid)
         .single();
+    print(response);
     return response.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
   }
 }

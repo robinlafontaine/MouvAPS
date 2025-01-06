@@ -49,9 +49,6 @@ class NameFormScreenState extends State<NameFormScreen>{
                 keyboardType: TextInputType.text,
                 decoration: const ShadDecoration(
                     color: constants.textFieldColor,
-                    border: ShadBorder(
-                      top: ShadBorderSide(color: constants.textFieldColor),
-                    )
                 ),
                 validator: (v) {
                   if (v.isEmpty) {
@@ -75,9 +72,6 @@ class NameFormScreenState extends State<NameFormScreen>{
                 keyboardType: TextInputType.text,
                 decoration: const ShadDecoration(
                     color: constants.textFieldColor,
-                    border: ShadBorder(
-                      top: ShadBorderSide(color: constants.textFieldColor),
-                    )
                 ),
                 validator: (v) {
                   if (v.isEmpty) {
@@ -94,7 +88,7 @@ class NameFormScreenState extends State<NameFormScreen>{
                     Navigator.push(context, 
                         PageRouteBuilder(
                             pageBuilder: (context, animation, secondaryAnimation) => IdentityFormScreen(
-                              formAnswers: FormAnswers(formKey.currentState!.value['nom'], formKey.currentState!.value['prenom']),),
+                              formAnswers: FormAnswers(formKey.currentState!.value['prenom'], formKey.currentState!.value['nom']),),
                             transitionsBuilder: (context, animation, secondaryAnimation, child) {
                               var begin = const Offset(1.0, 0.0);
                               var end = Offset.zero;

@@ -63,7 +63,13 @@ class DietFormScreenState extends State<DietFormScreen> {
                             },
                           ),
                           //TODO: systeme avec mots clés pour les allergies
+                          const SizedBox(height: 16),
+                          const Text(
+                              'Avez-vous des pathologies?',
+                              style: labelTextStyle),
                           _buildPathologySelect(),
+                          const SizedBox(height: 16),
+
                           ShadInputFormField(
                             id: 'allergies',
                             label: const Text(
@@ -147,26 +153,16 @@ class DietFormScreenState extends State<DietFormScreen> {
             onChanged: print,
             allowDeselection: true,
             closeOnSelect: false,
-            placeholder: const Text('Selectionnez vos pathologies'),
+            placeholder: const Text('Sélectionnez vos pathologies'),
             options: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(32, 6, 6, 6),
-                child: Text(
-                  'Pathologies',
-                  style: ShadTheme.of(context).textTheme.large,
-                  textAlign: TextAlign.start,
-                ),
-              ),
               ...snapshot.data!.map(
                     (e) => ShadOption(
-                  value: e.id,
+                  value: e,
                   child: Text(e.name.capitalize()),
                 ),
               )
             ],
-            selectedOptionsBuilder: (context, values) =>
-                Text(values.map((v) => v ?? '').join(', ')),
-          );
+            selectedOptionsBuilder: (context, values) => Text(values.where((e) => e != null).map((e) => e).join(', ')),          );
         }
         return const CircularProgressIndicator();
       },

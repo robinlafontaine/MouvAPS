@@ -11,9 +11,6 @@ const labelTextStyle = TextStyle(
 
 const formInputDecoration = ShadDecoration(
         color: constants.textFieldColor,
-        border: ShadBorder(
-          top: ShadBorderSide(color: constants.textFieldColor),
-        )
     );
 
 const placeholderTextStyle = TextStyle(

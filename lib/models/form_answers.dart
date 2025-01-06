@@ -31,6 +31,7 @@ class FormAnswers {
   late String expectationsNeedsSport;
   // Diet
   late String dietaryRestrictions;
+  late String pathologies;
   late String allergies;
   late String foodHated;
   late String expectationsNeedsDiet;
