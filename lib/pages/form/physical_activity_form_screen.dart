@@ -1,13 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/pages/form/diet_form_screen.dart';
-import 'package:mouvaps/models/FormAnswers.dart';
+import 'package:mouvaps/models/form_answers.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import 'package:mouvaps/utils/constants.dart' as Constants;
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class PhysicalActivityFormScreen extends StatefulWidget {
   final FormAnswers formAnswers;
@@ -15,11 +14,11 @@ class PhysicalActivityFormScreen extends StatefulWidget {
   const PhysicalActivityFormScreen({super.key, required this.formAnswers});
 
   @override
-  _PhysicalActivityFormScreenState createState() =>
-      _PhysicalActivityFormScreenState();
+  PhysicalActivityFormScreenState createState() =>
+      PhysicalActivityFormScreenState();
 }
 
-class _PhysicalActivityFormScreenState
+class PhysicalActivityFormScreenState
     extends State<PhysicalActivityFormScreen> {
   final formKey = GlobalKey<ShadFormState>();
 
@@ -49,10 +48,10 @@ class _PhysicalActivityFormScreenState
                           ShadRadioGroupFormField<bool>(
                             id:'physical_activity_yes_no',
                             label: const Text('Avez-vous fait de l’activité physique  ?',
-                              style: LabelTextStyle,),
+                              style: labelTextStyle,),
                               items: const [
-                                ShadRadio(value: true, label: const Text('Oui')),
-                                ShadRadio(value: false, label: const Text('Non')),
+                                ShadRadio(value: true, label: Text('Oui')),
+                                ShadRadio(value: false, label: Text('Non')),
                               ],
                               onChanged: (value){
                               setState(() {
@@ -64,7 +63,7 @@ class _PhysicalActivityFormScreenState
                                   return "Merci de renseigner si vous avez fait de l'activité physique";
                                 }
                                 if (v == false) {
-                                  widget.formAnswers.physical_activity = "Non";
+                                  widget.formAnswers.physicalActivity = "Non";
                                 }
                                 return null;
                               },
@@ -77,15 +76,15 @@ class _PhysicalActivityFormScreenState
                                 id: 'physical_activity',
                                 label: const Text(
                                     "Si oui laquelle/lesquelles?",
-                                    style: LabelTextStyle),
-                                placeholder: const Text("Activité physique", style: PlaceholderTextStyle),
+                                    style: labelTextStyle),
+                                placeholder: const Text("Activité physique", style: placeholderTextStyle),
                                 keyboardType: TextInputType.text,
-                                decoration: FormInputDecoration,
+                                decoration: formInputDecoration,
                                 validator: (v) {
                                   if (v.isEmpty) {
                                     return "Merci de renseigner votre activité physique";
                                   }
-                                  widget.formAnswers.physical_activity = v;
+                                  widget.formAnswers.physicalActivity = v;
                                   return null;
                                 },
                               )
@@ -95,10 +94,10 @@ class _PhysicalActivityFormScreenState
                           ShadRadioGroupFormField<bool>(
                             id:'current_activity_yes_no',
                             label: const Text('Faites-vous de l’activité physique actuellement ?',
-                            style: LabelTextStyle,),
+                            style: labelTextStyle,),
                             items: const [
-                              ShadRadio(value: true, label: const Text('Oui')),
-                              ShadRadio(value: false, label: const Text('Non')),
+                              ShadRadio(value: true, label: Text('Oui')),
+                              ShadRadio(value: false, label: Text('Non')),
                             ],
                             onChanged: (value){
                               setState(() {
@@ -110,7 +109,7 @@ class _PhysicalActivityFormScreenState
                                 return "Merci de répondre à la question";
                               }
                               if (v == false) {
-                                widget.formAnswers.physical_activity = "Non";
+                                widget.formAnswers.physicalActivity = "Non";
                               }
                               return null;
                             },
@@ -124,15 +123,15 @@ class _PhysicalActivityFormScreenState
                                   id: 'current_activity',
                                   label: const Text(
                                       "Si oui laquelle/lesquelles?",
-                                      style: LabelTextStyle),
-                                  placeholder: const Text("Activité physique", style: PlaceholderTextStyle),
+                                      style: labelTextStyle),
+                                  placeholder: const Text("Activité physique", style: placeholderTextStyle),
                                   keyboardType: TextInputType.text,
-                                  decoration: FormInputDecoration,
+                                  decoration: formInputDecoration,
                                   validator: (v) {
                                     if (v.isEmpty) {
                                       return "Merci de renseigner votre activité physique";
                                     }
-                                    widget.formAnswers.current_activity = v;
+                                    widget.formAnswers.currentActivity = v;
                                     return null;
                                   },
                                 ),
@@ -141,23 +140,23 @@ class _PhysicalActivityFormScreenState
                                   id: 'current_activity_frequency',
                                   label: const Text(
                                       "A quelle fréquence ?",
-                                      style: LabelTextStyle),
-                                  placeholder: const Text("Fréquence", style: PlaceholderTextStyle),
+                                      style: labelTextStyle),
+                                  placeholder: const Text("Fréquence", style: placeholderTextStyle),
                                   keyboardType: TextInputType.text,
-                                  decoration: FormInputDecoration,
+                                  decoration: formInputDecoration,
                                   validator: (v) {
                                     if (v.isEmpty) {
                                       return "Merci de renseigner votre activité physique";
                                     }
-                                    widget.formAnswers.current_activity_time = v;
+                                    widget.formAnswers.currentActivityTime = v;
                                     return null;
                                   },
                                 ),
                                 const SizedBox(height: 16),
                                 const Text("A quelle intensité ?",style: TextStyle(
                                   fontSize: 18 ,
-                                  fontWeight: Constants.form_label_font_weight,
-                                  color: Constants.textColor,
+                                  fontWeight: constants.formLabelFontWeight,
+                                  color: constants.textColor,
                                 ),),
                                 const SizedBox(height: 8),
                                 ShadRadioGroupFormField<String>(
@@ -176,7 +175,7 @@ class _PhysicalActivityFormScreenState
                                     if (v == null) {
                                       return "Merci de répondre à la question";
                                     }
-                                    widget.formAnswers.current_activity_intensity = v;
+                                    widget.formAnswers.currentActivityIntensity = v;
                                     return null;
                                   },
                                 ),]
@@ -185,13 +184,13 @@ class _PhysicalActivityFormScreenState
                           ShadInputFormField(
                             id: 'activity_difficulties',
                             label: const Text("Avez-vous des difficultés pour faire de l’activité physique ",
-                              style: LabelTextStyle,),
-                            placeholder: const Text("Difficultés", style: PlaceholderTextStyle),
+                              style: labelTextStyle,),
+                            placeholder: const Text("Difficultés", style: placeholderTextStyle),
                             keyboardType: TextInputType.text,
-                            decoration: FormInputDecoration,
+                            decoration: formInputDecoration,
                             validator: (v) {
                               if (v.isNotEmpty) {
-                                widget.formAnswers.activity_difficulties = v;
+                                widget.formAnswers.activityDifficulties = v;
                                 return null;
                               }
                               return "Merci de répondre à la question";
@@ -201,10 +200,10 @@ class _PhysicalActivityFormScreenState
                           ShadRadioGroupFormField<bool>(
                             id:'up_down_able',
                             label: const Text('Savez-vous vous mettre au sol et vous relever ?',
-                              style: LabelTextStyle,),
+                              style: labelTextStyle,),
                             items: const [
-                              ShadRadio(value: true, label: const Text('Oui')),
-                              ShadRadio(value: false, label: const Text('Non')),
+                              ShadRadio(value: true, label: Text('Oui')),
+                              ShadRadio(value: false, label: Text('Non')),
                             ],
                             onChanged: (value){
                               setState(() {
@@ -215,7 +214,7 @@ class _PhysicalActivityFormScreenState
                               if (v == null) {
                                 return "Merci de répondre à la question";
                               }
-                              widget.formAnswers.up_down_able = v;
+                              widget.formAnswers.upDownAble = v;
                               return null;
                             },
                           ),
@@ -223,13 +222,13 @@ class _PhysicalActivityFormScreenState
                           ShadInputFormField(
                             id:'home_material',
                             label: const Text("Avez-vous du matériel sportif chez-vous ?",
-                              style: LabelTextStyle,),
-                            placeholder: const Text("Matériel sportif", style: PlaceholderTextStyle),
+                              style: labelTextStyle,),
+                            placeholder: const Text("Matériel sportif", style: placeholderTextStyle),
                             keyboardType: TextInputType.text,
-                            decoration: FormInputDecoration,
+                            decoration: formInputDecoration,
                             validator: (v) {
                               if (v.isNotEmpty) {
-                                widget.formAnswers.home_material = v;
+                                widget.formAnswers.homeMaterial = v;
                                 return null;
                               }
                               return "Merci de répondre à la question";
@@ -239,13 +238,13 @@ class _PhysicalActivityFormScreenState
                           ShadInputFormField(
                             id:'expectation_needs',
                             label: const Text("Quelles sont vos attentes et vos besoins pour le programme sportif ?",
-                              style: LabelTextStyle,),
-                            placeholder: const Text("Attentes et besoins", style: PlaceholderTextStyle),
+                              style: labelTextStyle,),
+                            placeholder: const Text("Attentes et besoins", style: placeholderTextStyle),
                             keyboardType: TextInputType.text,
-                            decoration: FormInputDecoration,
+                            decoration: formInputDecoration,
                             validator: (v) {
                               if (v.isNotEmpty) {
-                                widget.formAnswers.expectations_needs_sport = v;
+                                widget.formAnswers.expectationsNeedsSport = v;
                                 return null;
                               }
                               return "Merci de répondre à la question";
@@ -280,7 +279,7 @@ class _PhysicalActivityFormScreenState
                               } else {}
                             },
                             child: const Text("Continuer",
-                                style: PrimaryButtonTextStyle),
+                                style: primaryButtonTextStyle),
                           )
                         ])))));
   }

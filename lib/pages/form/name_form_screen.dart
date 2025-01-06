@@ -1,22 +1,21 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/pages/form/identity_form_screen.dart';
-import 'package:mouvaps/models/FormAnswers.dart';
+import 'package:mouvaps/models/form_answers.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import 'package:mouvaps/utils/constants.dart' as Constants;
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class NameFormScreen extends StatefulWidget {
 
-  const NameFormScreen({Key? key}) : super(key: key);
+  const NameFormScreen({super.key});
 
   @override
-  _NameFormScreenState createState() => _NameFormScreenState();
+  NameFormScreenState createState() => NameFormScreenState();
 }
 
-class _NameFormScreenState extends State<NameFormScreen>{
+class NameFormScreenState extends State<NameFormScreen>{
 
   final formKey = GlobalKey<ShadFormState>();
 
@@ -45,13 +44,13 @@ class _NameFormScreenState extends State<NameFormScreen>{
                 // ),),
                 placeholder: const Text('Votre prénom', style:
                 TextStyle(
-                  color: Constants.textFieldPlaceholderColor
+                  color: constants.textFieldPlaceholderColor
                 ),),
                 keyboardType: TextInputType.text,
                 decoration: const ShadDecoration(
-                    color: Constants.textFieldColor,
+                    color: constants.textFieldColor,
                     border: ShadBorder(
-                      top: BorderSide(color: Constants.textFieldColor),
+                      top: ShadBorderSide(color: constants.textFieldColor),
                     )
                 ),
                 validator: (v) {
@@ -71,13 +70,13 @@ class _NameFormScreenState extends State<NameFormScreen>{
                 // ),),
                 placeholder: const Text('Votre Nom', style:
                 TextStyle(
-                  color: Constants.textFieldPlaceholderColor,
+                  color: constants.textFieldPlaceholderColor,
                 ),),
                 keyboardType: TextInputType.text,
                 decoration: const ShadDecoration(
-                    color: Constants.textFieldColor,
+                    color: constants.textFieldColor,
                     border: ShadBorder(
-                      top: BorderSide(color: Constants.textFieldColor),
+                      top: ShadBorderSide(color: constants.textFieldColor),
                     )
                 ),
                 validator: (v) {
@@ -115,7 +114,7 @@ class _NameFormScreenState extends State<NameFormScreen>{
                     logger.d("validation failed");
                   }
                 },
-                child: const Text('Suivant',style:PrimaryButtonTextStyle),
+                child: const Text('Suivant',style:primaryButtonTextStyle),
               )
             ],
           ))),))

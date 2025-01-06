@@ -127,4 +127,17 @@ class User {
       age: 0,
     );
   }
+
+  static Future<bool> exists(String? uuid) async {
+    if (uuid == null) {
+      return false;
+    }
+
+    final response = await _supabase
+        .from('users')
+        .select('user_uuid')
+        .eq('user_uuid', uuid)
+        .single();
+    return response.isNotEmpty;
+  }
 }

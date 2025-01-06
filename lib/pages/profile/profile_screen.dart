@@ -3,8 +3,6 @@ import 'package:mouvaps/services/auth.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/pages/profile/profile_switch.dart';
 
-import '../../utils/constants.dart';
-
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 

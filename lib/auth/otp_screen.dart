@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/auth.dart';
+import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 
 class OTPScreen extends StatefulWidget {
@@ -90,7 +91,28 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   void _onVerificationSuccess(bool res) {
-    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    final uuid = Auth.instance.getUUID();
+    User.exists(uuid).then((exists) {
+      if (exists) {
+        _onUserExists();
+      } else {
+        _onUserDoesNotExist();
+      }
+    });
+  }
+
+  _onUserExists() {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/home',
+      (route) => false,
+    );
+  }
+
+  _onUserDoesNotExist() {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/form',
+      (route) => false,
+    );
   }
 
   void _resendOtp() {

@@ -31,8 +31,8 @@ const FontWeight pFontWeight = FontWeight.w400;
 const double smallFontSize = 12;
 const FontWeight smallFontWeight = FontWeight.w400;
 
-const double form_label_font_size = 17;
-const FontWeight form_label_font_weight = FontWeight.w400;
+const double formLabelFontSize = 17;
+const FontWeight formLabelFontWeight = FontWeight.w400;
 
 const double buttonTextFontSize = 18;
 const FontWeight buttonTextFontWeight = FontWeight.w500;
@@ -48,7 +48,7 @@ final genres = {
   'null': 'Ne préfère pas répondre',
 };
 
-final family_situations = {
+final familySituations = {
   'celibataire': 'Célibataire',
   'marie': 'Marié(e)',
   'divorce': 'Divorcé(e)',

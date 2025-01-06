@@ -1,26 +1,25 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/pages/form/medical_form_screen.dart';
-import 'package:mouvaps/models/FormAnswers.dart';
+import 'package:mouvaps/models/form_answers.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import 'package:mouvaps/utils/constants.dart' as Constants;
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class IdentityFormScreen extends StatefulWidget {
   final FormAnswers formAnswers;
 
-  IdentityFormScreen(
+  const IdentityFormScreen(
       {super.key,required this.formAnswers});
 
   @override
-  _IdentityFormScreenState createState() => _IdentityFormScreenState();
+  IdentityFormScreenState createState() => IdentityFormScreenState();
 }
 
-class _IdentityFormScreenState extends State<IdentityFormScreen> {
+class IdentityFormScreenState extends State<IdentityFormScreen> {
   final formKey = GlobalKey<ShadFormState>();
 
   @override
@@ -43,7 +42,7 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                             text: ' ${widget.formAnswers.name}',
                             style: const TextStyle(
                                 fontStyle: FontStyle.italic,
-                                color: Constants.textColor),
+                                color: constants.textColor),
                           ),
                           TextSpan(
                             text: ', bienvenue sur Mouv\'Aps !',
@@ -63,14 +62,14 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                     ShadInputFormField(
                       id: 'age',
                       label: const Text('Quel est votre âge?',
-                          style: LabelTextStyle),
+                          style: labelTextStyle),
                       placeholder:
-                          const Text('Votre âge', style: PlaceholderTextStyle),
+                          const Text('Votre âge', style: placeholderTextStyle),
 
                       initialValue: "${widget.formAnswers.age==-1?'':widget.formAnswers.age}",
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: FormInputDecoration,
+                      decoration: formInputDecoration,
                       validator: (v) {
                         if (v.isEmpty) {
                           return "Merci d'entrer votre âge";
@@ -81,20 +80,20 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                     ),
                     const SizedBox(height: 16),
                     //input deroulant pour le sexe
-                    const Text('Quel est votre sexe?', style: LabelTextStyle),
+                    const Text('Quel est votre sexe?', style: labelTextStyle),
                     ShadSelectFormField<String>(
                       id: 'sexe',
                       placeholder: const Text(
                         'Sexe',
-                        style: PlaceholderTextStyle,
+                        style: placeholderTextStyle,
                       ),
                       options: [
-                        ...Constants.genres.entries.map((e) =>
+                        ...constants.genres.entries.map((e) =>
                             ShadOption(value: e.key, child: Text(e.value)))
                       ],
                       initialValue: widget.formAnswers.sex.isEmpty?null:widget.formAnswers.sex,
                       selectedOptionBuilder: (context, value) =>
-                          Text(Constants.genres[value]!),
+                          Text(constants.genres[value]!),
                       validator: (v) {
                         if (v == null) {
                           return "Veuillez choisir une option";
@@ -110,7 +109,7 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                       label: Text.rich(
                         TextSpan(
                             text: 'Quelle est votre taille? ',
-                            style: LabelTextStyle,
+                            style: labelTextStyle,
                             children: [
                               TextSpan(
                                   text: '(en cm)',
@@ -121,8 +120,8 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       initialValue: "${widget.formAnswers.height==-1?'':widget.formAnswers.height}",
                       placeholder: const Text('Votre taille',
-                          style: PlaceholderTextStyle),
-                      decoration: FormInputDecoration,
+                          style: placeholderTextStyle),
+                      decoration: formInputDecoration,
                       validator: (v) {
                         if (v.isEmpty) {
                           return "Merci d'entrer votre taille";
@@ -137,7 +136,7 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                       label: Text.rich(
                         TextSpan(
                             text: 'Quel est votre poids? ',
-                            style: LabelTextStyle,
+                            style: labelTextStyle,
                             children: [
                               TextSpan(
                                   text: '(en kg)',
@@ -151,8 +150,8 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                       ],
                       initialValue: "${widget.formAnswers.weight==-1?'':widget.formAnswers.weight}",
                       placeholder: const Text('Votre poids',
-                          style: PlaceholderTextStyle),
-                      decoration: FormInputDecoration,
+                          style: placeholderTextStyle),
+                      decoration: formInputDecoration,
                       validator: (v) {
                         if (v.isEmpty) {
                           return "Merci d'entrer votre poids";
@@ -166,36 +165,37 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                       id: 'handicap',
                       label: const Text(
                         'Souffrez-vous d\'une maladie ou d\'un handicap?',
-                        style: LabelTextStyle,
+                        style: labelTextStyle,
                       ),
                       placeholder: const Text(
                           'Ex: maladie cardiaque : syndrome coronarien aigu',
-                          style: PlaceholderTextStyle),
-                      decoration: FormInputDecoration,
+                          style: placeholderTextStyle),
+                      decoration: formInputDecoration,
                       validator: (v) {
                         if (v.isNotEmpty) {
                           widget.formAnswers.handicap = v;
                         }
+                        return null;
                       },
                     ),
                     const SizedBox(height: 16),
                     ShadSelectFormField<String>(
                       id: 'family_situation',
                       label: const Text('Quelle est votre situation familiale?',
-                          style: LabelTextStyle),
+                          style: labelTextStyle),
                       placeholder:
-                          const Text('Situation', style: PlaceholderTextStyle),
+                          const Text('Situation', style: placeholderTextStyle),
                       options: [
-                        ...Constants.family_situations.entries.map((e) =>
+                        ...constants.familySituations.entries.map((e) =>
                             ShadOption(value: e.key, child: Text(e.value)))
                       ],
                       selectedOptionBuilder: (context, value) =>
-                          Text(Constants.family_situations[value]!),
+                          Text(constants.familySituations[value]!),
                       validator: (v) {
                         if (v == null) {
                           return "Veuillez choisir une option";
                         }
-                        widget.formAnswers.family_situation = v;
+                        widget.formAnswers.familySituation = v;
                         return null;
                       },
                     ),
@@ -203,7 +203,7 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                     ShadRadioGroupFormField<bool>(
                       id: 'retired',
                       label: const Text('Êtes-vous retraité(e)?',
-                          style: LabelTextStyle),
+                          style: labelTextStyle),
                       items: const [
                         ShadRadio(value: true, label: Text('Oui')),
                         ShadRadio(value: false, label: Text('Non')),
@@ -220,12 +220,12 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                     ShadInputFormField(
                       id: 'children',
                       label: const Text('Combien avez-vous d\'enfants?',
-                          style: LabelTextStyle),
+                          style: labelTextStyle),
                       placeholder: const Text('Nombre d\'enfants',
-                          style: PlaceholderTextStyle),
+                          style: placeholderTextStyle),
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: FormInputDecoration,
+                      decoration: formInputDecoration,
                       validator: (v) {
                         if (v.isEmpty) {
                           return "Merci d'entrer le nombre d'enfants";
@@ -238,7 +238,7 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                     ShadRadioGroupFormField<bool>(
                       id: 'pregnant',
                       label: const Text('Êtes-vous enceinte?',
-                          style: LabelTextStyle),
+                          style: labelTextStyle),
                       items: const [
                         ShadRadio(value: true, label: Text('Oui')),
                         ShadRadio(value: false, label: Text('Non')),
@@ -256,7 +256,7 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                       id: 'home_floors',
                       label: const Text(
                           'Votre habitat comporte-t-il des étages?',
-                          style: LabelTextStyle),
+                          style: labelTextStyle),
                       items: const [
                         ShadRadio(value: true, label: Text('Oui')),
                         ShadRadio(value: false, label: Text('Non')),
@@ -268,7 +268,7 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                         if (v == null) {
                           return "Veuillez choisir une option";
                         }
-                        widget.formAnswers.home_floors = v;
+                        widget.formAnswers.homeFloors = v;
                         return null;
                       },
                     ),
@@ -276,21 +276,21 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                       ShadInputFormField(
                         id: 'home_floors_number',
                         label: const Text('Si oui combien?',
-                            style: LabelTextStyle),
+                            style: labelTextStyle),
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         placeholder: const Text('Nombre d\'étages',
-                            style: PlaceholderTextStyle),
-                        decoration: FormInputDecoration,
+                            style: placeholderTextStyle),
+                        decoration: formInputDecoration,
                         validator: (v) {
                           if (v.isEmpty &&
                               formKey.currentState?.value['home_floors'] ==
                                   true) {
                             return "Merci d'entrer le nombre d'étages";
                           }
-                          widget.formAnswers.home_floors_number = int.parse(v);
+                          widget.formAnswers.homeFloorsNumber = int.parse(v);
                           return null;
                         },
                       ),
@@ -299,7 +299,7 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                       id: 'home_stairs',
                       label: const Text(
                           'Accède-t-on à votre habitat par des escaliers?',
-                          style: LabelTextStyle),
+                          style: labelTextStyle),
                       items: const [
                         ShadRadio(value: true, label: Text('Oui')),
                         ShadRadio(value: false, label: Text('Non')),
@@ -308,7 +308,7 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                         if (v == null) {
                           return "Veuillez choisir une option";
                         }
-                        widget.formAnswers.home_stairs = v;
+                        widget.formAnswers.homeStairs = v;
                         return null;
                       },
                     ),
@@ -317,10 +317,10 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                       id: 'job',
                       label: const Text(
                           'Quel est votre profession ou que faites-vous actuellement?',
-                          style: LabelTextStyle),
+                          style: labelTextStyle),
                       placeholder: const Text('Votre profession',
-                          style: PlaceholderTextStyle),
-                      decoration: FormInputDecoration,
+                          style: placeholderTextStyle),
+                      decoration: formInputDecoration,
                       validator: (v) {
                         if (v.isEmpty) {
                           return "Merci d'entrer votre profession";
@@ -358,7 +358,7 @@ class _IdentityFormScreenState extends State<IdentityFormScreen> {
                         } else {}
                       },
                       child: const Text("Continuer",
-                          style: PrimaryButtonTextStyle),
+                          style: primaryButtonTextStyle),
                     )
                   ],
                 ),

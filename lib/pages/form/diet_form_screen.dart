@@ -1,12 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/models/FormAnswers.dart';
+import 'package:mouvaps/models/form_answers.dart';
+import 'package:mouvaps/services/pathology.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
+import 'package:mouvaps/utils/text_utils.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import 'package:mouvaps/utils/constants.dart' as Constants;
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class DietFormScreen extends StatefulWidget {
   final FormAnswers formAnswers;
@@ -14,11 +15,12 @@ class DietFormScreen extends StatefulWidget {
   const DietFormScreen({super.key, required this.formAnswers});
 
   @override
-  _DietFormScreenState createState() => _DietFormScreenState();
+  DietFormScreenState createState() => DietFormScreenState();
 }
 
-class _DietFormScreenState extends State<DietFormScreen> {
+class DietFormScreenState extends State<DietFormScreen> {
   final formKey = GlobalKey<ShadFormState>();
+  final Future<List<Pathology>> pathologies = Pathology.getAll();
 
   @override
   Widget build(BuildContext context) {
@@ -47,29 +49,30 @@ class _DietFormScreenState extends State<DietFormScreen> {
                             id:'dietary_restrictions',
                             label: const Text(
                                 'Avez-vous un régime particulier?',
-                                style: LabelTextStyle),
+                                style: labelTextStyle),
                             placeholder: const Text("Exemple : végétarien, sans gluten, etc.",
-                                style: PlaceholderTextStyle),
+                                style: placeholderTextStyle),
                             keyboardType: TextInputType.text,
-                            decoration: FormInputDecoration,
+                            decoration: formInputDecoration,
                             validator: (v) {
                               if (v.isNotEmpty) {
-                                widget.formAnswers.dietary_restrictions = v;
+                                widget.formAnswers.dietaryRestrictions = v;
                                 return null;
                               }
                               return "Merci de répondre à la question";
                             },
                           ),
                           //TODO: systeme avec mots clés pour les allergies
+                          _buildPathologySelect(),
                           ShadInputFormField(
                             id: 'allergies',
                             label: const Text(
                                 'Avez-vous des allergies alimentaires?',
-                                style: LabelTextStyle),
+                                style: labelTextStyle),
                             placeholder: const Text("Exemple : arachides, crustacés, etc.",
-                                style: PlaceholderTextStyle),
+                                style: placeholderTextStyle),
                             keyboardType: TextInputType.text,
-                            decoration: FormInputDecoration,
+                            decoration: formInputDecoration,
                             validator: (v) {
                               if (v.isNotEmpty) {
                                 widget.formAnswers.allergies = v;
@@ -83,14 +86,14 @@ class _DietFormScreenState extends State<DietFormScreen> {
                             id: 'food_hated',
                             label: const Text(
                                 'Y-a-t-il des aliments que vous détestez ?',
-                                style: LabelTextStyle),
+                                style: labelTextStyle),
                             placeholder: const Text("Aliments détestés",
-                                style: PlaceholderTextStyle),
+                                style: placeholderTextStyle),
                             keyboardType: TextInputType.text,
-                            decoration: FormInputDecoration,
+                            decoration: formInputDecoration,
                             validator: (v) {
                               if (v.isNotEmpty) {
-                                widget.formAnswers.food_hated = v;
+                                widget.formAnswers.foodHated = v;
                                 return null;
                               }
                               return "Merci de répondre à la question";
@@ -101,14 +104,14 @@ class _DietFormScreenState extends State<DietFormScreen> {
                             id:'expectations_needs_diet',
                             label: const Text(
                                 'Quelles sont vos attentes et vos besoins pour le programme alimentaire?',
-                                style: LabelTextStyle),
+                                style: labelTextStyle),
                             placeholder: const Text("Attentes et besoins",
-                                style: PlaceholderTextStyle),
+                                style: placeholderTextStyle),
                             keyboardType: TextInputType.text,
-                            decoration: FormInputDecoration,
+                            decoration: formInputDecoration,
                             validator: (v) {
                               if (v.isNotEmpty) {
-                                widget.formAnswers.expectations_needs_diet = v;
+                                widget.formAnswers.expectationsNeedsDiet = v;
                                 return null;
                               }
                               return "Merci de répondre à la question";
@@ -124,11 +127,50 @@ class _DietFormScreenState extends State<DietFormScreen> {
                               } else {}
                             },
                             child: const Text("Envoyer",
-                                style: PrimaryButtonTextStyle),
+                                style: primaryButtonTextStyle),
                           )
                         ]
                     )
-                ))));
+                )
+            )
+        )
+    );
+  }
+
+  Widget _buildPathologySelect() {
+    return FutureBuilder<List<Pathology>>(
+      future: pathologies,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ShadSelect.multiple(
+            minWidth: 340,
+            onChanged: print,
+            allowDeselection: true,
+            closeOnSelect: false,
+            placeholder: const Text('Selectionnez vos pathologies'),
+            options: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32, 6, 6, 6),
+                child: Text(
+                  'Pathologies',
+                  style: ShadTheme.of(context).textTheme.large,
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              ...snapshot.data!.map(
+                    (e) => ShadOption(
+                  value: e.id,
+                  child: Text(e.name.capitalize()),
+                ),
+              )
+            ],
+            selectedOptionsBuilder: (context, values) =>
+                Text(values.map((v) => v ?? '').join(', ')),
+          );
+        }
+        return const CircularProgressIndicator();
+      },
+    );
   }
 }
 
@@ -144,7 +186,7 @@ class AllergyBubbleWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
-        color: Constants.primaryColor,
+        color: constants.primaryColor,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

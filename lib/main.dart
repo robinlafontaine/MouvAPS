@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/auth/auth_router.dart';
+import 'package:mouvaps/pages/form/name_form_screen.dart';
 import 'package:mouvaps/pages/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
 import 'package:mouvaps/pages/offline/downloads_screen.dart';
@@ -98,6 +99,7 @@ class MyApp extends StatelessWidget {
               email: ModalRoute.of(context)!.settings.arguments as String),
           '/profile': (context) => const ProfileScreen(),
           '/offline': (context) => const DownloadsScreen(),
+          '/form': (context) => const NameFormScreen(),
         },
       ),
     );

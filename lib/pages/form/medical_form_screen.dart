@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/pages/form/physical_activity_form_screen.dart';
-import 'package:mouvaps/models/FormAnswers.dart';
+import 'package:mouvaps/models/form_answers.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -13,10 +12,10 @@ class MedicalFormScreen extends StatefulWidget {
   const MedicalFormScreen({super.key, required this.formAnswers});
 
   @override
-  _MedicalFormScreenState createState() => _MedicalFormScreenState();
+  MedicalFormScreenState createState() => MedicalFormScreenState();
 }
 
-class _MedicalFormScreenState extends State<MedicalFormScreen> {
+class MedicalFormScreenState extends State<MedicalFormScreen> {
   final formKey = GlobalKey<ShadFormState>();
 
   @override
@@ -46,17 +45,17 @@ class _MedicalFormScreenState extends State<MedicalFormScreen> {
                             id: 'medical_history',
                             label: const Text(
                                 "Quels sont vos antécédents médicaux ?",
-                                style: LabelTextStyle),
+                                style: labelTextStyle),
                             placeholder: const Text(
                                 "Exemple : entorse de la cheville droite, etc.",
-                                style: PlaceholderTextStyle),
+                                style: placeholderTextStyle),
                             keyboardType: TextInputType.text,
-                            decoration: FormInputDecoration,
+                            decoration: formInputDecoration,
                             validator: (v) {
                               if (v.isEmpty) {
                                 return "Merci de renseigner vos antécédents médicaux";
                               }
-                              widget.formAnswers.medical_history = v;
+                              widget.formAnswers.medicalHistory = v;
                               return null;
 
                             },
@@ -66,17 +65,17 @@ class _MedicalFormScreenState extends State<MedicalFormScreen> {
                             id: 'risk_factors',
                             label: const Text(
                                 "Présentez-vous des facteurs de risques ?",
-                                style: LabelTextStyle),
+                                style: labelTextStyle),
                             placeholder: const Text(
                                 "Exemple : tabagisme, hypertension, etc.",
-                                style: PlaceholderTextStyle),
+                                style: placeholderTextStyle),
                             keyboardType: TextInputType.text,
-                            decoration: FormInputDecoration,
+                            decoration: formInputDecoration,
                             validator: (v) {
                               if (v.isEmpty) {
                                 return "Merci d'indiquer si vous présentez des facteurs de risques";
                               }
-                              widget.formAnswers.risk_factors = v;
+                              widget.formAnswers.riskFactors = v;
                               return null;
                             },
                           ),
@@ -85,7 +84,7 @@ class _MedicalFormScreenState extends State<MedicalFormScreen> {
                             id: 'medication_yes_no',
                             label: const Text(
                                 "Avez-vous un traitement médicamenteux ?",
-                                style: LabelTextStyle),
+                                style: labelTextStyle),
                             items: const [
                               ShadRadio(value: true, label: Text('Oui')),
                               ShadRadio(value: false, label: Text('Non')),
@@ -109,12 +108,12 @@ class _MedicalFormScreenState extends State<MedicalFormScreen> {
                           ShadInputFormField(
                               id: 'medication',
                               label: const Text("Si oui lequel/lesquels  ?",
-                                  style: LabelTextStyle),
+                                  style: labelTextStyle),
                               placeholder: const Text(
                                   "Exemple : Bétabloquant, vasodilatateurs, etc.",
-                                  style: PlaceholderTextStyle),
+                                  style: placeholderTextStyle),
                               keyboardType: TextInputType.text,
-                              decoration: FormInputDecoration,
+                              decoration: formInputDecoration,
                               validator: (v) {
                                 if (v.isEmpty) {
                                   return "Merci de répondre à la question";
@@ -151,8 +150,13 @@ class _MedicalFormScreenState extends State<MedicalFormScreen> {
                               } else {}
                             },
                             child: const Text("Continuer",
-                                style: PrimaryButtonTextStyle),
+                                style: primaryButtonTextStyle),
                           )
-                        ])))));
+                        ]
+                    )
+                )
+            )
+        )
+    );
   }
 }

@@ -1,22 +1,22 @@
 import 'package:flutter/cupertino.dart';
 
-import 'package:mouvaps/utils/constants.dart' as Constants;
+import 'package:mouvaps/utils/constants.dart' as constants;
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-const LabelTextStyle = TextStyle(
-  fontSize: Constants.form_label_font_size,
-  fontWeight: Constants.form_label_font_weight,
-  color: Constants.textColor,
+const labelTextStyle = TextStyle(
+  fontSize: constants.formLabelFontSize,
+  fontWeight: constants.formLabelFontWeight,
+  color: constants.textColor,
 );
 
-const FormInputDecoration = ShadDecoration(
-        color: Constants.textFieldColor,
+const formInputDecoration = ShadDecoration(
+        color: constants.textFieldColor,
         border: ShadBorder(
-          top: BorderSide(color: Constants.textFieldColor),
+          top: ShadBorderSide(color: constants.textFieldColor),
         )
     );
 
-const PlaceholderTextStyle = TextStyle(
-  color: Constants.textFieldPlaceholderColor,
+const placeholderTextStyle = TextStyle(
+  color: constants.textFieldPlaceholderColor,
 );
 
