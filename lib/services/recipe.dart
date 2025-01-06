@@ -123,7 +123,6 @@ class Recipe {
       )
     )
   ''');
-
     return response.map((json) => Recipe.fromJson(json)).toList();
   }
 

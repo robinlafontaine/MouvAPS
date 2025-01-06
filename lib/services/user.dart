@@ -1,11 +1,12 @@
 import 'package:logger/logger.dart';
+import 'package:mouvaps/services/pathology.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 class User {
   final String userUuid;
   final int? formId;
-  final List<int>? pathologies;
+  final List<Pathology>? pathologies;
   final int points;
   final int age;
   final String firstName;
@@ -29,7 +30,7 @@ class User {
       userUuid: json['user_uuid'] as String,
       formId: json['form_id'] as int,
       pathologies: (json['user_pathologie'] as List<dynamic>?)
-          ?.map((e) => e['pathologie_id'] as int)
+          ?.map((e) => Pathology.fromJson(e['pathologies']))
           .toList(),
       age: json['age'] as int,
       firstName: json['first_name'] as String,
@@ -41,7 +42,7 @@ class User {
     return {
       'user_uuid': userUuid,
       'form_id': formId,
-      'user_pathologie': pathologies?.map((e) => {'pathologie_id': e}).toList(),
+      'user_pathologie': pathologies?.map((e) => e.toJson()).toList(),
       'points': points,
       'age': age,
       'first_name': firstName,
@@ -133,13 +134,17 @@ class User {
             form_id,
             points,
             age,
-            user_pathologie (
-              pathologie_id
-            ),
             first_name,
-            last_name
+            last_name,
+            user_pathologie (
+              pathologies (
+                id,
+                name
+              )
+            )
           ''')
             .eq('user_uuid', uuid).single();
+    print(response);
     return User.fromJson(response);
   }
 

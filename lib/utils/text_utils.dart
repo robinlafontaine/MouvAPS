@@ -16,6 +16,20 @@ class MediumText extends StatelessWidget {
   }
 }
 
+class H1 extends StatelessWidget {
+  final String content;
+  const H1(
+      {super.key, required this.content}
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      content,
+      style: ShadTheme.of(context).textTheme.h1);
+  }
+}
+
 class H2 extends StatelessWidget {
   final String content;
   const H2(

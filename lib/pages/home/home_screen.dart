@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      const ProfileScreen(),
+                      ProfileScreen(),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     var begin = const Offset(1.0, 0.0);

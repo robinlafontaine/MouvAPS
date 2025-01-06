@@ -96,7 +96,7 @@ class MyApp extends StatelessWidget {
           '/signin': (context) => const SignInScreen(),
           '/otp': (context) => OTPScreen(
               email: ModalRoute.of(context)!.settings.arguments as String),
-          '/profile': (context) => const ProfileScreen(),
+          '/profile': (context) => ProfileScreen(),
           '/offline': (context) => const DownloadsScreen(),
         },
       ),
