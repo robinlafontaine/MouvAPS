@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/pages/admin/widgets/content_list_admin.dart';
+import 'package:mouvaps/pages/admin/widgets/admin_content_list.dart';
 import 'package:mouvaps/services/exercise.dart';
 
 class ExerciseAdminScreen extends StatefulWidget {

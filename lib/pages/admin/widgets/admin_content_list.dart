@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mouvaps/pages/admin/widgets/admin_content_new.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:mouvaps/services/recipe.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -34,7 +35,13 @@ class _ContentListAdminState extends State<ContentListAdmin> {
         shrinkWrap: true,
         itemCount: widget.recipes!.length,
         itemBuilder: (context, index) {
-          return _buildTitleButton(widget.recipes![index].name, () {});
+          return _buildTitleButton(widget.recipes![index].name, () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const AdminNewContent(),
+              ),
+            );
+          });
         },
         separatorBuilder: (context, index) {
           return const Divider(indent: 15, endIndent: 15);
@@ -50,6 +57,7 @@ class _ContentListAdminState extends State<ContentListAdmin> {
   Widget _buildTitleButton(String title, Function() onPressed) {
     return ListTile(
       title: Text(title, style: ShadTheme.of(context).textTheme.p),
+      onTap: onPressed,
     );
   }
 }
