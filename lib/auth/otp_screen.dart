@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
-import 'package:pinput/pinput.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/auth.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
@@ -21,7 +21,6 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   var logger = Logger(printer: SimplePrinter());
-  final pinController = TextEditingController();
   final focusNode = FocusNode();
   String? errorMessage;
   bool isLoading = false;
@@ -38,7 +37,6 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   void dispose() {
-    pinController.dispose();
     focusNode.dispose();
     _timer?.cancel();
     super.dispose();
@@ -68,7 +66,8 @@ class _OTPScreenState extends State<OTPScreen> {
     });
   }
 
-  Future<void> _verifyOtp() async {
+  Future<void> _verifyOtp(String pin) async {
+
     setState(() {
       isLoading = true;
       errorMessage = null;
@@ -76,7 +75,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
     final bool res = await Auth.instance.verifyOtp(
       email: widget.email,
-      token: pinController.text,
+      token: pin,
     );
 
     if (!res) {
@@ -110,21 +109,36 @@ class _OTPScreenState extends State<OTPScreen> {
     );
   }
 
+  Widget _buildOTPInput() {
+    return ShadInputOTP(
+      onChanged: (v) => v.contains(' ') ? null : _verifyOtp(v),
+      maxLength: 6,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+      ],
+      children: const [
+        ShadInputOTPGroup(
+          children: [
+            ShadInputOTPSlot(),
+            ShadInputOTPSlot(),
+            ShadInputOTPSlot(),
+          ],
+        ),
+        ShadImage.square(size: 24, LucideIcons.dot),
+        ShadInputOTPGroup(
+          children: [
+            ShadInputOTPSlot(),
+            ShadInputOTPSlot(),
+            ShadInputOTPSlot(),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final defaultPinTheme = PinTheme(
-      width: 56,
-      height: 56,
-      textStyle: const TextStyle(
-        fontSize: 22,
-        color: Colors.black,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-    );
-
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -133,7 +147,7 @@ class _OTPScreenState extends State<OTPScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const ShadImage(
-              'https://avatars.githubusercontent.com/u/124599?v=4',
+              'assets/images/icon.png',
               height: 100,
             ),
             const SizedBox(height: 16),
@@ -148,24 +162,7 @@ class _OTPScreenState extends State<OTPScreen> {
               fontWeight: constants.pFontWeight,
             ),),
             const SizedBox(height: 20),
-            Pinput(
-              length: 6,
-              controller: pinController,
-              focusNode: focusNode,
-              defaultPinTheme: defaultPinTheme,
-              focusedPinTheme: defaultPinTheme.copyWith(
-                decoration: defaultPinTheme.decoration?.copyWith(
-                  border: Border.all(color: constants.primaryColor),
-                ),
-              ),
-              errorPinTheme: defaultPinTheme.copyWith(
-                decoration: defaultPinTheme.decoration?.copyWith(
-                  border: Border.all(color: constants.errorColor),
-                ),
-              ),
-              errorText: errorMessage,
-              onCompleted: (_) => _verifyOtp(),
-            ),
+            _buildOTPInput(),
             const SizedBox(height: 20),
             if (errorMessage != null)
               Text(

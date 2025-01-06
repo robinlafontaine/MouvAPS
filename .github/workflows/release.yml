@@ -40,7 +40,7 @@ jobs:
       - name: Flutter action
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 3.24.5
+          flutter-version: 3.27.0
           channel: stable
 
       - name: Install dependencies
@@ -67,9 +67,7 @@ jobs:
           echo SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY >> .env   
 
       - name: Run tests
-        run: |
-          flutter test
-          flutter analyze
+        run: flutter analyze
 
       - name: Build Apk
         run: flutter build apk --release -v

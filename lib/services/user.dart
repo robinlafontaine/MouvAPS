@@ -3,11 +3,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 class User {
-  final String createdAt;
-  final int? formId;
-  final int points;
-  final int pathology;
   final String userUuid;
+  final int? formId;
+  final List<int>? pathologies;
+  final int points;
   final int age;
   final String firstName;
   final String lastName;
@@ -15,11 +14,10 @@ class User {
   Logger logger = Logger();
 
   User({
-    required this.createdAt,
-    required this.formId,
-    required this.points,
-    required this.pathology,
     required this.userUuid,
+    required this.formId,
+    required this.pathologies,
+    required this.points,
     required this.age,
     required this.firstName,
     required this.lastName,
@@ -27,11 +25,12 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      createdAt: json['created_at'] as String,
-      formId: json['form_id'] as int?,
       points: json['points'] as int,
-      pathology: json['pathology_id'] as int,
       userUuid: json['user_uuid'] as String,
+      formId: json['form_id'] as int,
+      pathologies: (json['user_pathologie'] as List<dynamic>?)
+          ?.map((e) => e['pathologie_id'] as int)
+          .toList(),
       age: json['age'] as int,
       firstName: json['first_name'] as String,
       lastName: json['last_name'] as String,
@@ -40,11 +39,10 @@ class User {
 
   Map<String, dynamic> toJson() {
     return {
-      'created_at': createdAt,
-      'form_id': formId,
-      'points': points,
-      'pathology': pathology,
       'user_uuid': userUuid,
+      'form_id': formId,
+      'user_pathologie': pathologies?.map((e) => {'pathologie_id': e}).toList(),
+      'points': points,
       'age': age,
       'first_name': firstName,
       'last_name': lastName,
@@ -69,8 +67,43 @@ class User {
         .eq('user_uuid', userUuid)
         .select()
         .single();
-
     return User.fromJson(response);
+  }
+
+  // Update the user's points
+  Future<User> updatePoints(int points) async {
+    final response = await _supabase
+        .from('users')
+        .update({'points': points})
+        .eq('user_uuid', userUuid)
+        .select()
+        .single();
+    return User.fromJson(response);
+  }
+
+  // Get user's points
+  Future<int> getPoints() async {
+    final response = await _supabase
+        .from('users')
+        .select('points')
+        .eq('user_uuid', userUuid)
+        .single();
+    return response['points'] as int;
+  }
+
+  // Get user's points by user uuid
+  static Future<int> getPointsByUuid(String? uuid) async {
+
+    if (uuid == null) {
+      return 0;
+    }
+
+    final response = await _supabase
+        .from('users')
+        .select('points')
+        .eq('user_uuid', uuid)
+        .single();
+    return response['points'] as int;
   }
 
   static Future<List<User>> getAll() async {
@@ -87,19 +120,35 @@ class User {
         .eq('user_uuid', userUuid);
   }
 
-  static Future<User> getByUuid(String uuid) async {
+  static Future<User> getUserByUuid(String? uuid) async {
+
+    if (uuid == null) {
+      return empty();
+    }
+
     final response =
-    await _supabase.from('users').select().eq('user_uuid', uuid).single();
+        await _supabase.from('users')
+            .select('''
+            user_uuid,
+            form_id,
+            points,
+            age,
+            user_pathologie (
+              pathologie_id
+            ),
+            first_name,
+            last_name
+          ''')
+            .eq('user_uuid', uuid).single();
     return User.fromJson(response);
   }
 
   static User empty() {
     return User(
-      createdAt: '',
-      formId: 0,
-      points: 0,
-      pathology: 0,
       userUuid: const Uuid().v4(),
+      formId: 0,
+      pathologies: [],
+      points: 0,
       age: 0,
       firstName: '',
       lastName: '',
