@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mouvaps/pages/admin/users/user_screen.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 import 'package:mouvaps/utils/text_utils.dart';
+import 'package:mouvaps/widgets/custom_badge.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/pathology.dart';
 
@@ -40,9 +41,17 @@ class UserTile extends StatelessWidget {
             spacing: 10,
             runSpacing: 5, // Adds spacing between rows if wrapping occurs
             children: [
-              ShadBadge(child: Text("$age ans")),
+              CustomBadge(
+                  text: "$age ans",
+                  backgroundColor: constants.primaryColor,
+                  textColor: constants.lightColor,
+              ),
               for (final pathology in pathologies!) ...[
-                ShadBadge.secondary(child: Text(pathology.name)),
+                CustomBadge(
+                    text: pathology.name,
+                    backgroundColor: constants.lightColor,
+                    textColor: constants.textColor,
+                ),
               ],
             ],
           ),

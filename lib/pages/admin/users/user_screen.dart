@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 import 'package:mouvaps/services/user.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:mouvaps/widgets/custom_badge.dart';
 
 class UserScreen extends StatelessWidget {
   final String uuid;
@@ -77,7 +77,11 @@ class UserScreen extends StatelessWidget {
                                   direction: Axis.horizontal,
                                   children: [
                                     for (final pathology in currentUser.pathologies!) ...[
-                                      ShadBadge(child: Text(pathology.name)),
+                                      CustomBadge(
+                                        text: pathology.name,
+                                        backgroundColor: constants.lightColor,
+                                        textColor: constants.textColor,
+                                      ),
                                       const SizedBox(width: 10)
                                     ],
                                   ],
