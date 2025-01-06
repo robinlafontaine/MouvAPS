@@ -28,6 +28,7 @@ class _UserListState extends State<UserList> {
                   lastName: content.lastName,
                   points: content.points,
                   age: content.age,
+                  pathologies: content.pathologies,
                 );
               }).toList());
         } else {
