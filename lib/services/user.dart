@@ -3,14 +3,12 @@ import 'package:uuid/uuid.dart';
 
 class User {
   final String userUuid;
-  final int? formId;
   final List<int>? pathologies;
   final int points;
   final int age;
 
   User({
     required this.userUuid,
-    required this.formId,
     required this.pathologies,
     required this.points,
     required this.age,
@@ -19,7 +17,6 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       userUuid: json['user_uuid'] as String,
-      formId: json['form_id'] as int,
       pathologies: (json['user_pathologie'] as List<dynamic>?)
           ?.map((e) => e['pathologie_id'] as int)
           .toList(),
@@ -31,7 +28,6 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'user_uuid': userUuid,
-      'form_id': formId,
       'user_pathologie': pathologies?.map((e) => {'pathologie_id': e}).toList(),
       'points': points,
       'age': age,
@@ -107,7 +103,6 @@ class User {
         await _supabase.from('users')
             .select('''
             user_uuid,
-            form_id,
             points,
             age,
             user_pathologie (
@@ -121,10 +116,27 @@ class User {
   static User empty() {
     return User(
       userUuid: const Uuid().v4(),
-      formId: 0,
       pathologies: [],
       points: 0,
       age: 0,
     );
+  }
+
+  static Future<bool> exists(String? uuid) async {
+    try {
+    if (uuid == null) {
+      return false;
+    }
+
+    final response = await _supabase
+        .from('users')
+        .select('user_uuid')
+        .eq('user_uuid', uuid)
+        .single();
+
+    return response.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
   }
 }
