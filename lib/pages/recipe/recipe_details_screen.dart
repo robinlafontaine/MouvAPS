@@ -14,7 +14,8 @@ class RecipeDetailsScreen extends StatefulWidget {
   final Recipe recipe;
   final bool isOffline;
 
-  const RecipeDetailsScreen({super.key, required this.recipe, this.isOffline = false});
+  const RecipeDetailsScreen(
+      {super.key, required this.recipe, this.isOffline = false});
 
   @override
   State<RecipeDetailsScreen> createState() => _RecipeDetailsScreenState();
@@ -97,7 +98,7 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   // Grid axis count based on screen size
-                  crossAxisCount: 2,
+                  crossAxisCount: 3,
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
                 ),
@@ -140,12 +141,14 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
   }
 
   Widget _buildIngredientCard(Ingredient ingredient) {
+    double deviceWidth = MediaQuery.of(context).size.width;
+    double imageHeight = deviceWidth / 7;
     return ShadCard(
       padding: const EdgeInsets.all(0),
       title: Center(
         child: Text(
           ingredient.name,
-          style: ShadTheme.of(context).textTheme.h3,
+          style: ShadTheme.of(context).textTheme.p,
           softWrap: true,
         ),
       ),
@@ -155,22 +158,23 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
           style: ShadTheme.of(context).textTheme.p,
         ),
       ),
-      child: ClipRRect(
-        child: AspectRatio(
-          aspectRatio: 16 / 9,
-
-          child: Image(
-            image: widget.isOffline
-                ? FileImage(File(ingredient.imageUrl))
-                : NetworkImage(ingredient.imageUrl),
-            fit: BoxFit.contain,
-            errorBuilder: (BuildContext context, Object exception,
-                StackTrace? stackTrace) {
-              return const Icon(
-                Icons.image_not_supported,
-                size: 30,
-              );
-            },
+      child: Center(
+        child: ClipRRect(
+          child: SizedBox(
+            height: imageHeight,
+            child: Image(
+              image: widget.isOffline
+                  ? FileImage(File(ingredient.imageUrl))
+                  : NetworkImage(ingredient.imageUrl),
+              fit: BoxFit.cover,
+              errorBuilder: (BuildContext context, Object exception,
+                  StackTrace? stackTrace) {
+                return const Icon(
+                  Icons.image_not_supported,
+                  size: 30,
+                );
+              },
+            ),
           ),
         ),
       ),
