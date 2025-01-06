@@ -32,7 +32,7 @@ class _SignInScreenState extends State<SignInScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const ShadImage(
-                  'https://avatars.githubusercontent.com/u/124599?v=4',
+                  'assets/images/icon.png',
                   height: 100,
                 ),
                 const SizedBox(height: 16),
@@ -59,9 +59,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     decoration: const ShadDecoration(
                         color: constants.textFieldColor,
-                        border: ShadBorder(
-                          top: BorderSide(color: constants.textFieldColor),
-                        )
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
