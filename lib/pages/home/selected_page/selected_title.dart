@@ -13,9 +13,9 @@ class SelectedTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(isAdmin) {
+    if (isAdmin) {
       int index = currentIndex;
-      if(currentIndex > 1) {
+      if (currentIndex > 2) {
         index = 0;
       }
       List<Widget> widgets = <Widget>[
@@ -24,7 +24,11 @@ class SelectedTitle extends StatelessWidget {
           style: ShadTheme.of(context).textTheme.h1,
         ),
         Text(
-          'Contenus',
+          'Séances',
+          style: ShadTheme.of(context).textTheme.h1,
+        ),
+        Text(
+          'Recettes',
           style: ShadTheme.of(context).textTheme.h1,
         ),
       ];

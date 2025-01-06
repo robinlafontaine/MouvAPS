@@ -16,9 +16,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(isAdmin) {
+    if (isAdmin) {
       int index = currentIndex;
-      if(currentIndex > 1) {
+      if (currentIndex > 2) {
         index = 0;
       }
       return BottomNavigationBar(
@@ -28,8 +28,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
             label: 'Utilisateurs',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.play_circle),
-            label: 'Contenus',
+            icon: Icon(Icons.fitness_center),
+            label: 'Séances',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant),
+            label: 'Recettes',
           ),
         ],
         currentIndex: index,

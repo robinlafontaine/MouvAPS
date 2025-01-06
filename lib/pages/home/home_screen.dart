@@ -50,36 +50,37 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        const DownloadsScreen(),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      var begin = const Offset(1.0, 0.0);
-                      var end = Offset.zero;
-                      var curve = Curves.ease;
+            onPressed: () {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const DownloadsScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    var begin = const Offset(1.0, 0.0);
+                    var end = Offset.zero;
+                    var curve = Curves.ease;
 
-                      var tween = Tween(begin: begin, end: end)
-                          .chain(CurveTween(curve: curve));
+                    var tween = Tween(begin: begin, end: end)
+                        .chain(CurveTween(curve: curve));
 
-                      return SlideTransition(
-                        position: animation.drive(tween),
-                        child: child,
-                      );
-                    },
-                  ),
-                ).then((_) {
-                  setState(() {});
-                });
-              },
-              icon: const Icon(
-                Icons.download_for_offline,
-                color: primaryColor,
-                size: 36,
-              )),
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                ),
+              ).then((_) {
+                setState(() {});
+              });
+            },
+            icon: const Icon(
+              Icons.download_for_offline,
+              color: primaryColor,
+              size: 36,
+            ),
+          ),
           IconButton(
             icon: const Icon(
               Icons.account_circle,
