@@ -36,7 +36,7 @@ class Pathology {
   }
 
   static Future<List<Pathology>> getAll() async {
-    final response = await _supabase.from('pathologies').select();
+    final response = await _supabase.from('pathologies').select().order('id', ascending: true);
     return (response as List)
         .map((e) => Pathology.fromJson(e))
         .toList();

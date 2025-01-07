@@ -164,4 +164,22 @@ class User {
       lastName: '',
     );
   }
+
+  static Future<bool> exists(String? uuid) async {
+    try {
+    if (uuid == null) {
+      return false;
+    }
+
+    final response = await _supabase
+        .from('users')
+        .select('user_uuid')
+        .eq('user_uuid', uuid)
+        .single();
+
+    return response.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
 }
