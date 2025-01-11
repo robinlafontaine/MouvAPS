@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mouvaps/utils/constants.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class MediumText extends StatelessWidget {
+class BadgeText extends StatelessWidget {
   final String content;
-  const MediumText(
+  const BadgeText(
       {super.key, required this.content}
       );
 
@@ -11,8 +12,31 @@ class MediumText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       content,
-      style: const TextStyle(fontWeight: FontWeight.w500),
+      style: const TextStyle(
+        fontFamily: fontFamily,
+        fontSize: badgeFontSize,
+        fontVariations:[
+          FontVariation(
+              'wght', badgeFontWeight
+          )
+        ],
+        color: textColor,
+      ),
     );
+  }
+}
+
+class H1 extends StatelessWidget {
+  final String content;
+  const H1(
+    {super.key, required this.content}
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      content,
+      style: ShadTheme.of(context).textTheme.h1);
   }
 }
 
@@ -33,6 +57,45 @@ class H2 extends StatelessWidget {
   }
 }
 
+class H4 extends StatelessWidget {
+  final String content;
+  const H4(
+      {super.key, required this.content}
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      content,
+      style: ShadTheme.of(context).textTheme.h4
+    );
+  }
+}
+
+class SubTitle extends StatelessWidget {
+  final String content;
+  const SubTitle(
+      {super.key, required this.content}
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      content,
+      style: const TextStyle(
+        fontFamily: fontFamily,
+        fontSize: subtitleFontSize,
+        fontVariations:[
+          FontVariation(
+              'wght', subtitleFontWeight
+          )
+        ],
+        color: textColor,
+      ),
+    );
+  }
+}
+
 class P extends StatelessWidget {
   final String content;
   const P(
@@ -41,11 +104,9 @@ class P extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 8.0),
-      child: Text(
-          content,
-          textAlign: TextAlign.justify),
+    return Text(
+      content,
+      style: ShadTheme.of(context).textTheme.p
     );
   }
 }

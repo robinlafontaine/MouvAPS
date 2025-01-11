@@ -155,7 +155,11 @@ class PhysicalActivityFormScreenState
                                 const SizedBox(height: 16),
                                 const Text("A quelle intensité ?",style: TextStyle(
                                   fontSize: 18 ,
-                                  fontWeight: constants.formLabelFontWeight,
+                                  fontVariations:[
+                                    FontVariation(
+                                        'wght', constants.formLabelFontWeight
+                                    )
+                                  ],
                                   color: constants.textColor,
                                 ),),
                                 const SizedBox(height: 8),

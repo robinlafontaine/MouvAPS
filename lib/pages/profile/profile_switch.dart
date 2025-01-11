@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/globals/globals.dart' as globals;
 
+import 'package:mouvaps/utils/text_utils.dart';
+
 class ProfileSwitch extends StatefulWidget {
   const ProfileSwitch({super.key});
 
@@ -22,7 +24,7 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
     return ShadSwitch(
       value: value,
       onChanged: (v) => handleToggle(v),
-      label: const Text('Mode administrateur'),
+      label: const BadgeText(content:'Mode administrateur'),
     );
   }
 }

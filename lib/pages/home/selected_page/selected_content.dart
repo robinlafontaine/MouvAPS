@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mouvaps/pages/offline/downloads_screen.dart';
 import 'package:mouvaps/pages/recipe/recipe_screen.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:mouvaps/pages/admin/users/users_page.dart';
+import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/pages/exercise/exercise_screen.dart';
+import 'package:mouvaps/pages/admin/users/users_screen.dart';
 
 class SelectedPage extends StatelessWidget {
   final int currentIndex;
@@ -18,29 +19,22 @@ class SelectedPage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isAdmin) {
       int index = currentIndex;
-      if (currentIndex > 1) {
-        index = 0;
+      if (currentIndex > 2) {
+        index = 2;
       }
-      List<Widget> widgets = <Widget>[
-        const UsersPage(),
-        Text(
-          'Index 1: Contenus',
-          style: ShadTheme.of(context).textTheme.h1,
-        ),
+      List<Widget> widgets = const <Widget>[
+        UsersPage(),
+        H2(content: 'En construction...'),
+        H2(content: 'En construction...'),
       ];
       return widgets[index];
     }
-    List<Widget> widgets = <Widget>[
-      const ExerciseScreen(),
-      const RecipeScreen(),
-      Text(
-        'Index 2: Infos',
-        style: ShadTheme.of(context).textTheme.h1,
-      ),
-      Text(
-        'Index 3: Chat',
-        style: ShadTheme.of(context).textTheme.h1,
-      ),
+    List<Widget> widgets = const <Widget>[
+      ExerciseScreen(),
+      RecipeScreen(),
+      H2(content: 'En construction...'),
+      H2(content: 'En construction...'),
+      DownloadsScreen(),
     ];
     return widgets[currentIndex];
   }
