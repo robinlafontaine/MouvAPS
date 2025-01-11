@@ -57,7 +57,44 @@ class H2 extends StatelessWidget {
   }
 }
 
+class H4 extends StatelessWidget {
+  final String content;
+  const H4(
+      {super.key, required this.content}
+      );
 
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      content,
+      style: ShadTheme.of(context).textTheme.h4
+    );
+  }
+}
+
+class SubTitle extends StatelessWidget {
+  final String content;
+  const SubTitle(
+      {super.key, required this.content}
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      content,
+      style: const TextStyle(
+        fontFamily: fontFamily,
+        fontSize: subtitleFontSize,
+        fontVariations:[
+          FontVariation(
+              'wght', subtitleFontWeight
+          )
+        ],
+        color: textColor,
+      ),
+    );
+  }
+}
 
 class P extends StatelessWidget {
   final String content;

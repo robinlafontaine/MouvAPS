@@ -27,7 +27,7 @@ const double h2FontWeight = 600;
 const double h3FontSize = 20;
 const double h3FontWeight = 500;
 
-const double h4FontSize = 18;
+const double h4FontSize = 16;
 const double h4FontWeight = 600;
 
 const double pFontSize = 16;
@@ -45,7 +45,8 @@ const double buttonTextFontWeight = 500;
 const double badgeFontSize = 12;
 const double badgeFontWeight = 600;
 
-
+const double subtitleFontSize = 14;
+const double subtitleFontWeight = 400;
 
 
 // form contents

@@ -2,23 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:mouvaps/pages/admin/users/user_screen.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 import 'package:mouvaps/utils/text_utils.dart';
-import 'package:mouvaps/widgets/custom_badge.dart';
-import 'package:mouvaps/services/pathology.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class UserTile extends StatelessWidget {
   final String uuid;
   final String firstName;
   final String lastName;
   final int age;
-  final List<Pathology>? pathologies;
 
   const UserTile({super.key,
     required this.uuid,
     required this.firstName,
     required this.lastName,
     required this.age,
-    this.pathologies = const [],
   });
 
   @override
@@ -36,28 +31,8 @@ class UserTile extends StatelessWidget {
               style: const TextStyle(color: constants.primaryColor),
             ),
           ),
-          title: BadgeText(content: "$firstName $lastName"),
-          subtitle: Wrap(
-            spacing: 10,
-            runSpacing: 5, // Adds spacing between rows if wrapping occurs
-            children: [
-              CustomBadge(
-                  text: "$age ans",
-                  backgroundColor: constants.primaryColor,
-                  textColor: constants.lightColor,
-              ),
-              for (final pathology in pathologies!) ...[
-                CustomBadge(
-                    text: pathology.name,
-                    backgroundColor: constants.lightColor,
-                    textColor: constants.textColor,
-                ),
-              ],
-            ],
-          ),
-          trailing: IconButton(
-              onPressed: () {},
-              icon: Icon(PhosphorIcons.pencilSimple(PhosphorIconsStyle.regular))),
+          title: H4(content: "$firstName $lastName" ),
+          subtitle: SubTitle(content: "$age ans"),
           onTap: () {
             Navigator.push(
               context,

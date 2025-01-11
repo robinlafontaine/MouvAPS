@@ -27,7 +27,6 @@ class _UserListState extends State<UserList> {
                   firstName: content.firstName,
                   lastName: content.lastName,
                   age: content.age,
-                  pathologies: content.pathologies,
                   uuid: content.userUuid,
                 );
               }).toList());

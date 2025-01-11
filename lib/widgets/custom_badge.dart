@@ -16,8 +16,16 @@ class CustomBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Badge(
         label: Text(
-            text,
-            style: const TextStyle(fontSize: badgeFontSize),
+          text,
+          style: const TextStyle(
+            fontFamily: fontFamily,
+            fontSize: badgeFontSize,
+            fontVariations: [
+              FontVariation(
+                  'wght', badgeFontWeight
+              )
+            ],
+          ),
         ),
         backgroundColor: backgroundColor,
         textColor: textColor,

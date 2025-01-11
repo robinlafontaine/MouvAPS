@@ -49,7 +49,7 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            BadgeText(content: "${currentUser.firstName}${currentUser.lastName}"),
+                            BadgeText(content: "${currentUser.firstName} ${currentUser.lastName}"),
                           ],
                         ),
                         const Padding(

@@ -5,7 +5,6 @@ import 'package:mouvaps/utils/constants.dart' as constants;
 class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
-  final Color primaryColor;
   final bool isAdmin;
 
 
@@ -13,7 +12,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
     super.key,
     required this.currentIndex,
     required this.onTap,
-    required this.primaryColor,
     required this.isAdmin,
   });
 
@@ -53,17 +51,17 @@ class CustomBottomNavigationBar extends StatelessWidget {
         ],
           type: BottomNavigationBarType.fixed,
           currentIndex: index,
-          selectedItemColor: primaryColor,
+          selectedItemColor: constants.primaryColor,
           unselectedItemColor: constants.textColor,
           showUnselectedLabels: false,
           showSelectedLabels: true,
-        selectedLabelStyle: TextStyle(
-          color: primaryColor,
+        selectedLabelStyle: const TextStyle(
+          color: constants.primaryColor,
           fontSize: 8,
           fontWeight: FontWeight.w600,
         ),
-        unselectedLabelStyle: TextStyle(
-          color: primaryColor,
+        unselectedLabelStyle: const TextStyle(
+          color: constants.primaryColor,
           fontSize: 8,
           fontWeight: FontWeight.w600,
         ),
@@ -115,19 +113,19 @@ class CustomBottomNavigationBar extends StatelessWidget {
       ],
       type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
-      selectedItemColor: primaryColor,
+      selectedItemColor: constants.primaryColor,
       unselectedItemColor: constants.textColor,
       showUnselectedLabels: false,
       showSelectedLabels: true,
-      selectedLabelStyle: TextStyle(
+      selectedLabelStyle: const TextStyle(
         fontFamily: constants.fontFamily,
-        color: primaryColor,
+        color: constants.primaryColor,
         fontSize: 8,
         fontWeight: FontWeight.w600,
       ),
-      unselectedLabelStyle: TextStyle(
+      unselectedLabelStyle: const TextStyle(
         fontFamily: constants.fontFamily,
-        color: primaryColor,
+        color: constants.primaryColor,
         fontSize: 8,
         fontWeight: FontWeight.w600,
       ),

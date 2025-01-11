@@ -112,7 +112,6 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: CustomBottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-          primaryColor: primaryColor,
           isAdmin: globals.isAdmin),
     );
   }
