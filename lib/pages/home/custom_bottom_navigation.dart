@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mouvaps/utils/constants.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
   final Color primaryColor;
   final bool isAdmin;
+
 
   const CustomBottomNavigationBar({
     super.key,
@@ -18,7 +21,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     if(isAdmin) {
       int index = currentIndex;
-      if(currentIndex > 1) {
+      if(currentIndex > 2) {
         index = 0;
       }
       return BottomNavigationBar(
@@ -28,41 +31,65 @@ class CustomBottomNavigationBar extends StatelessWidget {
             label: 'Utilisateurs',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.play_circle),
-            label: 'Contenus',
+            icon: FaIcon(FontAwesomeIcons.personRunning),
+            label: 'Séances',
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.utensils),
+            label: 'Recettes',
           ),
         ],
-        currentIndex: index,
-        selectedItemColor: primaryColor,
-        unselectedItemColor: primaryColor,
-        showUnselectedLabels: true,
-        onTap: onTap,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: index,
+          selectedItemColor: primaryColor,
+          unselectedItemColor: textColor,
+          showUnselectedLabels: false,
+          showSelectedLabels: true,
+          selectedLabelStyle: TextStyle(
+            color: primaryColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+          onTap: onTap,
       );
     }
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.fitness_center),
-          label: 'Sport',
+          icon: FaIcon(FontAwesomeIcons.personRunning),
+          label: 'Séances',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.restaurant),
+          icon: FaIcon(FontAwesomeIcons.utensils),
           label: 'Recettes',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.info),
+          icon: FaIcon(FontAwesomeIcons.circleInfo),
           label: 'Infos',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.live_help),
+          icon: FaIcon(FontAwesomeIcons.comments),
           label: 'Chat',
         ),
+        BottomNavigationBarItem(
+          icon: FaIcon(FontAwesomeIcons.download),
+          label: 'Local',
+        ),
       ],
+      type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
       selectedItemColor: primaryColor,
-      unselectedItemColor: primaryColor,
-      showUnselectedLabels: true,
+      unselectedItemColor: textColor,
+      showUnselectedLabels: false,
+      showSelectedLabels: true,
+      selectedLabelStyle: TextStyle(
+        color: primaryColor,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
       onTap: onTap,
     );
   }
+
+  void setState(Null Function() param0) {}
 }

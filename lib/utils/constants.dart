@@ -16,10 +16,10 @@ const Color destructiveButtonHoverColor = Color(0xFFAA2727);
 const Color textFieldColor = Color.fromRGBO(224, 224, 224, 1);
 const Color textFieldPlaceholderColor = Color.fromRGBO(166, 166, 166, 1);
 
-const double h1FontSize = 32;
+const double h1FontSize = 26;
 const FontWeight h1FontWeight = FontWeight.w600;
 
-const double h2FontSize = 24;
+const double h2FontSize = 22;
 const FontWeight h2FontWeight = FontWeight.w600;
 
 const double h3FontSize = 20;

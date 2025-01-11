@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mouvaps/utils/text_utils.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class SelectedTitle extends StatelessWidget {
@@ -18,35 +19,19 @@ class SelectedTitle extends StatelessWidget {
       if(currentIndex > 1) {
         index = 0;
       }
-      List<Widget> widgets = <Widget>[
-        Text(
-          'Utilisateurs',
-          style: ShadTheme.of(context).textTheme.h1,
-        ),
-        Text(
-          'Contenus',
-          style: ShadTheme.of(context).textTheme.h1,
-        ),
+      List<Widget> widgets = const <Widget>[
+        H1(content: 'Utilisateurs'),
+        H1(content: 'Séances'),
+        H1(content: 'Recettes'),
       ];
       return widgets[index];
     }
-    List<Widget> widgets = <Widget>[
-      Text(
-        'Séances',
-        style: ShadTheme.of(context).textTheme.h1,
-      ),
-      Text(
-        'Recettes',
-        style: ShadTheme.of(context).textTheme.h1,
-      ),
-      Text(
-        'Infos',
-        style: ShadTheme.of(context).textTheme.h1,
-      ),
-      Text(
-        'Chat',
-        style: ShadTheme.of(context).textTheme.h1,
-      ),
+    List<Widget> widgets = const <Widget>[
+      H1(content: 'Séances'),
+      H1(content: 'Recettes'),
+      H1(content: 'Infos'),
+      H1(content: 'Chat'),
+      H1(content: 'Téléchargements'),
     ];
     return widgets[currentIndex];
   }
