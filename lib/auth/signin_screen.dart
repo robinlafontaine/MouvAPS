@@ -46,7 +46,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     id: 'email',
                     label: const Text('Adresse mail', style: TextStyle(
                       fontSize: constants.h3FontSize,
-                      fontWeight: constants.h3FontWeight,
+                      fontWeight: FontWeight.w500,
                       color: constants.textColor,
                     ),),
                     placeholder: const Text('mail@example.com', style: TextStyle(
@@ -86,7 +86,11 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: const Text("Recevoir un code", style: TextStyle(
                     color: constants.buttonTextColor,
                     fontSize: constants.buttonTextFontSize,
-                    fontWeight: constants.buttonTextFontWeight,
+                    fontVariations:[
+                      FontVariation(
+                          'wght', constants.buttonTextFontWeight
+                      )
+                    ],
                   )),
                 ),
               ],

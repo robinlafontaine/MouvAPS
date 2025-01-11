@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/utils/text_utils.dart';
+import 'package:mouvaps/utils/constants.dart';
 
 class CustomBadge extends StatelessWidget {
   final String text;
@@ -15,7 +15,10 @@ class CustomBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Badge(
-        label: MediumText(content: text),
+        label: Text(
+            text,
+            style: const TextStyle(fontSize: badgeFontSize),
+        ),
         backgroundColor: backgroundColor,
         textColor: textColor,
         padding: const EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2)

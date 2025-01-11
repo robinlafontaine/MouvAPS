@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mouvaps/utils/constants.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -22,73 +22,118 @@ class CustomBottomNavigationBar extends StatelessWidget {
     if(isAdmin) {
       int index = currentIndex;
       if(currentIndex > 2) {
-        index = 0;
+        index = 2;
       }
       return BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items:  <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.people),
+            icon: Icon(
+              index == 0
+                  ? PhosphorIcons.users(PhosphorIconsStyle.fill)
+                  : PhosphorIcons.users(PhosphorIconsStyle.regular),
+            ),
             label: 'Utilisateurs',
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.personRunning),
+            icon: Icon(
+              index == 1
+                  ? PhosphorIcons.sneakerMove(PhosphorIconsStyle.fill)
+                  : PhosphorIcons.sneakerMove(PhosphorIconsStyle.regular),
+            ),
             label: 'Séances',
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.utensils),
+            icon: Icon(
+              index == 2
+                  ? PhosphorIcons.bowlFood(PhosphorIconsStyle.fill)
+                  : PhosphorIcons.bowlFood(PhosphorIconsStyle.regular),
+            ),
             label: 'Recettes',
           ),
         ],
           type: BottomNavigationBarType.fixed,
           currentIndex: index,
           selectedItemColor: primaryColor,
-          unselectedItemColor: textColor,
+          unselectedItemColor: constants.textColor,
           showUnselectedLabels: false,
           showSelectedLabels: true,
-          selectedLabelStyle: TextStyle(
-            color: primaryColor,
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-          ),
+        selectedLabelStyle: TextStyle(
+          color: primaryColor,
+          fontSize: 8,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: TextStyle(
+          color: primaryColor,
+          fontSize: 8,
+          fontWeight: FontWeight.w600,
+        ),
           onTap: onTap,
       );
     }
     return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
+      items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: FaIcon(FontAwesomeIcons.personRunning),
+          icon: Icon(
+            currentIndex == 0
+                ? PhosphorIcons.sneakerMove(PhosphorIconsStyle.fill)
+                : PhosphorIcons.sneakerMove(PhosphorIconsStyle.regular),
+          ),
           label: 'Séances',
         ),
         BottomNavigationBarItem(
-          icon: FaIcon(FontAwesomeIcons.utensils),
+          icon: Icon(
+            currentIndex == 1
+                ? PhosphorIcons.bowlFood(PhosphorIconsStyle.fill)
+                : PhosphorIcons.bowlFood(PhosphorIconsStyle.regular),
+          ),
           label: 'Recettes',
         ),
         BottomNavigationBarItem(
-          icon: FaIcon(FontAwesomeIcons.circleInfo),
+          icon: Icon(
+            currentIndex == 2
+                ? PhosphorIcons.info(PhosphorIconsStyle.fill)
+                : PhosphorIcons.info(PhosphorIconsStyle.regular),
+          ),
           label: 'Infos',
         ),
         BottomNavigationBarItem(
-          icon: FaIcon(FontAwesomeIcons.comments),
+          icon: Icon(
+            currentIndex == 3
+                ? PhosphorIcons.chatCircleDots(PhosphorIconsStyle.fill)
+                : PhosphorIcons.chatCircleDots(PhosphorIconsStyle.regular),
+          ),
           label: 'Chat',
         ),
         BottomNavigationBarItem(
-          icon: FaIcon(FontAwesomeIcons.download),
-          label: 'Local',
+          icon: Icon(
+            currentIndex == 4
+                ? PhosphorIcons.downloadSimple(PhosphorIconsStyle.fill)
+                : PhosphorIcons.downloadSimple(PhosphorIconsStyle.regular),
+          ),
+          label: 'Téléchargés',
         ),
       ],
       type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
       selectedItemColor: primaryColor,
-      unselectedItemColor: textColor,
+      unselectedItemColor: constants.textColor,
       showUnselectedLabels: false,
       showSelectedLabels: true,
       selectedLabelStyle: TextStyle(
+        fontFamily: constants.fontFamily,
         color: primaryColor,
-        fontSize: 12,
+        fontSize: 8,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontFamily: constants.fontFamily,
+        color: primaryColor,
+        fontSize: 8,
         fontWeight: FontWeight.w600,
       ),
       onTap: onTap,
     );
+
   }
 
   void setState(Null Function() param0) {}

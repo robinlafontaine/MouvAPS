@@ -49,14 +49,14 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            MediumText(content: "${currentUser.firstName} ${currentUser.lastName}"),
+                            BadgeText(content: "${currentUser.firstName}${currentUser.lastName}"),
                           ],
                         ),
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Divider(),
                         ),
-                        MediumText(content: "${currentUser.points.toString()} points"),
+                        BadgeText(content: "${currentUser.points.toString()} points"),
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Divider(),
@@ -64,7 +64,7 @@ class ProfileScreen extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const MediumText(content: "Pathologies : "),
+                            const BadgeText(content: "Pathologies : "),
                             const SizedBox(height: 5),
                             Flex(
                               direction: Axis.horizontal,

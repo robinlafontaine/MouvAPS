@@ -181,7 +181,7 @@ class _OTPScreenState extends State<OTPScreen> {
             Text('Veuillez entrer le code à 6 chiffres envoyé à ${widget.email}.',
             style: const TextStyle(
               fontSize: constants.pFontSize,
-              fontWeight: constants.pFontWeight,
+              fontWeight: FontWeight.w400,
             ),),
             const SizedBox(height: 20),
             _buildOTPInput(),

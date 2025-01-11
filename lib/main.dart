@@ -45,35 +45,76 @@ class MyApp extends StatelessWidget {
         },
         themeMode: ThemeMode.light,
         theme: ShadThemeData(
+
             colorScheme: const ShadSlateColorScheme.light(),
             brightness: Brightness.light,
 
             // TYPOGRAPHY
             textTheme: ShadTextTheme(
-              family: 'Poppins',
               h1: const TextStyle(
+                fontFamily: constants.fontFamily,
                 fontSize: constants.h1FontSize,
-                fontWeight: constants.h1FontWeight,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                      'wght', constants.h1FontWeight
+                  )
+                ],
                 color: constants.primaryColor,
               ),
               h2: const TextStyle(
+                fontFamily: constants.fontFamily,
                 fontSize: constants.h2FontSize,
-                fontWeight: constants.h2FontWeight,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                      'wght', constants.h2FontWeight
+                  )
+                ],
                 color: constants.secondaryColor,
               ),
               h3: const TextStyle(
+                fontFamily: constants.fontFamily,
                 fontSize: constants.h3FontSize,
-                fontWeight: constants.h3FontWeight,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                      'wght', constants.h3FontWeight
+                  )
+                ],
+                color: constants.textColor,
+              ),
+              h4: const TextStyle(
+                fontFamily: constants.fontFamily,
+                fontSize: constants.h4FontSize,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                    'wght', constants.h4FontWeight
+                  )
+                ],
                 color: constants.textColor,
               ),
               p: const TextStyle(
+                fontFamily: constants.fontFamily,
                 fontSize: constants.pFontSize,
-                fontWeight: constants.pFontWeight,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                      'wght', constants.pFontWeight
+                  )
+                ],
                 color: constants.textColor,
               ),
               small: const TextStyle(
+                fontFamily: constants.fontFamily,
                 fontSize: constants.smallFontSize,
-                fontWeight: constants.smallFontWeight,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                      'wght', constants.smallFontWeight
+                  )
+                ],
                 color: constants.textColor,
               ),
             ),

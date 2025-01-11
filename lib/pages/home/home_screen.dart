@@ -17,13 +17,26 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final PageController _pageController = PageController();
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedIndex = index; // Update the selected index when the item is tapped
+    });
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 1),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _selectedIndex = index; // Update the selected index when the page is swiped
     });
   }
+
 
   @override
   void initState() {
@@ -42,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Consumer<UserPointsNotifier>(
             builder: (context, userPointsNotifier, child) {
-              return MediumText(
+              return BadgeText(
                 content: '${userPointsNotifier.points}',
               );
             },
@@ -81,12 +94,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
-          child: SelectedPage(
-              currentIndex: _selectedIndex, isAdmin: globals.isAdmin),
+      body: Padding(
+        padding:
+          const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: _onPageChanged,
+          children: [
+            SelectedPage(currentIndex: 0, isAdmin: globals.isAdmin),
+            SelectedPage(currentIndex: 1, isAdmin: globals.isAdmin),
+            SelectedPage(currentIndex: 2, isAdmin: globals.isAdmin),
+            if(!globals.isAdmin) SelectedPage(currentIndex: 3, isAdmin: globals.isAdmin),
+            if(!globals.isAdmin) SelectedPage(currentIndex: 4, isAdmin: globals.isAdmin),
+          ],
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(

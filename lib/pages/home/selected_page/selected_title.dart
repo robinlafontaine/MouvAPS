@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/utils/text_utils.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 
 class SelectedTitle extends StatelessWidget {
   final int currentIndex;
@@ -16,8 +15,8 @@ class SelectedTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     if(isAdmin) {
       int index = currentIndex;
-      if(currentIndex > 1) {
-        index = 0;
+      if(currentIndex > 2) {
+        index = 2;
       }
       List<Widget> widgets = const <Widget>[
         H1(content: 'Utilisateurs'),

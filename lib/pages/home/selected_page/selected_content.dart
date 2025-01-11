@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mouvaps/pages/offline/downloads_screen.dart';
 import 'package:mouvaps/pages/recipe/recipe_screen.dart';
 import 'package:mouvaps/utils/text_utils.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/pages/exercise/exercise_screen.dart';
 import 'package:mouvaps/pages/admin/users/users_screen.dart';
 
@@ -21,20 +20,20 @@ class SelectedPage extends StatelessWidget {
     if (isAdmin) {
       int index = currentIndex;
       if (currentIndex > 2) {
-        index = 0;
+        index = 2;
       }
-      List<Widget> widgets = <Widget>[
-        const UsersPage(),
-        H1(content: 'Index 1: Séances'),
-        H1(content: 'Index 2: Recettes'),
+      List<Widget> widgets = const <Widget>[
+        UsersPage(),
+        H2(content: 'En construction...'),
+        H2(content: 'En construction...'),
       ];
       return widgets[index];
     }
     List<Widget> widgets = const <Widget>[
       ExerciseScreen(),
       RecipeScreen(),
-      H1(content: 'Index 2: Infos'),
-      H1(content: 'Index 3: Chat'),
+      H2(content: 'En construction...'),
+      H2(content: 'En construction...'),
       DownloadsScreen(),
     ];
     return widgets[currentIndex];

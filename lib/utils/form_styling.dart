@@ -5,7 +5,11 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 const labelTextStyle = TextStyle(
   fontSize: constants.formLabelFontSize,
-  fontWeight: constants.formLabelFontWeight,
+  fontVariations:[
+    FontVariation(
+        'wght', constants.formLabelFontWeight
+    )
+  ],
   color: constants.textColor,
 );
 

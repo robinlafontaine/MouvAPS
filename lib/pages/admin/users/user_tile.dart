@@ -3,8 +3,8 @@ import 'package:mouvaps/pages/admin/users/user_screen.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/widgets/custom_badge.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/pathology.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class UserTile extends StatelessWidget {
   final String uuid;
@@ -36,7 +36,7 @@ class UserTile extends StatelessWidget {
               style: const TextStyle(color: constants.primaryColor),
             ),
           ),
-          title: MediumText(content: "$firstName $lastName"),
+          title: BadgeText(content: "$firstName $lastName"),
           subtitle: Wrap(
             spacing: 10,
             runSpacing: 5, // Adds spacing between rows if wrapping occurs
@@ -55,7 +55,9 @@ class UserTile extends StatelessWidget {
               ],
             ],
           ),
-          trailing: IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+          trailing: IconButton(
+              onPressed: () {},
+              icon: Icon(PhosphorIcons.pencilSimple(PhosphorIconsStyle.regular))),
           onTap: () {
             Navigator.push(
               context,

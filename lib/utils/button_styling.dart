@@ -2,7 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:mouvaps/utils/constants.dart';
 
 const primaryButtonTextStyle = TextStyle(
+  fontFamily: fontFamily,
   color: buttonTextColor,
   fontSize: buttonTextFontSize,
-  fontWeight: buttonTextFontWeight,
+    fontVariations:[
+      FontVariation(
+          'wght', buttonTextFontSize
+      )
+    ],
 );
