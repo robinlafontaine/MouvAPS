@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
                       'wght', constants.h1FontWeight
                   )
                 ],
-                color: constants.primaryColor,
+                color: constants.textColor,
               ),
               h2: const TextStyle(
                 fontFamily: constants.fontFamily,
@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
                       'wght', constants.h2FontWeight
                   )
                 ],
-                color: constants.secondaryColor,
+                color: constants.textColor,
               ),
               h3: const TextStyle(
                 fontFamily: constants.fontFamily,

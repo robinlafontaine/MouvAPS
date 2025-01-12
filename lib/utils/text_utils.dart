@@ -4,23 +4,28 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 class BadgeText extends StatelessWidget {
   final String content;
+  final Color _textColor;
   const BadgeText(
-      {super.key, required this.content}
-      );
+      {
+        super.key,
+        required this.content,
+        Color? color,
+      }
+      ) : _textColor = color ?? textColor;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       content,
-      style: const TextStyle(
+      style: TextStyle(
         fontFamily: fontFamily,
         fontSize: badgeFontSize,
-        fontVariations:[
+        fontVariations:const [
           FontVariation(
               'wght', badgeFontWeight
           )
         ],
-        color: textColor,
+        color: _textColor,
       ),
     );
   }

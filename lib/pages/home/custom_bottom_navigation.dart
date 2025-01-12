@@ -53,7 +53,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           currentIndex: index,
           selectedItemColor: constants.primaryColor,
           unselectedItemColor: constants.textColor,
-          showUnselectedLabels: false,
+          showUnselectedLabels: true,
           showSelectedLabels: true,
         selectedLabelStyle: const TextStyle(
           color: constants.primaryColor,
@@ -114,8 +114,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
       type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
       selectedItemColor: constants.primaryColor,
-      unselectedItemColor: constants.textColor,
-      showUnselectedLabels: false,
+      unselectedItemColor: const Color(0xFFA6A6A6),
+      showUnselectedLabels: true,
       showSelectedLabels: true,
       selectedLabelStyle: const TextStyle(
         fontFamily: constants.fontFamily,

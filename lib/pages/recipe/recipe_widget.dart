@@ -234,37 +234,37 @@ class _RecipeWidgetState extends State<RecipeWidget> {
     widget.onRecipeStateChanged();
   }
 
-Widget _buildDownloadButton() {
-  return DownloadButton<Recipe>(
-    item: widget.recipe,
-    itemId: widget.recipe.id!,
-    isEnabled: !widget.isLocked && !widget.isOffline,
-    downloadRequests: [
-      DownloadRequest(
-        url: widget.recipe.imageUrl,
-        filename: 'r_${widget.recipe.name}_i',
-        fileExtension: widget.recipe.imageUrl.split('.').last,
-      ),
-      DownloadRequest(
-        url: widget.recipe.videoUrl,
-        filename: 'r_${widget.recipe.name}_v',
-        fileExtension: widget.recipe.videoUrl.split('.').last,
-      ),
-      ...widget.recipe.ingredients!.map((ingredient) => DownloadRequest(
-        url: ingredient.imageUrl,
-        filename: 'ing_${ingredient.name}',
-        fileExtension: ingredient.imageUrl.split('.').last,
-      )),
-    ],
-    onSave: (paths) async {
-      await Recipe.saveLocalRecipe(widget.recipe, paths[1], paths[0], paths.sublist(2));
-    },
-    onDownloadComplete: (recipe) {
-      if (!mounted) return;
-      setState(() {});
-    },
-  );
-}
+  Widget _buildDownloadButton() {
+    return DownloadButton<Recipe>(
+      item: widget.recipe,
+      itemId: widget.recipe.id!,
+      isEnabled: !widget.isLocked && !widget.isOffline,
+      downloadRequests: [
+        DownloadRequest(
+          url: widget.recipe.imageUrl,
+          filename: 'r_${widget.recipe.name}_i',
+          fileExtension: widget.recipe.imageUrl.split('.').last,
+        ),
+        DownloadRequest(
+          url: widget.recipe.videoUrl,
+          filename: 'r_${widget.recipe.name}_v',
+          fileExtension: widget.recipe.videoUrl.split('.').last,
+        ),
+        ...widget.recipe.ingredients!.map((ingredient) => DownloadRequest(
+          url: ingredient.imageUrl,
+          filename: 'ing_${ingredient.name}',
+          fileExtension: ingredient.imageUrl.split('.').last,
+        )),
+      ],
+      onSave: (paths) async {
+        await Recipe.saveLocalRecipe(widget.recipe, paths[1], paths[0], paths.sublist(2));
+      },
+      onDownloadComplete: (recipe) {
+        if (!mounted) return;
+        setState(() {});
+      },
+    );
+  }
 
   Widget _buildOfflineIndicator() {
     return const IconButton(
@@ -313,9 +313,9 @@ Widget _buildDownloadButton() {
             Column(
               children: widget.recipe.ingredients!
                   .map((ingredient) => Text(
-                        ingredient.name,
-                        style: ShadTheme.of(context).textTheme.p,
-                      ))
+                ingredient.name,
+                style: ShadTheme.of(context).textTheme.p,
+              ))
                   .toList(),
             ),
           ],
