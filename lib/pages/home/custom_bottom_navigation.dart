@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:mouvaps/utils/constants.dart' as constants;
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
-  final Color primaryColor;
   final bool isAdmin;
+
 
   const CustomBottomNavigationBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
-    required this.primaryColor,
     required this.isAdmin,
   });
 
@@ -22,51 +23,116 @@ class CustomBottomNavigationBar extends StatelessWidget {
         index = 0;
       }
       return BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items:  <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.people),
+            icon: Icon(
+              index == 0
+                  ? PhosphorIcons.users(PhosphorIconsStyle.fill)
+                  : PhosphorIcons.users(PhosphorIconsStyle.regular),
+            ),
             label: 'Utilisateurs',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.fitness_center),
+            icon: Icon(
+              index == 1
+                  ? PhosphorIcons.sneakerMove(PhosphorIconsStyle.fill)
+                  : PhosphorIcons.sneakerMove(PhosphorIconsStyle.regular),
+            ),
             label: 'Séances',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant),
+            icon: Icon(
+              index == 2
+                  ? PhosphorIcons.bowlFood(PhosphorIconsStyle.fill)
+                  : PhosphorIcons.bowlFood(PhosphorIconsStyle.regular),
+            ),
             label: 'Recettes',
           ),
         ],
-        currentIndex: index,
-        selectedItemColor: primaryColor,
-        unselectedItemColor: primaryColor,
-        showUnselectedLabels: true,
-        onTap: onTap,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: index,
+          selectedItemColor: constants.primaryColor,
+          unselectedItemColor: constants.textColor,
+          showUnselectedLabels: true,
+          showSelectedLabels: true,
+        selectedLabelStyle: const TextStyle(
+          color: constants.primaryColor,
+          fontSize: 8,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          color: constants.primaryColor,
+          fontSize: 8,
+          fontWeight: FontWeight.w600,
+        ),
+          onTap: onTap,
       );
     }
     return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
+      items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.fitness_center),
-          label: 'Sport',
+          icon: Icon(
+            currentIndex == 0
+                ? PhosphorIcons.sneakerMove(PhosphorIconsStyle.fill)
+                : PhosphorIcons.sneakerMove(PhosphorIconsStyle.regular),
+          ),
+          label: 'Séances',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.restaurant),
+          icon: Icon(
+            currentIndex == 1
+                ? PhosphorIcons.bowlFood(PhosphorIconsStyle.fill)
+                : PhosphorIcons.bowlFood(PhosphorIconsStyle.regular),
+          ),
           label: 'Recettes',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.info),
+          icon: Icon(
+            currentIndex == 2
+                ? PhosphorIcons.info(PhosphorIconsStyle.fill)
+                : PhosphorIcons.info(PhosphorIconsStyle.regular),
+          ),
           label: 'Infos',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.live_help),
+          icon: Icon(
+            currentIndex == 3
+                ? PhosphorIcons.chatCircleDots(PhosphorIconsStyle.fill)
+                : PhosphorIcons.chatCircleDots(PhosphorIconsStyle.regular),
+          ),
           label: 'Chat',
         ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            currentIndex == 4
+                ? PhosphorIcons.downloadSimple(PhosphorIconsStyle.fill)
+                : PhosphorIcons.downloadSimple(PhosphorIconsStyle.regular),
+          ),
+          label: 'Téléchargés',
+        ),
       ],
+      type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
-      selectedItemColor: primaryColor,
-      unselectedItemColor: primaryColor,
+      selectedItemColor: constants.primaryColor,
+      unselectedItemColor: const Color(0xFFA6A6A6),
       showUnselectedLabels: true,
+      showSelectedLabels: true,
+      selectedLabelStyle: const TextStyle(
+        fontFamily: constants.fontFamily,
+        color: constants.primaryColor,
+        fontSize: 8,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelStyle: const TextStyle(
+        fontFamily: constants.fontFamily,
+        color: constants.primaryColor,
+        fontSize: 8,
+        fontWeight: FontWeight.w600,
+      ),
       onTap: onTap,
     );
+
   }
+
+  void setState(Null Function() param0) {}
 }

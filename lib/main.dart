@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mouvaps/auth/auth_router.dart';
+import 'package:mouvaps/pages/form/name_form_screen.dart';
 import 'package:mouvaps/pages/home/home_screen.dart';
 import 'package:mouvaps/auth/signin_screen.dart';
 import 'package:mouvaps/pages/offline/downloads_screen.dart';
@@ -44,35 +45,76 @@ class MyApp extends StatelessWidget {
         },
         themeMode: ThemeMode.light,
         theme: ShadThemeData(
+
             colorScheme: const ShadSlateColorScheme.light(),
             brightness: Brightness.light,
 
             // TYPOGRAPHY
             textTheme: ShadTextTheme(
-              family: 'Poppins',
               h1: const TextStyle(
+                fontFamily: constants.fontFamily,
                 fontSize: constants.h1FontSize,
-                fontWeight: constants.h1FontWeight,
-                color: constants.primaryColor,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                      'wght', constants.h1FontWeight
+                  )
+                ],
+                color: constants.textColor,
               ),
               h2: const TextStyle(
+                fontFamily: constants.fontFamily,
                 fontSize: constants.h2FontSize,
-                fontWeight: constants.h2FontWeight,
-                color: constants.secondaryColor,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                      'wght', constants.h2FontWeight
+                  )
+                ],
+                color: constants.textColor,
               ),
               h3: const TextStyle(
+                fontFamily: constants.fontFamily,
                 fontSize: constants.h3FontSize,
-                fontWeight: constants.h3FontWeight,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                      'wght', constants.h3FontWeight
+                  )
+                ],
+                color: constants.textColor,
+              ),
+              h4: const TextStyle(
+                fontFamily: constants.fontFamily,
+                fontSize: constants.h4FontSize,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                    'wght', constants.h4FontWeight
+                  )
+                ],
                 color: constants.textColor,
               ),
               p: const TextStyle(
+                fontFamily: constants.fontFamily,
                 fontSize: constants.pFontSize,
-                fontWeight: constants.pFontWeight,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                      'wght', constants.pFontWeight
+                  )
+                ],
                 color: constants.textColor,
               ),
               small: const TextStyle(
+                fontFamily: constants.fontFamily,
                 fontSize: constants.smallFontSize,
-                fontWeight: constants.smallFontWeight,
+                fontWeight: FontWeight.w400,
+                fontVariations:[
+                  FontVariation(
+                      'wght', constants.smallFontWeight
+                  )
+                ],
                 color: constants.textColor,
               ),
             ),
@@ -96,8 +138,9 @@ class MyApp extends StatelessWidget {
           '/signin': (context) => const SignInScreen(),
           '/otp': (context) => OTPScreen(
               email: ModalRoute.of(context)!.settings.arguments as String),
-          '/profile': (context) => const ProfileScreen(),
+          '/profile': (context) => ProfileScreen(),
           '/offline': (context) => const DownloadsScreen(),
+          '/form': (context) => const NameFormScreen(),
         },
       ),
     );

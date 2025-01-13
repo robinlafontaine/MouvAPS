@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/auth.dart';
+import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 
 class OTPScreen extends StatefulWidget {
@@ -90,7 +91,28 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   void _onVerificationSuccess(bool res) {
-    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    final uuid = Auth.instance.getUUID();
+    User.exists(uuid).then((exists) {
+      if (exists) {
+        _onUserExists();
+      } else {
+        _onUserDoesNotExist();
+      }
+    });
+  }
+
+  _onUserExists() {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/home',
+      (route) => false,
+    );
+  }
+
+  _onUserDoesNotExist() {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/form',
+      (route) => false,
+    );
   }
 
   void _resendOtp() {
@@ -140,47 +162,59 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const ShadImage(
-              'assets/images/icon.png',
-              height: 100,
-            ),
-            const SizedBox(height: 16),
-            Text(
-                'Vérification par email',
-              style: ShadTheme.of(context).textTheme.h1
-            ),
-            const SizedBox(height: 16),
-            Text('Veuillez entrer le code à 6 chiffres envoyé à ${widget.email}.',
-            style: const TextStyle(
-              fontSize: constants.pFontSize,
-              fontWeight: constants.pFontWeight,
-            ),),
-            const SizedBox(height: 20),
-            _buildOTPInput(),
-            const SizedBox(height: 20),
-            if (errorMessage != null)
-              Text(
-                errorMessage!,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: constants.errorColor,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 52),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const ShadImage(
+                  'assets/images/icon.png',
+                  height: 100,
                 ),
-              ),
-            const SizedBox(height: 20),
-            const Text("Vous n'avez pas reçu de mail ?"),
-            const Text("Vérifiez vos spams et indésirables."),
-            const SizedBox(height: 20),
-            ShadButton(
-              onPressed: _resendOtp,
-              enabled: !isButtonDisabled,
-              child: Text(isButtonDisabled ? 'Renvoyer le code ($countdown)' : 'Renvoyer le code'),
+                const SizedBox(height: 16),
+                Text(
+                    'Vérification par email',
+                  style: ShadTheme.of(context).textTheme.h1
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Veuillez entrer le code à 6 chiffres envoyé à ${widget.email}.',
+                  style: const TextStyle(
+                    fontSize: constants.pFontSize,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                _buildOTPInput(),
+                const SizedBox(height: 20),
+                if (errorMessage != null)
+                  Text(
+                    errorMessage!,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: constants.errorColor,
+                    ),
+                  ),
+                const SizedBox(height: 20),
+                const Text("Vous n'avez pas reçu de mail ?"),
+                const Text("Vérifiez vos spams et indésirables."),
+                const SizedBox(height: 20),
+                ShadButton(
+                  onPressed: _resendOtp,
+                  enabled: !isButtonDisabled,
+                  child: Text(isButtonDisabled ? 'Renvoyer le code ($countdown)' : 'Renvoyer le code'),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

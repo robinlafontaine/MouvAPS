@@ -23,11 +23,11 @@ class _UserListState extends State<UserList> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(children: snapshot.data!.map((content) {
-                return UserTile(
+              return UserTile(
                   firstName: content.firstName,
                   lastName: content.lastName,
-                  points: content.points,
                   age: content.age,
+                  uuid: content.userUuid,
                 );
               }).toList());
         } else {

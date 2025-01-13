@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mouvaps/pages/offline/downloads_screen.dart';
 import 'package:mouvaps/pages/admin/recipe/recipe_admin_screen.dart';
 import 'package:mouvaps/pages/recipe/recipe_screen.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/pages/exercise/exercise_screen.dart';
 import 'package:mouvaps/pages/admin/users/users_screen.dart';
 
@@ -31,17 +32,12 @@ class SelectedPage extends StatelessWidget {
       ];
       return widgets[index];
     }
-    List<Widget> widgets = <Widget>[
-      const ExerciseScreen(),
-      const RecipeScreen(),
-      Text(
-        'Index 2: Infos',
-        style: ShadTheme.of(context).textTheme.h1,
-      ),
-      Text(
-        'Index 3: Chat',
-        style: ShadTheme.of(context).textTheme.h1,
-      ),
+    List<Widget> widgets = const <Widget>[
+      ExerciseScreen(),
+      RecipeScreen(),
+      H2(content: 'En construction...'),
+      H2(content: 'En construction...'),
+      DownloadsScreen(),
     ];
     return widgets[currentIndex];
   }
