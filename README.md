@@ -1,4 +1,6 @@
 # MOUV'APS
+[![Release CI](https://github.com/robinlafontaine/MouvAPS/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/robinlafontaine/MouvAPS/actions/workflows/release.yml)
+[![Build CI](https://github.com/robinlafontaine/MouvAPS/actions/workflows/prbuild.yml/badge.svg?branch=main)](https://github.com/robinlafontaine/MouvAPS/actions/workflows/prbuild.yml)
 ## Description
 MOUV'APS est une application mobile de sport-santé conçue pour accompagner les patients dans leur parcours de santé, particulièrement en Hauts-de-France. L'application propose un suivi personnalisé combinant activité physique et nutrition, spécialement adaptée pour les personnes atteintes de cancer, d'obésité ou de maladies cardiovasculaires.
 
