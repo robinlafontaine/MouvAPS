@@ -15,7 +15,7 @@ class SelectedTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isAdmin) {
       int index = currentIndex;
-      if(currentIndex > 2) {
+      if (currentIndex > 2) {
         index = 0;
       }
       List<Widget> widgets = const <Widget>[

@@ -23,7 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index; // Update the selected index when the item is tapped
+      _selectedIndex =
+          index; // Update the selected index when the item is tapped
     });
     _pageController.animateToPage(
       index,
@@ -34,10 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onPageChanged(int index) {
     setState(() {
-      _selectedIndex = index; // Update the selected index when the page is swiped
+      _selectedIndex =
+          index; // Update the selected index when the page is swiped
     });
   }
-
 
   @override
   void initState() {
@@ -76,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                    ProfileScreen(),
+                        ProfileScreen(),
                     transitionsBuilder:
                         (context, animation, secondaryAnimation, child) {
                       var begin = const Offset(1.0, 0.0);
@@ -101,8 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: Padding(
-        padding:
-          const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
+        padding: const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
         child: PageView(
           controller: _pageController,
           onPageChanged: _onPageChanged,
@@ -110,8 +110,10 @@ class _HomeScreenState extends State<HomeScreen> {
             SelectedPage(currentIndex: 0, isAdmin: globals.isAdmin),
             SelectedPage(currentIndex: 1, isAdmin: globals.isAdmin),
             SelectedPage(currentIndex: 2, isAdmin: globals.isAdmin),
-            if(!globals.isAdmin) SelectedPage(currentIndex: 3, isAdmin: globals.isAdmin),
-            if(!globals.isAdmin) SelectedPage(currentIndex: 4, isAdmin: globals.isAdmin),
+            if (!globals.isAdmin)
+              SelectedPage(currentIndex: 3, isAdmin: globals.isAdmin),
+            if (!globals.isAdmin)
+              SelectedPage(currentIndex: 4, isAdmin: globals.isAdmin),
           ],
         ),
       ),
