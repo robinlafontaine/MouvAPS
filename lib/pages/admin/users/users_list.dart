@@ -4,7 +4,13 @@ import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/pages/admin/users/user_tile.dart';
 
 class UserList extends StatefulWidget {
-  const UserList({super.key});
+  final String role;
+
+  const UserList({super.key,
+      required this.role,
+    }
+  );
+
 
   @override
   State<StatefulWidget> createState() {
@@ -23,15 +29,23 @@ class _UserListState extends State<UserList> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(children: snapshot.data!.map((content) {
-              return UserTile(
-                  firstName: content.firstName,
-                  lastName: content.lastName,
-                  age: content.age,
-                  uuid: content.userUuid,
+            for (var role in content.roles!) {
+              print(role.name);
+              if (role.name == widget.role) {
+                return UserTile(
+                  user: content,
                 );
-              }).toList());
+              }
+            }
+            return const SizedBox.shrink();
+          }).toList());
         } else {
-          return const CircularProgressIndicator();
+          return Column(
+            children: [
+              const CircularProgressIndicator(),
+              Text(snapshot.error.toString()),
+            ],
+          );
         }
       },
     );

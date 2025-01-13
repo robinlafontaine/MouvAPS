@@ -1,5 +1,6 @@
 import 'package:logger/logger.dart';
 import 'package:mouvaps/services/pathology.dart';
+import 'package:mouvaps/services/role.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -10,6 +11,7 @@ class User {
   final int age;
   final String firstName;
   final String lastName;
+  final List<Role>? roles;
 
   Logger logger = Logger();
 
@@ -20,10 +22,11 @@ class User {
     required this.age,
     required this.firstName,
     required this.lastName,
+    required this.roles,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+    User user = User(
       points: json['points'] as int,
       userUuid: json['user_uuid'] as String,
       pathologies: (json['user_pathologie'] as List<dynamic>?)
@@ -32,7 +35,11 @@ class User {
       age: json['age'] as int,
       firstName: json['first_name'] as String,
       lastName: json['last_name'] as String,
+      roles: (json['user_role'] as List<dynamic>?)
+          ?.map((e) => Role.fromJson(e['roles']))
+          .toList(),
     );
+    return user;
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +50,7 @@ class User {
       'age': age,
       'first_name': firstName,
       'last_name': lastName,
+      'user_role': roles?.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -117,6 +125,12 @@ class User {
                 id,
                 name
               )
+            ),
+            user_role (
+              roles (
+                id,
+                name
+              )
             )
           ''');
     return response.map((json) => User.fromJson(json)).toList();
@@ -149,6 +163,12 @@ class User {
                 name
               )
             )
+            user_role (
+              roles (
+                id,
+                name
+              )
+            )
           ''')
             .eq('user_uuid', uuid).single();
     return User.fromJson(response);
@@ -162,6 +182,7 @@ class User {
       age: 0,
       firstName: '',
       lastName: '',
+      roles: [],
     );
   }
 
@@ -183,3 +204,5 @@ class User {
     }
   }
 }
+
+

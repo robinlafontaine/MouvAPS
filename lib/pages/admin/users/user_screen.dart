@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/widgets/custom_badge.dart';
+import 'package:mouvaps/pages/admin/users/user_edit_screen.dart';
 
 class UserScreen extends StatelessWidget {
   final String uuid;
@@ -18,6 +20,37 @@ class UserScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const H1(content: 'Détails'),
+        actions: [
+          IconButton(
+            icon: const FaIcon(
+              FontAwesomeIcons.solidPenToSquare,
+              color: constants.primaryColor
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      UserEditScreen(user: user),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    var begin = const Offset(1.0, 0.0);
+                    var end = Offset.zero;
+                    var curve = Curves.ease;
+
+                    var tween = Tween(begin: begin, end: end)
+                        .chain(CurveTween(curve: curve));
+
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                ),
+              );
+            }
+          ),
+        ],
       ),
       body: Center(
           child: Column(
@@ -84,6 +117,38 @@ class UserScreen extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 10)
                                     ],
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Divider(),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const BadgeText(content: "Rôles : "),
+                                const SizedBox(height: 5),
+                                Flex(
+                                  direction: Axis.horizontal,
+                                  children: [
+                                    if (currentUser.roles == null)
+                                      const CustomBadge(
+                                        text: "Aucun rôle",
+                                        backgroundColor: constants.lightColor,
+                                        textColor: constants.textColor,
+                                      )
+                                    else
+                                      for (final role in currentUser.roles!) ...[
+                                        CustomBadge(
+                                          text: role.name,
+                                          backgroundColor: constants.lightColor,
+                                          textColor: constants.textColor,
+                                        ),
+                                        const SizedBox(width: 10)
+                                      ]
+                                    ,
                                   ],
                                 ),
                               ],
