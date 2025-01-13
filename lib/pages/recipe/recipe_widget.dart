@@ -2,7 +2,7 @@ import 'dart:core';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating/flutter_rating.dart';
+import 'package:mouvaps/pages/recipe/locked_recipe_details_screen.dart';
 import 'package:mouvaps/pages/recipe/recipe_details_screen.dart';
 import 'package:mouvaps/services/recipe.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +12,8 @@ import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/notifiers/user_points_notifier.dart';
 import 'package:mouvaps/services/download.dart';
 import 'package:mouvaps/widgets/download_button.dart';
+
+import 'package:mouvaps/utils/text_utils.dart';
 
 class RecipeWidget extends StatefulWidget {
   final Recipe recipe;
@@ -38,12 +40,11 @@ class _RecipeWidgetState extends State<RecipeWidget> {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
-      enabled: !widget.isLocked,
+      enabled: true,
       tileColor: Colors.white,
       leading: _buildRecipeImage(),
       title: _buildRecipeTitle(),
       subtitle: _buildRecipeSubtitle(),
-      trailing: _buildTrailingButtons(),
       onTap: _handleRecipeTap,
     );
   }
@@ -78,29 +79,9 @@ class _RecipeWidgetState extends State<RecipeWidget> {
   }
 
   Widget _buildRecipeSubtitle() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildDifficultyRating(),
-        _buildDurationInfo(),
-        _buildPointsInfo(),
-      ],
-    );
-  }
-
-  Widget _buildDifficultyRating() {
-    return _buildInfoRow(
-        widget: StarRating(
-          rating: widget.recipe.difficulty.toDouble(),
-          color: primaryColor,
-          emptyIcon: CupertinoIcons.circle,
-          filledIcon: CupertinoIcons.circle_fill,
-          halfFilledIcon: CupertinoIcons.circle_lefthalf_fill,
-          borderColor: primaryColor,
-          starCount: 3,
-          size: 20,
-        ),
-        text: "Difficulté");
+    return widget.isLocked
+        ? P(content: '${widget.recipe.pricePoints} points')
+        : _buildDurationInfo();
   }
 
   Widget _buildDurationInfo() {
@@ -110,25 +91,6 @@ class _RecipeWidgetState extends State<RecipeWidget> {
     return _buildInfoRow(
       icon: Icons.timer,
       text: duration,
-    );
-  }
-
-  Widget _buildPointsInfo() {
-    return _buildInfoRow(
-      icon: Icons.payments,
-      text: '${widget.recipe.pricePoints} points',
-    );
-  }
-
-  Widget _buildTrailingButtons() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (widget.isLocked) _buildUnlockButton(),
-        if (widget.isLocked) _ingredientButton(),
-        if (!widget.isOffline && !widget.isLocked) _buildDownloadButton(),
-        if (widget.isOffline) _buildOfflineIndicator(),
-      ],
     );
   }
 
@@ -251,13 +213,14 @@ class _RecipeWidgetState extends State<RecipeWidget> {
           fileExtension: widget.recipe.videoUrl.split('.').last,
         ),
         ...widget.recipe.ingredients!.map((ingredient) => DownloadRequest(
-          url: ingredient.imageUrl,
-          filename: 'ing_${ingredient.name}',
-          fileExtension: ingredient.imageUrl.split('.').last,
-        )),
+              url: ingredient.imageUrl,
+              filename: 'ing_${ingredient.name}',
+              fileExtension: ingredient.imageUrl.split('.').last,
+            )),
       ],
       onSave: (paths) async {
-        await Recipe.saveLocalRecipe(widget.recipe, paths[1], paths[0], paths.sublist(2));
+        await Recipe.saveLocalRecipe(
+            widget.recipe, paths[1], paths[0], paths.sublist(2));
       },
       onDownloadComplete: (recipe) {
         if (!mounted) return;
@@ -313,9 +276,9 @@ class _RecipeWidgetState extends State<RecipeWidget> {
             Column(
               children: widget.recipe.ingredients!
                   .map((ingredient) => Text(
-                ingredient.name,
-                style: ShadTheme.of(context).textTheme.p,
-              ))
+                        ingredient.name,
+                        style: ShadTheme.of(context).textTheme.p,
+                      ))
                   .toList(),
             ),
           ],
@@ -345,6 +308,17 @@ class _RecipeWidgetState extends State<RecipeWidget> {
           builder: (context) => RecipeDetailsScreen(
             recipe: widget.recipe,
             isOffline: widget.isOffline,
+          ),
+        ),
+      );
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => LockedRecipeDetailsScreen(
+            recipe: widget.recipe,
+            isOffline: widget.isOffline,
+            user: widget.user,
+            onRecipeStateChanged: widget.onRecipeStateChanged,
           ),
         ),
       );

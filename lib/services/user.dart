@@ -49,11 +49,8 @@ class User {
   static final _supabase = Supabase.instance.client;
 
   Future<User> create() async {
-    final response = await _supabase
-        .from('users')
-        .insert(toJson())
-        .select()
-        .single();
+    final response =
+        await _supabase.from('users').insert(toJson()).select().single();
     return User.fromJson(response);
   }
 
@@ -78,6 +75,20 @@ class User {
     return User.fromJson(response);
   }
 
+  // Update the user's points by user uuid
+  static Future<int> updatePointsByUuid(String? uuid, int points) async {
+    final newPoints = await _supabase.rpc('decrement_user_points', params: {
+      'p_user_id': uuid,
+      'p_points_to_subtract': points,
+    });
+
+    if (newPoints.error != null) {
+      throw Exception(newPoints.error!.message);
+    }
+
+    return newPoints.data as int;
+  }
+
   // Get user's points
   Future<int> getPoints() async {
     final response = await _supabase
@@ -90,7 +101,6 @@ class User {
 
   // Get user's points by user uuid
   static Future<int> getPointsByUuid(String? uuid) async {
-
     if (uuid == null) {
       return 0;
     }
@@ -104,9 +114,7 @@ class User {
   }
 
   static Future<List<User>> getAll() async {
-    final response = await _supabase
-        .from('users')
-        .select('''
+    final response = await _supabase.from('users').select('''
             user_uuid,
             points,
             age,
@@ -123,21 +131,15 @@ class User {
   }
 
   Future<void> delete() async {
-    await _supabase
-        .from('users')
-        .delete()
-        .eq('user_uuid', userUuid);
+    await _supabase.from('users').delete().eq('user_uuid', userUuid);
   }
 
   static Future<User> getUserByUuid(String? uuid) async {
-
     if (uuid == null) {
       return empty();
     }
 
-    final response =
-        await _supabase.from('users')
-            .select('''
+    final response = await _supabase.from('users').select('''
             user_uuid,
             points,
             age,
@@ -149,8 +151,7 @@ class User {
                 name
               )
             )
-          ''')
-            .eq('user_uuid', uuid).single();
+          ''').eq('user_uuid', uuid).single();
     return User.fromJson(response);
   }
 
@@ -167,17 +168,17 @@ class User {
 
   static Future<bool> exists(String? uuid) async {
     try {
-    if (uuid == null) {
-      return false;
-    }
+      if (uuid == null) {
+        return false;
+      }
 
-    final response = await _supabase
-        .from('users')
-        .select('user_uuid')
-        .eq('user_uuid', uuid)
-        .single();
+      final response = await _supabase
+          .from('users')
+          .select('user_uuid')
+          .eq('user_uuid', uuid)
+          .single();
 
-    return response.isNotEmpty;
+      return response.isNotEmpty;
     } catch (e) {
       return false;
     }

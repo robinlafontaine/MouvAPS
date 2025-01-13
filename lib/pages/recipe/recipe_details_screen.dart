@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:chewie/chewie.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_rating/flutter_rating.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mouvaps/services/video.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/ingredient.dart';
@@ -67,9 +67,9 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
                       widget: StarRating(
                         rating: widget.recipe.difficulty.toDouble(),
                         color: primaryColor,
-                        emptyIcon: CupertinoIcons.circle,
-                        filledIcon: CupertinoIcons.circle_fill,
-                        halfFilledIcon: CupertinoIcons.circle_lefthalf_fill,
+                        emptyIcon: FontAwesomeIcons.star,
+                        filledIcon: FontAwesomeIcons.solidStar,
+                        halfFilledIcon: FontAwesomeIcons.solidStarHalfStroke,
                         borderColor: primaryColor,
                         starCount: 3,
                         size: 20,
@@ -80,10 +80,6 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
                     text: widget.recipe.timeMins! >= 60
                         ? '${(widget.recipe.timeMins! ~/ 60)}h${(widget.recipe.timeMins! % 60 > 0 ? ' ${(widget.recipe.timeMins! % 60)} min' : '')}'
                         : '${widget.recipe.timeMins} min',
-                  ),
-                  _buildInfoRow(
-                    icon: Icons.payments,
-                    text: '${widget.recipe.pricePoints} points',
                   ),
                 ],
               ),
