@@ -123,7 +123,7 @@ class FormAnswers {
 
       await _supabase.from('user_pathologie').insert(userPathologies);
 
-      await _supabase.from('user_difficulty').insert(userPathologies);
+      await _supabase.from('user_difficulty').insert(userDifficulties);
 
       return true;
     } catch (e) {
