@@ -5,10 +5,12 @@ import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/widgets/custom_badge.dart';
+import 'package:mouvaps/widgets/upload_button.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
   final Future<bool> hasRole = Auth.instance.hasRole('ADMIN');
+  final Future<bool> hasCertificate = Auth.instance.hasCertificate();
   final Future<User> user = User.getUserByUuid(Auth.instance.getUUID());
 
   @override
@@ -98,6 +100,19 @@ class ProfileScreen extends StatelessWidget {
                             }
                             if (snapshot.data == true) {
                               return const ProfileSwitch();
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                        FutureBuilder<bool>(
+                          future: hasCertificate,
+                          builder:
+                              (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                            if (!snapshot.data!) {
+                              return UserUploadButton(
+                                filename: 'certificat',
+                                onUploadComplete: () => (),
+                              );
                             }
                             return const SizedBox.shrink();
                           },

@@ -10,6 +10,7 @@ import 'package:mouvaps/utils/text_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:mouvaps/notifiers/user_points_notifier.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
+import 'package:mouvaps/services/auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,18 +49,28 @@ class _HomeScreenState extends State<HomeScreen> {
     userPointsNotifier.fetchUserPoints();
   }
 
+  //TODO: Rework banner design
   Widget _buildCertificateBanner() {
-    return MaterialBanner(
-      content: const Text('N\'oubliez pas d\'envoyer votre certificat médical !'),
-      leading: const Icon(Icons.description),
-      backgroundColor: constants.lightColor,
-      actions: <Widget>[
-        TextButton(
-          onPressed: () => Navigator.pushNamed(context, "/profile"),
-          child: const Text('J\'y vais !'),
-        ),
-      ],
-    );
+      return FutureBuilder<bool>(
+        future: Auth.instance.hasCertificate(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && !snapshot.data!) {
+            return MaterialBanner(
+              content: const Text('N\'oubliez pas d\'envoyer votre certificat médical !'),
+              leading: const Icon(Icons.description),
+              backgroundColor: constants.lightColor,
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pushNamed(context, "/profile"),
+                  child: const Text('J\'y vais !'),
+                ),
+              ],
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      );
   }
 
   @override
@@ -130,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if(!globals.isAdmin) SelectedPage(currentIndex: 4, isAdmin: globals.isAdmin),
               ],
             ),
-            //TODO: Auth.instance.hasCertificate() ? const SizedBox.shrink() : _buildCertificateBanner(),
+            _buildCertificateBanner(),
           ],
         ),
       ),
