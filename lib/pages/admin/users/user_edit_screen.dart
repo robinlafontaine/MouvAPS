@@ -34,6 +34,8 @@ class _UserEditScreenState extends State<UserEditScreen> {
                 color: primaryColor
             ),
             onPressed: () {
+              widget.user.then((value) => value.update());
+              Navigator.pop(context);
             }
           ),
         ],
@@ -63,12 +65,18 @@ class _UserEditScreenState extends State<UserEditScreen> {
                                 label: "Prénom",
                                 child: ShadInputFormField(
                                   initialValue: currentUser.firstName,
+                                  onChanged: (value) {
+                                    currentUser.firstName = value;
+                                  },
                                 )
                             ),
                             formElement(
                                 label: "Nom",
                                 child: ShadInputFormField(
                                   initialValue: currentUser.lastName,
+                                  onChanged: (value) {
+                                    currentUser.lastName = value;
+                                  },
                                 )
                             ),
                             formElement(
@@ -78,42 +86,98 @@ class _UserEditScreenState extends State<UserEditScreen> {
                                 )
                             ),
                             FutureBuilder(
-                                future: widget.roles,
-                                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
-                                  }
-                                  if (snapshot.hasError) {
-                                    return Text(snapshot.error.toString());
-                                  }
-                                  if (snapshot.hasData) {
-                                    List<Role> roles = snapshot.data;
-                                    return formElement(
-                                        label: "Rôles",
-                                        child: ShadSelect<String>.multiple(
-                                          minWidth: 340,
-                                          allowDeselection: true,
-                                          closeOnSelect: false,
-                                          placeholder: const Text(
-                                              'Sélectionnez les rôles'),
-                                          options: [
-                                            ...roles.map(
-                                                  (e) => ShadOption(
-                                                value: e.id.toString(),
-                                                child: Text(e.name),
-                                              ),
-                                            ),
-                                          ],
-                                          selectedOptionsBuilder: (context,
-                                              values) =>
-                                              Text(values.map((v) =>
-                                                  v.capitalize()).join(', ')),
-                                          initialValues: currentUser.roles.map((e) => e.id.toString()).toList(),
-                                        )
-                                    );
-                                  }
-                                  return const SizedBox.shrink();
+                              future: widget.roles,
+                              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
                                 }
+                                if (snapshot.hasError) {
+                                  return Text(snapshot.error.toString());
+                                }
+                                if (snapshot.hasData) {
+                                  List<Role> roles = snapshot.data;
+                                  return formElement(
+                                    label: "Rôles",
+                                    child: ShadSelect<String>.multiple(
+                                      minWidth: 340,
+                                      allowDeselection: true,
+                                      closeOnSelect: false,
+                                      placeholder: const Text(
+                                          'Sélectionnez les rôles'),
+                                      options: [
+                                        ...roles.map(
+                                              (e) => ShadOption(
+                                            value: e.id.toString(),
+                                            child: Text(e.name),
+                                          ),
+                                        ),
+                                      ],
+                                      selectedOptionsBuilder: (context,
+                                        values) =>
+                                        Text(values.map((v) =>
+                                          v.capitalize()).join(', ')),
+                                      initialValues: currentUser.roles.map((e) => e.id.toString()).toList(),
+                                      onChanged: (values) {
+                                        currentUser.roles =
+                                          values.map((e) => Role(
+                                            id: int.parse(e),
+                                            name: roles
+                                              .firstWhere((element) =>
+                                            element.id == int.parse(e))
+                                              .name)).toList();
+                                      },
+                                    )
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              }
+                            ),
+                            FutureBuilder(
+                              future: widget.roles,
+                              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                }
+                                if (snapshot.hasError) {
+                                  return Text(snapshot.error.toString());
+                                }
+                                if (snapshot.hasData) {
+                                  List<Role> roles = snapshot.data;
+                                  return formElement(
+                                      label: "Rôles",
+                                      child: ShadSelect<String>.multiple(
+                                        minWidth: 340,
+                                        allowDeselection: true,
+                                        closeOnSelect: false,
+                                        placeholder: const Text(
+                                            'Sélectionnez les rôles'),
+                                        options: [
+                                          ...roles.map(
+                                                (e) => ShadOption(
+                                              value: e.id.toString(),
+                                              child: Text(e.name),
+                                            ),
+                                          ),
+                                        ],
+                                        selectedOptionsBuilder: (context,
+                                            values) =>
+                                            Text(values.map((v) =>
+                                                v.capitalize()).join(', ')),
+                                        initialValues: currentUser.roles.map((e) => e.id.toString()).toList(),
+                                        onChanged: (values) {
+                                          currentUser.roles =
+                                              values.map((e) => Role(
+                                                  id: int.parse(e),
+                                                  name: roles
+                                                      .firstWhere((element) =>
+                                                  element.id == int.parse(e))
+                                                      .name)).toList();
+                                        },
+                                      )
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              }
                             ),
                             FutureBuilder(
                               future: widget.pathologies,
@@ -147,6 +211,15 @@ class _UserEditScreenState extends State<UserEditScreen> {
                                           Text(values.map((v) =>
                                               v.capitalize()).join(', ')),
                                       initialValues: currentUser.pathologies!.map((e) => e.id.toString()).toList(),
+                                      onChanged: (values) {
+                                        currentUser.pathologies =
+                                            values.map((e) => Pathology(
+                                                id: int.parse(e),
+                                                name: pathologies
+                                                    .firstWhere((element) =>
+                                                element.id == int.parse(e))
+                                                    .name)).toList();
+                                      },
                                     )
                                   );
                                 }

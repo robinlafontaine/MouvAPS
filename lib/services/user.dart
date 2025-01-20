@@ -6,12 +6,14 @@ import 'package:uuid/uuid.dart';
 
 class User {
   final String userUuid;
-  final List<Pathology>? pathologies;
-  final int points;
-  final int age;
-  final String firstName;
-  final String lastName;
-  final List<Role> roles;
+  List<Pathology>? pathologies;
+  int points;
+  int age;
+  String firstName;
+  String lastName;
+  List<Role> roles;
+  String gender;
+  String level;
 
   Logger logger = Logger();
 
@@ -23,6 +25,8 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.roles,
+    required this.gender,
+    required this.level,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -38,6 +42,8 @@ class User {
       roles: (json['user_role'] as List<dynamic>?)
           !.map((e) => Role.fromJson(e['roles']))
           .toList(),
+      gender: json['gender'] as String,
+      level: json['level'] as String,
     );
     return user;
   }
@@ -45,12 +51,12 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'user_uuid': userUuid,
-      'user_pathologie': pathologies?.map((e) => e.toJson()).toList(),
+      'pathologies': pathologies?.map((e) => e.toJson()).toList(),
       'points': points,
       'age': age,
       'first_name': firstName,
       'last_name': lastName,
-      'user_role': roles.map((e) => e.toJson()).toList(),
+      'roles': roles.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -131,7 +137,9 @@ class User {
                 id,
                 name
               )
-            )
+            ),
+            gender,
+            level
           ''');
     return response.map((json) => User.fromJson(json)).toList();
   }
@@ -168,7 +176,9 @@ class User {
                 id,
                 name
               )
-            )
+            ),
+            gender,
+            level
           ''')
             .eq('user_uuid', uuid).single();
     return User.fromJson(response);
@@ -183,6 +193,8 @@ class User {
       firstName: '',
       lastName: '',
       roles: [],
+      gender: '',
+      level: '',
     );
   }
 

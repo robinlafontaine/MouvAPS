@@ -84,69 +84,58 @@ class UserScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                BadgeText(content: "${currentUser.firstName} ${currentUser.lastName}"),
+                                H4(content: "${currentUser.firstName} ${currentUser.lastName}"),
                               ],
                             ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: Divider(),
+                            userElement(
+                              label: "Age",
+                              child: P(content: "${currentUser.age.toString()} ans")
                             ),
-                            BadgeText(content: "${currentUser.age.toString()} ans"),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: Divider(),
+                            userElement(
+                                label: "Genre",
+                                child: P(content: currentUser.gender)
                             ),
-                            BadgeText(content: "${currentUser.points.toString()} points"),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: Divider(),
+                            userElement(
+                                label: "Niveau",
+                                child: P(content: currentUser.level)
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const BadgeText(content: "Pathologies : "),
-                                const SizedBox(height: 5),
-                                Flex(
-                                  direction: Axis.horizontal,
-                                  children: [
-                                    for (final pathology in currentUser.pathologies!) ...[
-                                      CustomBadge(
-                                        text: pathology.name,
-                                        backgroundColor: constants.lightColor,
-                                        textColor: constants.textColor,
-                                      ),
-                                      const SizedBox(width: 10)
-                                    ],
+                            userElement(
+                              label: "Points",
+                              child: P(content: "${currentUser.points.toString()} points")
+                            ),
+                            userElement(
+                              label: "Pathologies",
+                              child: Flex(
+                                direction: Axis.horizontal,
+                                children: [
+                                  for (final pathology in currentUser.pathologies!) ...[
+                                    CustomBadge(
+                                      text: pathology.name,
+                                      backgroundColor: constants.lightColor,
+                                      textColor: constants.textColor,
+                                    ),
+                                    const SizedBox(width: 10)
                                   ],
-                                ),
-                              ],
+                                ],
+                              )
                             ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: Divider(),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const BadgeText(content: "Rôles : "),
-                                const SizedBox(height: 5),
-                                Flex(
-                                  direction: Axis.horizontal,
-                                  children: [
-                                    for (final role in currentUser.roles) ...[
-                                      CustomBadge(
-                                        text: role.name,
-                                        backgroundColor: constants.lightColor,
-                                        textColor: constants.textColor,
-                                      ),
-                                      const SizedBox(width: 10)
-                                    ]
-                                  ],
-                                ),
-                              ],
+                            userElement(
+                              label: "Rôles",
+                              child: Flex(
+                                direction: Axis.horizontal,
+                                children: [
+                                  for (final role in currentUser.roles) ...[
+                                    CustomBadge(
+                                      text: role.name,
+                                      backgroundColor: constants.lightColor,
+                                      textColor: constants.textColor,
+                                    ),
+                                    const SizedBox(width: 10)
+                                  ]
+                                ],
+                              )
                             ),
                           ],
-
                         ),
                       );
                     }
@@ -155,6 +144,17 @@ class UserScreen extends StatelessWidget {
               )
             ],
           )),
+    );
+  }
+
+  Widget userElement({required String label, required Widget child}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Divider(),
+        H4(content: label),
+        child,
+      ],
     );
   }
 }
