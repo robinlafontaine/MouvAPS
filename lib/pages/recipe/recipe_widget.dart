@@ -9,7 +9,6 @@ import 'package:mouvaps/utils/constants.dart';
 import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/services/download.dart';
 import 'package:mouvaps/widgets/download_button.dart';
-
 import 'package:mouvaps/utils/text_utils.dart';
 
 class RecipeWidget extends StatefulWidget {

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mouvaps/pages/admin/widgets/admin_content_new.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mouvaps/pages/admin/exercise/admin_exercise.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:mouvaps/services/recipe.dart';
+import 'package:mouvaps/utils/constants.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+
+import '../recipe/admin_recipe.dart';
 
 class ContentListAdmin extends StatefulWidget {
   final List<Recipe>? recipes;
@@ -19,6 +23,15 @@ class ContentListAdmin extends StatefulWidget {
 class _ContentListAdminState extends State<ContentListAdmin> {
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: _buildBody(),
+      floatingActionButton: _buildFAB(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _buildBody() {
+    // Display a list of exercises
     if (widget.exercises != null && widget.recipes == null) {
       return ListView.separated(
         shrinkWrap: true,
@@ -27,7 +40,7 @@ class _ContentListAdminState extends State<ContentListAdmin> {
           return _buildTitleButton(widget.exercises![index].name, () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => AdminNewContent(
+                builder: (context) => AdminExercise(
                   exercise: widget.exercises![index],
                 ),
               ),
@@ -38,6 +51,7 @@ class _ContentListAdminState extends State<ContentListAdmin> {
           return const Divider(indent: 15, endIndent: 15);
         },
       );
+      // Display a list of recipes
     } else if (widget.recipes != null && widget.exercises == null) {
       return ListView.separated(
         shrinkWrap: true,
@@ -46,7 +60,7 @@ class _ContentListAdminState extends State<ContentListAdmin> {
           return _buildTitleButton(widget.recipes![index].name, () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => AdminNewContent(
+                builder: (context) => AdminRecipe(
                   recipe: widget.recipes![index],
                 ),
               ),
@@ -58,7 +72,7 @@ class _ContentListAdminState extends State<ContentListAdmin> {
         },
       );
     } else if (widget.exercises == null || widget.recipes == null) {
-      return const CircularProgressIndicator();
+      return const SizedBox.shrink();
     } else {
       return const Center(child: Text('Error'));
     }
@@ -68,6 +82,36 @@ class _ContentListAdminState extends State<ContentListAdmin> {
     return ListTile(
       title: Text(title, style: ShadTheme.of(context).textTheme.p),
       onTap: onPressed,
+    );
+  }
+
+  Widget _buildFAB() {
+    return FloatingActionButton(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+        side: const BorderSide(color: primaryColor),
+      ),
+      onPressed: () {
+        if (widget.exercises != null && widget.recipes == null) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const AdminRecipe(
+                newRecipe: true,
+              ),
+            ),
+          );
+        } else if (widget.recipes != null && widget.exercises == null) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const AdminExercise(
+                newExercise: true,
+              ),
+            ),
+          );
+        } else {}
+      },
+      child: const Icon(FontAwesomeIcons.plus, color: primaryColor),
     );
   }
 }

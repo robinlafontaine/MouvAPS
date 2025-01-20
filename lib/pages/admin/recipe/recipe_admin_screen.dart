@@ -29,7 +29,7 @@ class _RecipeAdminScreenState extends State<RecipeAdminScreen> {
             recipes: snapshot.data,
           );
         } else {
-          return const CircularProgressIndicator();
+          return const SizedBox.shrink();
         }
       },
     );

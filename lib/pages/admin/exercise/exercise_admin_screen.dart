@@ -15,7 +15,7 @@ class _ExerciseAdminScreenState extends State<ExerciseAdminScreen> {
   @override
   void initState() {
     super.initState();
-    _exercices = Exercise.getAll();
+    _exercices = Exercise.getAllAdmin();
   }
 
   @override
@@ -28,7 +28,7 @@ class _ExerciseAdminScreenState extends State<ExerciseAdminScreen> {
             exercises: snapshot.data,
           );
         } else {
-          return const CircularProgressIndicator();
+          return const SizedBox.shrink();
         }
       },
     );
