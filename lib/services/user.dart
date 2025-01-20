@@ -11,7 +11,7 @@ class User {
   final int age;
   final String firstName;
   final String lastName;
-  final List<Role>? roles;
+  final List<Role> roles;
 
   Logger logger = Logger();
 
@@ -36,7 +36,7 @@ class User {
       firstName: json['first_name'] as String,
       lastName: json['last_name'] as String,
       roles: (json['user_role'] as List<dynamic>?)
-          ?.map((e) => Role.fromJson(e['roles']))
+          !.map((e) => Role.fromJson(e['roles']))
           .toList(),
     );
     return user;
@@ -50,7 +50,7 @@ class User {
       'age': age,
       'first_name': firstName,
       'last_name': lastName,
-      'user_role': roles?.map((e) => e.toJson()).toList(),
+      'user_role': roles.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -162,7 +162,7 @@ class User {
                 id,
                 name
               )
-            )
+            ),
             user_role (
               roles (
                 id,

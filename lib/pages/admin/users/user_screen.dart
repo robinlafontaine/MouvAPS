@@ -52,7 +52,7 @@ class UserScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
+      body: SingleChildScrollView(
           child: Column(
             children: [
               FutureBuilder(
@@ -133,22 +133,14 @@ class UserScreen extends StatelessWidget {
                                 Flex(
                                   direction: Axis.horizontal,
                                   children: [
-                                    if (currentUser.roles == null)
-                                      const CustomBadge(
-                                        text: "Aucun rôle",
+                                    for (final role in currentUser.roles) ...[
+                                      CustomBadge(
+                                        text: role.name,
                                         backgroundColor: constants.lightColor,
                                         textColor: constants.textColor,
-                                      )
-                                    else
-                                      for (final role in currentUser.roles!) ...[
-                                        CustomBadge(
-                                          text: role.name,
-                                          backgroundColor: constants.lightColor,
-                                          textColor: constants.textColor,
-                                        ),
-                                        const SizedBox(width: 10)
-                                      ]
-                                    ,
+                                      ),
+                                      const SizedBox(width: 10)
+                                    ]
                                   ],
                                 ),
                               ],
