@@ -34,7 +34,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObse
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return const Center(child: Text('Une erreur est survenue lors du chargement des séances'));
           } else {
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,

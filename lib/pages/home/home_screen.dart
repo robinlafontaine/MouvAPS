@@ -141,7 +141,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 if(!globals.isAdmin) SelectedPage(currentIndex: 4, isAdmin: globals.isAdmin),
               ],
             ),
-            _buildCertificateBanner(),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: _buildCertificateBanner(),
+            ),
           ],
         ),
       ),

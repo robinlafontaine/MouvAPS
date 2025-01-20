@@ -81,6 +81,10 @@ class Auth {
     return roles.contains(role);
   }
 
+  Future<bool> needsCertificate() async {
+    return true;
+  }
+
   Future<bool> hasCertificate() async {
     final response = await supabase.storage.from('user-data').list(path: getUUID(), searchOptions: const SearchOptions(search: 'certificat'));
     if (response.isEmpty) {

@@ -10,8 +10,11 @@ import 'package:mouvaps/widgets/upload_button.dart';
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
   final Future<bool> hasRole = Auth.instance.hasRole('ADMIN');
-  final Future<bool> hasCertificate = Auth.instance.hasCertificate();
   final Future<User> user = User.getUserByUuid(Auth.instance.getUUID());
+  final Future<bool> showCertificateUpload = Future.wait([
+    Auth.instance.hasCertificate(),
+    Auth.instance.needsCertificate()
+  ]).then((results) => results[0] && results[1]);
 
   @override
   Widget build(BuildContext context) {
@@ -105,13 +108,20 @@ class ProfileScreen extends StatelessWidget {
                           },
                         ),
                         FutureBuilder<bool>(
-                          future: hasCertificate,
+                          future: showCertificateUpload,
                           builder:
                               (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                            if (!snapshot.data!) {
-                              return UserUploadButton(
-                                filename: 'certificat',
-                                onUploadComplete: () => (),
+                            if (snapshot.hasData && !snapshot.data!) {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Certificat médical', style: TextStyle(color: constants.primaryColor)),
+                                  UserUploadButton(
+                                    filename: 'certificat',
+                                    onUploadComplete: () => (),
+                                  ),
+                                ],
                               );
                             }
                             return const SizedBox.shrink();
