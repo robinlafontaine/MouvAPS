@@ -33,6 +33,7 @@ class UploadRequest {
 class UploadManager {
   final String bucketName;
   final SupabaseClient supabase = Supabase.instance.client;
+  String? uploadedFileUrl;
 
   UploadRequest? _currentRequest;
   bool _isUploading = false;
@@ -51,9 +52,9 @@ class UploadManager {
     );
   }
 
-  Future<bool> uploadFile() async {
+  Future<String?> uploadFile() async {
     if (_currentRequest == null) {
-      return false;
+      return null;
     }
 
     _isUploading = true;
@@ -63,13 +64,34 @@ class UploadManager {
           .from(bucketName)
           .upload(_currentRequest!.fileName, _currentRequest!.file);
 
-      return response.isNotEmpty;
+      if (response.isEmpty) {
+        return null;
+      }
+
+      final url = _getUploadedUrl(response);
+
+      return url;
     } catch (e) {
-      return false;
+      return null;
     } finally {
       _isUploading = false;
       _currentRequest = null;
     }
+  }
+
+  Future<String?> _getUploadedUrl(String filePath) async {
+
+    final parsedFilePath = filePath.replaceFirst('$bucketName/', '');
+
+    final response = supabase.storage
+        .from(bucketName)
+        .getPublicUrl(parsedFilePath);
+
+    if (response.isEmpty) {
+      return null;
+    }
+
+    return response.replaceFirst('/public', '');
   }
 
   void clear() {

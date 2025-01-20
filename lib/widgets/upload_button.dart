@@ -43,14 +43,14 @@ class _UserUploadButtonState extends State<UserUploadButton> {
   }
 
   Future<void> _startUpload() async {
-    final bool response = await uploadManager.uploadFile();
+    final String? response = await uploadManager.uploadFile();
 
     if (mounted) {
       setState(() {
-        _wasSuccessful = response;
+        _wasSuccessful = response != null;
       });
 
-      if (response) {
+      if (response != null) {
         widget.onUploadComplete?.call();
       } else {
         ShadToaster.of(context).show(
