@@ -4,15 +4,13 @@ import 'package:mouvaps/services/recipe.dart';
 import 'package:mouvaps/utils/constants.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import '../../../services/ingredient.dart';
+import 'package:mouvaps/services/ingredient.dart';
+import 'package:mouvaps/utils/text_utils.dart';
 
 class AdminRecipe extends StatefulWidget {
   final Recipe? recipe;
-  final bool? newRecipe;
 
-  const AdminRecipe({super.key, this.recipe, this.newRecipe})
-      : assert(recipe != null || newRecipe != null,
-            'recipe or newRecipe must be provided');
+  const AdminRecipe({super.key, this.recipe});
 
   @override
   State<StatefulWidget> createState() {
@@ -44,6 +42,7 @@ class _AdminRecipeState extends State<AdminRecipe> {
             _buildRecipeImage(),
             const SizedBox(height: 15),
             _buildRecipeVideo(),
+            const H2(content: "Ingrédients"),
             _buildIngredients(),
           ],
         ),
@@ -86,10 +85,14 @@ class _AdminRecipeState extends State<AdminRecipe> {
       ),
       itemCount: (widget.recipe?.ingredients?.length ?? 0) + 1,
       itemBuilder: (context, index) {
-        if (index == widget.recipe?.ingredients?.length) {
-          return _buildAddIngredientCard();
+        if (widget.recipe != null) {
+          if (index == widget.recipe?.ingredients?.length) {
+            return _buildAddIngredientCard();
+          } else {
+            return _buildIngredientCard(widget.recipe?.ingredients![index]);
+          }
         } else {
-          return _buildIngredientCard(widget.recipe?.ingredients![index]);
+          return _buildAddIngredientCard();
         }
       },
     );
@@ -110,7 +113,15 @@ class _AdminRecipeState extends State<AdminRecipe> {
                   color: primaryColor,
                   size: iconSize,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  // Show the ingredient popup
+                  showShadDialog(
+                    context: context,
+                    builder: (context) {
+                      return _buildIngredientPopup();
+                    },
+                  );
+                },
               ),
             ),
           ),
@@ -153,6 +164,32 @@ class _AdminRecipeState extends State<AdminRecipe> {
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIngredientPopup() {
+    return ShadDialog(
+      constraints: const BoxConstraints(maxWidth: 300),
+      radius: BorderRadius.circular(20),
+      title: const Text('Ajouter un ingrédient'),
+      actions: const [ShadButton(child: Text('Save changes'))],
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        width: 100,
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ShadInput(
+              placeholder: Text("Nom de l'ingrédient"),
+              keyboardType: TextInputType.text,
+            ),
+            ShadInput(
+              placeholder: Text("Quantité"),
+              keyboardType: TextInputType.number,
+            ),
+          ],
         ),
       ),
     );

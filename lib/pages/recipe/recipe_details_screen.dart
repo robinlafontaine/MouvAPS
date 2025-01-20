@@ -5,6 +5,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mouvaps/services/video.dart';
+import 'package:mouvaps/utils/text_utils.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/ingredient.dart';
 import 'package:mouvaps/services/recipe.dart';
@@ -84,10 +85,7 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
                 ],
               ),
               const SizedBox(height: 8),
-              Text(
-                "Ingrédients",
-                style: ShadTheme.of(context).textTheme.h2,
-              ),
+              const H2(content: "Ingrédients"),
               const SizedBox(height: 8),
               GridView.builder(
                 shrinkWrap: true,
