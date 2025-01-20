@@ -96,16 +96,16 @@ class _ContentListAdminState extends State<ContentListAdmin> {
         if (widget.exercises != null && widget.recipes == null) {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const AdminRecipe(
-                newRecipe: true,
+              builder: (context) => const AdminExercise(
+                newExercise: true,
               ),
             ),
           );
         } else if (widget.recipes != null && widget.exercises == null) {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const AdminExercise(
-                newExercise: true,
+              builder: (context) => const AdminRecipe(
+                newRecipe: true,
               ),
             ),
           );

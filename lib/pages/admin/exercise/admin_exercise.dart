@@ -23,7 +23,7 @@ class _AdminExerciseState extends State<AdminExercise> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.exercise != null ? widget.exercise!.name : 'New Content',
+          widget.exercise != null ? widget.exercise!.name : 'New Exercise',
           style: ShadTheme.of(context).textTheme.h1,
         ),
       ),

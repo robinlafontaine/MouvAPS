@@ -22,7 +22,7 @@ class _AdminRecipeState extends State<AdminRecipe> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.recipe != null ? widget.recipe!.name : 'New Content',
+          widget.recipe != null ? widget.recipe!.name : 'New Recipe',
           style: ShadTheme.of(context).textTheme.h1,
         ),
       ),
