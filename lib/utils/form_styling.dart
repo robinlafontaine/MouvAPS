@@ -13,6 +13,16 @@ const labelTextStyle = TextStyle(
   color: constants.textColor,
 );
 
+const errorTextStyle = TextStyle(
+  fontSize: constants.formErrorFontSize,
+  fontVariations:[
+    FontVariation(
+        'wght', constants.formErrorFontWeight
+    )
+  ],
+  color: constants.errorColor,
+);
+
 const formInputDecoration = ShadDecoration(
         color: constants.textFieldColor,
     );
