@@ -1,6 +1,9 @@
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+
+import 'auth.dart';
+
 class Exercise {
   final int? id;
   final String name;
@@ -9,7 +12,7 @@ class Exercise {
   final int? rewardPoints;
   final Map<String, dynamic>? tags;
   final DateTime? createdAt;
-  Logger logger = Logger();
+  static final Logger logger = Logger();
 
   Exercise({
     this.id,
@@ -114,4 +117,73 @@ class Exercise {
   }
 
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
+  static Future<void> generatePlaylist() async {
+    try {
+      final String? userId = Auth.instance.getUUID();
+      if (userId == null) {
+        throw Exception('User not logged in');
+      }
+
+
+      final userResponse = await _supabase
+          .from('users')
+          .select('points, user_pathologie(pathologie_id)')
+          .eq('user_uuid', userId)
+          .single();
+
+
+      final int userPoints = userResponse['points'];
+      final List<int> userPathologies = (userResponse['user_pathologie'] as List)
+          .map<int>((p) => p['pathologie_id'] as int)
+          .toList();
+
+
+      logger.i('Utilisateur : $userId, Points : $userPoints, Pathologies : $userPathologies');
+
+
+      final exercisesResponse = await _supabase
+          .from('exercises')
+          .select('''
+           id,
+           name,
+           reward_points,
+           exercise_pathology_difficulties(pathology_id)
+         ''')
+          .lte('reward_points', userPoints);
+
+
+      final List<Map<String, dynamic>> filteredExercises = (exercisesResponse as List<dynamic>)
+          .map((exercise) => exercise as Map<String, dynamic>)
+          .where((exercise) {
+        final exercisePathologies = (exercise['exercise_pathology_difficulties'] as List<dynamic>)
+            .map<int>((p) => p['pathology_id'] as int)
+            .toList();
+        return exercisePathologies.every((p) => !userPathologies.contains(p));
+      })
+          .toList();
+
+
+      filteredExercises.sort((a, b) => a['reward_points'].compareTo(b['reward_points']));
+
+
+      final List<Map<String, dynamic>> playlist = [];
+      for (int i = 0; i < filteredExercises.length; i++) {
+        playlist.add({
+          'user_id': userId, // Correct column name
+          'exercise_id': filteredExercises[i]['id'],
+          'playlist_order': i + 1,
+          'is_unlocked': userPoints >= filteredExercises[i]['reward_points'],
+        });
+      }
+
+
+      await _supabase.from('user_exercise_playlist').insert(playlist);
+
+
+      logger.i('Playlist générée avec succès pour l\'utilisateur $userId');
+    } catch (e) {
+      logger.e('Erreur inattendue : $e');
+    }
+  }
 }
+
