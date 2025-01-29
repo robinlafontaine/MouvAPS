@@ -106,7 +106,7 @@ class UserScreen extends StatelessWidget {
                                 children: [
                                   if (currentUser.roles.isEmpty) ...[
                                     const CustomBadge(
-                                      text: "EN ATTENTE",
+                                      text: "En attente",
                                       backgroundColor: constants.lightColor,
                                       textColor: constants.textColor,
                                     ),
@@ -114,7 +114,7 @@ class UserScreen extends StatelessWidget {
                                   ] else
                                   for (final role in currentUser.roles) ...[
                                     CustomBadge(
-                                      text: role.name,
+                                      text: role.name.capitalize(),
                                       backgroundColor: constants.lightColor,
                                       textColor: constants.textColor,
                                     ),
@@ -189,7 +189,7 @@ class UserScreen extends StatelessWidget {
             ] else
             for (final element in elements) ...[
               CustomBadge(
-                text: element.name,
+                text: element.name.toString().capitalize(),
                 backgroundColor: constants.lightColor,
                 textColor: constants.textColor,
               ),

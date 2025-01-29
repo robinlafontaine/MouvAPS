@@ -96,19 +96,19 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'user_uuid': userUuid,
-      'pathologies': pathologies?.map((e) => e.toJson()).toList(),
+      'user_pathologie': pathologies?.map((e) => e.toJson()).toList(),
       'points': points,
       'birthday': birthday.toString(),
       'first_name': firstName,
       'last_name': lastName,
-      'roles': roles.map((e) => e.toJson()).toList(),
+      'user_role': roles.map((e) => e.toJson()).toList(),
       'gender': gender,
-      'difficulty': difficulty,
-      'regimes_alimentaires': regimesAlimentaires.map((e) => e.toJson()).toList(),
-      'materiel_sportif': materielSportif.map((e) => e.toJson()).toList(),
-      'allergies': allergies.map((e) => e.toJson()).toList(),
-      'attentes_alimentaires': attentesAlimentaires.map((e) => e.toJson()).toList(),
-      'attentes_sportives': attentesSportives.map((e) => e.toJson()).toList(),
+      'user_difficulty': difficulty,
+      'user_regime': regimesAlimentaires.map((e) => e.toJson()).toList(),
+      'user_materiel_sportif': materielSportif.map((e) => e.toJson()).toList(),
+      'user_allergie': allergies.map((e) => e.toJson()).toList(),
+      'user_attentes_alimentaires': attentesAlimentaires.map((e) => e.toJson()).toList(),
+      'user_attentes_sportives': attentesSportives.map((e) => e.toJson()).toList(),
     };
   }
 
