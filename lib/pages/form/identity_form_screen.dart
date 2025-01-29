@@ -8,7 +8,6 @@ import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
 import 'package:mouvaps/utils/text_utils.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-
 import 'package:mouvaps/utils/constants.dart' as constants;
 
 class IdentityFormScreen extends StatefulWidget {
@@ -68,9 +67,20 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
                       label: const Text('Quelle est votre date de naissance ?',
                           style: labelTextStyle),
                       placeholder: const Text('Date de naissance'),
+                      closeOnSelection: false,
+                      captionLayout: ShadCalendarCaptionLayout.dropdown,
                       validator: (v) {
                         if (v == null) {
                           return "Merci d'entrer votre date de naissance";
+                        }
+                        if (v.isAfter(DateTime.now())) {
+                          return "La date de naissance ne peut pas être dans le futur";
+                        }
+                        if (v.isBefore(DateTime.now().subtract(const Duration(days: 365 * 100)))) {
+                          return "La date de naissance ne peut pas être il y a plus de 100 ans";
+                        }
+                        if (v.isAfter(DateTime.now().subtract(const Duration(days: 365 * 18)))) {
+                          return "Vous devez être majeur pour utiliser l'application";
                         }
                         widget.formAnswers.birthday = v;
                         return null;

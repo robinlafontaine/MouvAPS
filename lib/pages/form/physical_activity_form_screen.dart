@@ -8,7 +8,6 @@ import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
 import 'package:mouvaps/utils/text_utils.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-
 import 'package:mouvaps/utils/constants.dart' as constants;
 
 class PhysicalActivityFormScreen extends StatefulWidget {
@@ -28,13 +27,11 @@ class PhysicalActivityFormScreenState extends State<PhysicalActivityFormScreen> 
 
   bool sportExpectationsError = false;
   bool homematerialError = false;
+  var logger = Logger(printer: SimplePrinter());
 
 
   @override
   Widget build(BuildContext context) {
-    var logger = Logger(printer: SimplePrinter());
-
-
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -191,7 +188,6 @@ class PhysicalActivityFormScreenState extends State<PhysicalActivityFormScreen> 
       });
     }
     if (formKey.currentState!.saveAndValidate()) {
-      var logger = Logger(printer: SimplePrinter());
       logger.d('Validation succeeded with ${formKey.currentState!.value}');
       Navigator.push(
         context,
@@ -215,7 +211,6 @@ class PhysicalActivityFormScreenState extends State<PhysicalActivityFormScreen> 
       );
 
     } else {
-      var logger = Logger(printer: SimplePrinter());
       logger.e('Validation failed with ${formKey.currentState!.value}');
     }
   }
@@ -259,8 +254,6 @@ class PhysicalActivityFormScreenState extends State<PhysicalActivityFormScreen> 
       future: sportExpectations,
       builder: (context, snapshot) {
         if(snapshot.hasError){
-          print("Erreur:");
-          print(snapshot.error);
           return const Text('Erreur de chargement des attentes sportives');
         }
         if (snapshot.hasData) {

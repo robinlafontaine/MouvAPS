@@ -4,12 +4,10 @@ import 'package:mouvaps/services/allergy.dart';
 import 'package:mouvaps/services/diet.dart';
 import 'package:mouvaps/services/diet_expectations.dart';
 import 'package:mouvaps/services/form_answers.dart';
-import 'package:mouvaps/services/pathology.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
 import 'package:mouvaps/utils/text_utils.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:mouvaps/utils/constants.dart' as constants;
 
 class DietFormScreen extends StatefulWidget {
   final FormAnswers formAnswers;
@@ -216,7 +214,8 @@ class DietFormScreenState extends State<DietFormScreen> {
               if(dieExpectationsEterror)
                 const Text('Merci de sélectionner au moins une attente alimentaire', style: errorTextStyle)
             ],
-          );}
+          );
+          }
           else{
             return Column(
               children: [

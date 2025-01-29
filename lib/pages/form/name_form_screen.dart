@@ -4,7 +4,6 @@ import 'package:mouvaps/pages/form/identity_form_screen.dart';
 import 'package:mouvaps/services/form_answers.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-
 import 'package:mouvaps/utils/constants.dart' as constants;
 
 class NameFormScreen extends StatefulWidget {
