@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mouvaps/models/form_answers.dart';
+import 'package:mouvaps/services/allergy.dart';
+import 'package:mouvaps/services/diet.dart';
+import 'package:mouvaps/services/diet_expectations.dart';
+import 'package:mouvaps/services/form_answers.dart';
 import 'package:mouvaps/services/pathology.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
@@ -19,11 +22,26 @@ class DietFormScreen extends StatefulWidget {
 
 class DietFormScreenState extends State<DietFormScreen> {
   final formKey = GlobalKey<ShadFormState>();
-  final Future<List<Pathology>> pathologies = Pathology.getAll();
+  final Future<List<Diet>> diets = Diet.getAll();
+  final Future<List<Allergy>> allergies = Allergy.getAll();
+
+  bool dieExpectationsEterror = false;
+
   var logger = Logger(printer: SimplePrinter());
 
   Future<void> _handleFormSubmission() async {
-    if (formKey.currentState!.saveAndValidate()) {
+    if(widget.formAnswers.dietExpectations.isEmpty){
+      setState(() {
+        dieExpectationsEterror = true;
+      });
+    }
+    else{
+      setState(() {
+        dieExpectationsEterror = false;
+      });
+    }
+    if (formKey.currentState!.saveAndValidate()
+    && !dieExpectationsEterror ) {
       logger.d('Validation succeeded with ${formKey.currentState!.value}');
       try {
         final bool success = await widget.formAnswers.insert();
@@ -67,6 +85,10 @@ class DietFormScreenState extends State<DietFormScreen> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
+              // Reset form answers
+              widget.formAnswers.dietaryRestrictions = [];
+              widget.formAnswers.allergies = [];
+              widget.formAnswers.dietExpectations = [];
             },
           ),
         ),
@@ -81,82 +103,17 @@ class DietFormScreenState extends State<DietFormScreen> {
                           Text('Alimentation',
                               style: ShadTheme.of(context).textTheme.h3),
                           const SizedBox(height: 16),
-                          ShadInputFormField(
-                            id:'dietary_restrictions',
-                            label: const Text(
-                                'Avez-vous un régime particulier?',
-                                style: labelTextStyle),
-                            placeholder: const Text("Exemple : végétarien, sans gluten, etc.",
-                                style: placeholderTextStyle),
-                            keyboardType: TextInputType.text,
-                            decoration: formInputDecoration,
-                            validator: (v) {
-                              if (v.isNotEmpty) {
-                                widget.formAnswers.dietaryRestrictions = v;
-                                return null;
-                              }
-                              return "Merci de répondre à la question";
-                            },
-                          ),
+                          const Text("Avez-vous un régime alimentaire particulier ?", style: labelTextStyle,),
+                          const SizedBox(height: 8),
+                          _buildDietSelect(),
                           const SizedBox(height: 16),
-                          const Text(
-                              'Avez-vous des pathologies?',
-                              style: labelTextStyle),
-                          _buildPathologySelect(),
+                          const Text("Avez-vous des allergies ?", style: labelTextStyle,),
+                          const SizedBox(height: 8),
+                          _buildAllergySelect(),
                           const SizedBox(height: 16),
-                          ShadInputFormField(
-                            id: 'allergies',
-                            label: const Text(
-                                'Avez-vous des allergies alimentaires?',
-                                style: labelTextStyle),
-                            placeholder: const Text("Exemple : arachides, crustacés, etc.",
-                                style: placeholderTextStyle),
-                            keyboardType: TextInputType.text,
-                            decoration: formInputDecoration,
-                            validator: (v) {
-                              if (v.isNotEmpty) {
-                                widget.formAnswers.allergies = v;
-                                return null;
-                              }
-                              return "Merci de répondre à la question";
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          ShadInputFormField(
-                            id: 'food_hated',
-                            label: const Text(
-                                'Y-a-t-il des aliments que vous détestez ?',
-                                style: labelTextStyle),
-                            placeholder: const Text("Aliments détestés",
-                                style: placeholderTextStyle),
-                            keyboardType: TextInputType.text,
-                            decoration: formInputDecoration,
-                            validator: (v) {
-                              if (v.isNotEmpty) {
-                                widget.formAnswers.foodHated = v;
-                                return null;
-                              }
-                              return "Merci de répondre à la question";
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          ShadInputFormField(
-                            id:'expectations_needs_diet',
-                            label: const Text(
-                                'Quelles sont vos attentes et vos besoins pour le programme alimentaire?',
-                                style: labelTextStyle),
-                            placeholder: const Text("Attentes et besoins",
-                                style: placeholderTextStyle),
-                            keyboardType: TextInputType.text,
-                            decoration: formInputDecoration,
-                            validator: (v) {
-                              if (v.isNotEmpty) {
-                                widget.formAnswers.expectationsNeedsDiet = v;
-                                return null;
-                              }
-                              return "Merci de répondre à la question";
-                            },
-                          ),
+                          const Text("Quelles sont vos attentes et besoin pour le programme alimentaire ?", style: labelTextStyle,),
+                          const SizedBox(height: 8),
+                          _buildDietExpectationsSelect(dieExpectationsEterror),
                           const SizedBox(height: 16),
                           ShadButton(
                             onPressed: _handleFormSubmission,
@@ -171,24 +128,25 @@ class DietFormScreenState extends State<DietFormScreen> {
     );
   }
 
-  Widget _buildPathologySelect() {
-    return FutureBuilder<List<Pathology>>(
-      future: pathologies,
+  Widget _buildAllergySelect(){
+    return FutureBuilder<List<Allergy>>(
+      future: allergies,
       builder: (context, snapshot) {
+        if(snapshot.hasError){
+          return const Text('Erreur de chargement des allergies');
+        }
         if (snapshot.hasData) {
-          return ShadSelect.multiple(
-            minWidth: 340,
-            onChanged: print,
+          return ShadSelect<Allergy>.multiple(
             allowDeselection: true,
             closeOnSelect: false,
-            placeholder: const Text('Sélectionnez vos pathologies'),
-            initialValues: [snapshot.data!.first],
+            minWidth: 340,
+            placeholder: const Text('Sélectionnez des allergies', style: placeholderTextStyle),
             options: snapshot.data!.map((e) => ShadOption(
               value: e,
               child: Text(e.name.capitalize()),
             )).toList(),
             selectedOptionsBuilder: (context, values) {
-              widget.formAnswers.pathologies = values.cast<Pathology>();
+              widget.formAnswers.allergies = values;
               return Text(values.map((e) => e.name).join(', '));
             },
           );
@@ -197,34 +155,95 @@ class DietFormScreenState extends State<DietFormScreen> {
       },
     );
   }
-}
 
-class AllergyBubbleWidget extends StatelessWidget {
-  final String allergy;
-  final Function removeIconFunction;
+  Widget _buildDietSelect(){
+    return FutureBuilder<List<Diet>>(
+      future: diets,
+      builder: (context, snapshot) {
+        if(snapshot.hasError){
+          return const Text('Erreur de chargement des régimes alimentaires');
+        }
+        if (snapshot.hasData) {
+          return
+              ShadSelect<Diet>.multiple(
+                allowDeselection: true,
+                closeOnSelect: false,
+                minWidth: 340,
+                placeholder: const Text('Sélectionnez un régime', style: placeholderTextStyle),
+                options: snapshot.data!.map((e) => ShadOption(
+                  value: e,
+                  child: Text(e.name.capitalize()),
+                )).toList(),
+                selectedOptionsBuilder: (context, values) {
+                  widget.formAnswers.dietaryRestrictions = values;
+                  return Text(values.map((e) => e.name.capitalize()).join(', '));
+                },
 
-  const AllergyBubbleWidget({super.key, required this.allergy, required this.removeIconFunction});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      margin: const EdgeInsets.only(right: 8),
-      decoration: BoxDecoration(
-        color: constants.primaryColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Text(allergy, style: const TextStyle(color: Colors.white)),
-          IconButton(
-              onPressed: (){
-                removeIconFunction();
-              },
-              icon: const Icon(Icons.close, color: Colors.white))
-
-        ],
-      ),
+          );
+        }
+        return const CircularProgressIndicator();
+      },
     );
   }
+
+  Widget _buildDietExpectationsSelect(bool dieExpectationsEterror) {
+    return FutureBuilder<List<DietExpectations>>(
+      future: DietExpectations.getAll(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Erreur de chargement des attentes alimentaires');
+        }
+
+        if (snapshot.hasData) {
+          if(widget.formAnswers.dietExpectations.isEmpty){
+          return Column(
+            children: [
+              ShadSelect<DietExpectations>.multiple(
+                allowDeselection: true,
+                closeOnSelect: false,
+                minWidth: 340,
+                placeholder: const Text('Sélectionnez des attentes alimentaires', style: placeholderTextStyle),
+                options: snapshot.data!.map((e) => ShadOption(
+                  value: e,
+                  child: Text(e.name.capitalize()),
+                )).toList(),
+                selectedOptionsBuilder: (context, values) {
+                  widget.formAnswers.dietExpectations = values;
+                  return Text(values.map((e) => e.name.capitalize()).join(', '));
+                },
+              ),
+              if(dieExpectationsEterror)
+                const Text('Merci de sélectionner au moins une attente alimentaire', style: errorTextStyle)
+            ],
+          );}
+          else{
+            return Column(
+              children: [
+                ShadSelect<DietExpectations>.multiple(
+                  allowDeselection: true,
+                  closeOnSelect: false,
+                  minWidth: 340,
+                  placeholder: const Text('Sélectionnez des attentes alimentaires', style: placeholderTextStyle),
+                  initialValues: widget.formAnswers.dietExpectations,
+                  options: snapshot.data!.map((e) => ShadOption(
+                    value: e,
+                    child: Text(e.name.capitalize()),
+                  )).toList(),
+                  selectedOptionsBuilder: (context, values) {
+                    widget.formAnswers.dietExpectations = values;
+                    return Text(values.map((e) => e.name.capitalize()).join(', '));
+                  },
+                ),
+                if(dieExpectationsEterror)
+                  const Text('Merci de sélectionner au moins une attente alimentaire', style: errorTextStyle)
+              ],
+            );
+          }
+        }
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+
 }
