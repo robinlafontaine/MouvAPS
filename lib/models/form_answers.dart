@@ -2,6 +2,7 @@ import 'package:logger/logger.dart';
 import 'package:mouvaps/services/pathology.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:mouvaps/services/auth.dart';
+import 'package:mouvaps/services/difficulty.dart';
 
 class FormAnswers {
   String name;
@@ -30,7 +31,8 @@ class FormAnswers {
   late String currentActivityTime = "";
   late String currentActivityIntensity = "";
   late String currentActivityFrequency = "";
-  late String activityDifficulties;
+  late String activityDifficulties = "";
+  late List<Difficulty> difficulties; // Uploaded separately  late bool upDownAble;
   late bool upDownAble;
   late String homeMaterial;
   late String expectationsNeedsSport;
@@ -89,6 +91,8 @@ class FormAnswers {
       }
 
       List<Map<String, dynamic>> userPathologies = [];
+      List<Map<String, dynamic>> userDifficulties = [];
+
       final uuid = Auth.instance.getUUID();
       final form = await _supabase.from('form').insert([toJson()]).select();
 
@@ -110,7 +114,16 @@ class FormAnswers {
         });
       }
 
+      for (var difficulty in difficulties) {
+        userDifficulties.add({
+          'user_uuid': uuid,
+          'difficulty_id': difficulty.id,
+        });
+      }
+
       await _supabase.from('user_pathologie').insert(userPathologies);
+
+      await _supabase.from('user_difficulty').insert(userDifficulties);
 
       return true;
     } catch (e) {

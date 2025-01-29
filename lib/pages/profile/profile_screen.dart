@@ -5,11 +5,16 @@ import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/widgets/custom_badge.dart';
+import 'package:mouvaps/widgets/upload_button.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
   final Future<bool> hasRole = Auth.instance.hasRole('ADMIN');
   final Future<User> user = User.getUserByUuid(Auth.instance.getUUID());
+  final Future<bool> showCertificateUpload = Future.wait([
+    Auth.instance.hasCertificate(),
+    Auth.instance.needsCertificate()
+  ]).then((results) => results[0] && results[1]);
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +103,26 @@ class ProfileScreen extends StatelessWidget {
                             }
                             if (snapshot.data == true) {
                               return const ProfileSwitch();
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                        FutureBuilder<bool>(
+                          future: showCertificateUpload,
+                          builder:
+                              (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                            if (snapshot.hasData && !snapshot.data!) {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Certificat médical', style: TextStyle(color: constants.primaryColor)),
+                                  UserUploadButton(
+                                    filename: 'certificat',
+                                    onUploadComplete: () => (),
+                                  ),
+                                ],
+                              );
                             }
                             return const SizedBox.shrink();
                           },

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/pages/form/diet_form_screen.dart';
 import 'package:mouvaps/models/form_answers.dart';
+import 'package:mouvaps/services/difficulty.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
+import 'package:mouvaps/utils/text_utils.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'package:mouvaps/utils/constants.dart' as constants;
@@ -21,6 +23,8 @@ class PhysicalActivityFormScreen extends StatefulWidget {
 class PhysicalActivityFormScreenState
     extends State<PhysicalActivityFormScreen> {
   final formKey = GlobalKey<ShadFormState>();
+  final Future<List<Difficulty>> difficulties = Difficulty.getAll();
+  var logger = Logger(printer: SimplePrinter());
 
   @override
   Widget build(BuildContext context) {
@@ -185,21 +189,9 @@ class PhysicalActivityFormScreenState
                                 ),]
                             ),
                           const SizedBox(height: 16),
-                          ShadInputFormField(
-                            id: 'activity_difficulties',
-                            label: const Text("Avez-vous des difficultés pour faire de l’activité physique ",
-                              style: labelTextStyle,),
-                            placeholder: const Text("Difficultés", style: placeholderTextStyle),
-                            keyboardType: TextInputType.text,
-                            decoration: formInputDecoration,
-                            validator: (v) {
-                              if (v.isNotEmpty) {
-                                widget.formAnswers.activityDifficulties = v;
-                                return null;
-                              }
-                              return "Merci de répondre à la question";
-                            },
-                          ),
+                          const Text("Avez-vous des difficultés pour faire de l’activité physique ",
+                            style: labelTextStyle,),
+                          _buildDifficultySelect(),
                           const SizedBox(height: 16),
                           ShadRadioGroupFormField<bool>(
                             id:'up_down_able',
@@ -285,6 +277,38 @@ class PhysicalActivityFormScreenState
                             child: const Text("Continuer",
                                 style: primaryButtonTextStyle),
                           )
-                        ])))));
+                        ]
+                    )
+                )
+            )
+        )
+    );
+  }
+
+  Widget _buildDifficultySelect() {
+    return FutureBuilder<List<Difficulty>>(
+      future: difficulties,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ShadSelect.multiple(
+            minWidth: 340,
+            onChanged: print,
+            allowDeselection: true,
+            closeOnSelect: false,
+            placeholder: const Text('Sélectionnez vos difficultés'),
+            initialValues: [snapshot.data!.first],
+            options: snapshot.data!.map((e) => ShadOption(
+              value: e,
+              child: Text(e.name.capitalize()),
+            )).toList(),
+            selectedOptionsBuilder: (context, values) {
+              widget.formAnswers.difficulties = values.cast<Difficulty>();
+              return Text(values.map((e) => e.name).join(', '));
+            },
+          );
+        }
+        return const CircularProgressIndicator();
+      },
+    );
   }
 }
