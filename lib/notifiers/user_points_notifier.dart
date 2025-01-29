@@ -23,7 +23,7 @@ class UserPointsNotifier extends ChangeNotifier {
     if (user != null) {
       try {
         await User.decrementPointsByUuid(user.id, points);
-        _points -= points;
+        fetchUserPoints();
         notifyListeners();
       } catch (e) {
         logger.e('Error decrementing points: $e');
@@ -36,7 +36,7 @@ class UserPointsNotifier extends ChangeNotifier {
     if (user != null) {
       try {
         await User.incrementPointsByUuid(user.id, points);
-        _points += points;
+        fetchUserPoints();
         notifyListeners();
       } catch (e) {
         logger.e('Error adding points: $e');
