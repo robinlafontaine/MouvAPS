@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/pages/form/medical_form_screen.dart';
-import 'package:mouvaps/models/form_answers.dart';
+import 'package:mouvaps/services/form_answers.dart';
+import 'package:mouvaps/services/pathology.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:mouvaps/utils/form_styling.dart';
+import 'package:mouvaps/utils/text_utils.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-
 import 'package:mouvaps/utils/constants.dart' as constants;
 
 class IdentityFormScreen extends StatefulWidget {
@@ -21,10 +22,12 @@ class IdentityFormScreen extends StatefulWidget {
 
 class IdentityFormScreenState extends State<IdentityFormScreen> {
   final formKey = GlobalKey<ShadFormState>();
+  final Future<List<Pathology>> pathologies = Pathology.getAll();
 
   @override
   Widget build(BuildContext context) {
     var logger = Logger(printer: SimplePrinter());
+
     return Scaffold(
         body: Container(
             padding: const EdgeInsets.all(16),
@@ -59,22 +62,27 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
                     Text("Votre identité",
                         style: ShadTheme.of(context).textTheme.h3),
                     const SizedBox(height: 16),
-                    ShadInputFormField(
-                      id: 'age',
-                      label: const Text('Quel est votre âge?',
+                    ShadDatePickerFormField(
+                      id: 'birthday',
+                      label: const Text('Quelle est votre date de naissance ?',
                           style: labelTextStyle),
-                      placeholder:
-                          const Text('Votre âge', style: placeholderTextStyle),
-
-                      initialValue: "${widget.formAnswers.age==-1?'':widget.formAnswers.age}",
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: formInputDecoration,
+                      placeholder: const Text('Date de naissance'),
+                      closeOnSelection: false,
+                      captionLayout: ShadCalendarCaptionLayout.dropdown,
                       validator: (v) {
-                        if (v.isEmpty) {
-                          return "Merci d'entrer votre âge";
+                        if (v == null) {
+                          return "Merci d'entrer votre date de naissance";
                         }
-                        widget.formAnswers.age = int.parse(v);
+                        if (v.isAfter(DateTime.now())) {
+                          return "La date de naissance ne peut pas être dans le futur";
+                        }
+                        if (v.isBefore(DateTime.now().subtract(const Duration(days: 365 * 100)))) {
+                          return "La date de naissance ne peut pas être il y a plus de 100 ans";
+                        }
+                        if (v.isAfter(DateTime.now().subtract(const Duration(days: 365 * 18)))) {
+                          return "Vous devez être majeur pour utiliser l'application";
+                        }
+                        widget.formAnswers.birthday = v;
                         return null;
                       },
                     ),
@@ -88,17 +96,17 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
                         style: placeholderTextStyle,
                       ),
                       options: [
-                        ...constants.genres.entries.map((e) =>
+                        ...constants.genresOptions.entries.map((e) =>
                             ShadOption(value: e.key, child: Text(e.value)))
                       ],
-                      initialValue: widget.formAnswers.sex.isEmpty?null:widget.formAnswers.sex,
+                      initialValue: widget.formAnswers.gender.isEmpty?null:widget.formAnswers.gender,
                       selectedOptionBuilder: (context, value) =>
-                          Text(constants.genres[value]!),
+                          Text(constants.genresOptions[value]!),
                       validator: (v) {
                         if (v == null) {
                           return "Veuillez choisir une option";
                         } else {
-                          widget.formAnswers.sex = v;
+                          widget.formAnswers.gender = v;
                           return null;
                         }
                       },
@@ -161,79 +169,11 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    ShadInputFormField(
-                      id: 'handicap',
-                      label: const Text(
-                        'Souffrez-vous d\'une maladie ou d\'un handicap?',
-                        style: labelTextStyle,
-                      ),
-                      placeholder: const Text(
-                          'Ex: maladie cardiaque : syndrome coronarien aigu',
-                          style: placeholderTextStyle),
-                      decoration: formInputDecoration,
-                      validator: (v) {
-                        if (v.isNotEmpty) {
-                          widget.formAnswers.handicap = v;
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    ShadSelectFormField<String>(
-                      id: 'family_situation',
-                      label: const Text('Quelle est votre situation familiale?',
-                          style: labelTextStyle),
-                      placeholder:
-                          const Text('Situation', style: placeholderTextStyle),
-                      options: [
-                        ...constants.familySituations.entries.map((e) =>
-                            ShadOption(value: e.key, child: Text(e.value)))
-                      ],
-                      selectedOptionBuilder: (context, value) =>
-                          Text(constants.familySituations[value]!),
-                      validator: (v) {
-                        if (v == null) {
-                          return "Veuillez choisir une option";
-                        }
-                        widget.formAnswers.familySituation = v;
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    ShadRadioGroupFormField<bool>(
-                      id: 'retired',
-                      label: const Text('Êtes-vous retraité(e)?',
-                          style: labelTextStyle),
-                      items: const [
-                        ShadRadio(value: true, label: Text('Oui')),
-                        ShadRadio(value: false, label: Text('Non')),
-                      ],
-                      validator: (v) {
-                        if (v == null) {
-                          return "Veuillez choisir une option";
-                        }
-                        widget.formAnswers.retired = v;
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    ShadInputFormField(
-                      id: 'children',
-                      label: const Text('Combien avez-vous d\'enfants?',
-                          style: labelTextStyle),
-                      placeholder: const Text('Nombre d\'enfants',
-                          style: placeholderTextStyle),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: formInputDecoration,
-                      validator: (v) {
-                        if (v.isEmpty) {
-                          return "Merci d'entrer le nombre d'enfants";
-                        }
-                        widget.formAnswers.children = int.parse(v);
-                        return null;
-                      },
-                    ),
+                    const Text(
+                        'Avez-vous des pathologies?',
+                        style: labelTextStyle),
+                    const SizedBox(height: 8),
+                    _buildPathologySelect(),
                     const SizedBox(height: 16),
                     ShadRadioGroupFormField<bool>(
                       id: 'pregnant',
@@ -252,81 +192,25 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    ShadRadioGroupFormField<bool>(
-                      id: 'home_floors',
-                      label: const Text(
-                          'Votre habitat comporte-t-il des étages?',
+                    ShadSelectFormField<String>(
+                      id: 'job_physicality',
+                      label: const Text('Votre métier est-il :',
                           style: labelTextStyle),
-                      items: const [
-                        ShadRadio(value: true, label: Text('Oui')),
-                        ShadRadio(value: false, label: Text('Non')),
+                      placeholder: const Text('Métier', style: placeholderTextStyle),
+                      options: [
+                        ...constants.jobPhysicalityOptions.entries.map((e) =>
+                            ShadOption(value: e.key, child: Text(e.value)))
                       ],
-                      onChanged: (value) {
-                        setState(() {});
-                      },
+                      // initialValue: widget.formAnswers.job.isEmpty?null:widget.formAnswers.job,
+                      selectedOptionBuilder: (context, value) =>
+                          Text(constants.jobPhysicalityOptions[value]!),
                       validator: (v) {
                         if (v == null) {
                           return "Veuillez choisir une option";
-                        }
-                        widget.formAnswers.homeFloors = v;
-                        return null;
-                      },
-                    ),
-                    if (formKey.currentState?.value['home_floors'] == true)
-                      ShadInputFormField(
-                        id: 'home_floors_number',
-                        label: const Text('Si oui combien?',
-                            style: labelTextStyle),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        placeholder: const Text('Nombre d\'étages',
-                            style: placeholderTextStyle),
-                        decoration: formInputDecoration,
-                        validator: (v) {
-                          if (v.isEmpty &&
-                              formKey.currentState?.value['home_floors'] ==
-                                  true) {
-                            return "Merci d'entrer le nombre d'étages";
-                          }
-                          widget.formAnswers.homeFloorsNumber = int.parse(v);
+                        } else {
+                          widget.formAnswers.jobPhysicality = v;
                           return null;
-                        },
-                      ),
-                    const SizedBox(height: 16),
-                    ShadRadioGroupFormField<bool>(
-                      id: 'home_stairs',
-                      label: const Text(
-                          'Accède-t-on à votre habitat par des escaliers?',
-                          style: labelTextStyle),
-                      items: const [
-                        ShadRadio(value: true, label: Text('Oui')),
-                        ShadRadio(value: false, label: Text('Non')),
-                      ],
-                      validator: (v) {
-                        if (v == null) {
-                          return "Veuillez choisir une option";
                         }
-                        widget.formAnswers.homeStairs = v;
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    ShadInputFormField(
-                      id: 'job',
-                      label: const Text(
-                          'Quel est votre profession ou que faites-vous actuellement?',
-                          style: labelTextStyle),
-                      placeholder: const Text('Votre profession',
-                          style: placeholderTextStyle),
-                      decoration: formInputDecoration,
-                      validator: (v) {
-                        if (v.isEmpty) {
-                          return "Merci d'entrer votre profession";
-                        }
-                        widget.formAnswers.job = v;
-                        return null;
                       },
                     ),
                     const SizedBox(height: 16),
@@ -365,4 +249,41 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
               ),
             )));
   }
+
+  Widget _buildPathologySelect() {
+    return FutureBuilder<List<Pathology>>(
+      future: pathologies,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Column(
+            children: [
+              ShadSelect<Pathology>.multiple(
+                minWidth: 340,
+                onChanged: print,
+                allowDeselection: true,
+                closeOnSelect: false,
+                placeholder: const Text('Sélectionnez vos pathologies',style: placeholderTextStyle,),
+                options: snapshot.data!.map((e) => ShadOption(
+                  value: e,
+                  child: Text(e.name.capitalize()),
+                )).toList(),
+                selectedOptionsBuilder: (context, values) {
+                  widget.formAnswers.pathologies = values.cast<Pathology>();
+                  return Text(values.map((e) => e.name.capitalize()).join(', '));
+                },
+              ),
+
+            ],
+          );
+        }
+        return const CircularProgressIndicator();
+      },
+    );
+  }
 }
+
+
+
+
+
+

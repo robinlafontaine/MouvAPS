@@ -43,14 +43,14 @@ class _UserUploadButtonState extends State<UserUploadButton> {
   }
 
   Future<void> _startUpload() async {
-    final bool response = await uploadManager.uploadFile();
+    final String? response = await uploadManager.uploadFile();
 
     if (mounted) {
       setState(() {
-        _wasSuccessful = response;
+        _wasSuccessful = response != null;
       });
 
-      if (response) {
+      if (response != null) {
         widget.onUploadComplete?.call();
       } else {
         ShadToaster.of(context).show(
@@ -123,7 +123,7 @@ class _UserUploadButtonState extends State<UserUploadButton> {
         );
       },
       enabled: !_wasSuccessful,
-      icon: _wasSuccessful ? const Icon(Icons.check) : const Icon(Icons.cloud_upload),
+      icon: _wasSuccessful ? const Icon(Icons.check, size: 24) : const Icon(Icons.cloud_upload, size: 24),
       child: Text(_wasSuccessful ? 'Fichier envoyé' : 'Envoyer un fichier'),
     );
   }

@@ -3,6 +3,8 @@ import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/services/exercise.dart';
 import 'package:mouvaps/pages/exercise/exercise_widget.dart';
 
+import '../../services/auth.dart';
+
 class ExerciseScreen extends StatefulWidget {
   const ExerciseScreen({super.key});
 
@@ -16,7 +18,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObse
   @override
   void initState() {
     super.initState();
-    _exercisesFuture = Exercise.getAll();
+    _exercisesFuture = _getExercises();
   }
 
     @override
@@ -32,7 +34,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObse
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return const Center(child: Text('Une erreur est survenue lors du chargement des séances'));
           } else {
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -59,9 +61,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> with WidgetsBindingObse
       );
     }
 
+  Future<List<Exercise>> _getExercises() async {
+    return await Auth.instance.hasRole('VERIFIED') ? Exercise.getAll() : Exercise.getDemoExercises();
+  }
+
     void _refresh() async {
       setState(() {
-        _exercisesFuture = Exercise.getAll();
+        _exercisesFuture = _getExercises();
       });
     }
   }

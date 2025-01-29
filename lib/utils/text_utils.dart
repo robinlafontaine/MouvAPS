@@ -62,6 +62,21 @@ class H2 extends StatelessWidget {
   }
 }
 
+class H3 extends StatelessWidget {
+  final String content;
+  const H3(
+      {super.key, required this.content}
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      content,
+      style: ShadTheme.of(context).textTheme.h3
+    );
+  }
+}
+
 class H4 extends StatelessWidget {
   final String content;
   const H4(
