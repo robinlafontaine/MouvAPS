@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mouvaps/pages/admin/recipe/selectable_list_widget.dart';
 import 'package:mouvaps/services/recipe.dart';
-import 'package:mouvaps/services/upload.dart';
 import 'package:mouvaps/utils/constants.dart';
 import 'package:mouvaps/widgets/content_upload_service.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -28,18 +28,26 @@ class AdminRecipe extends StatefulWidget {
 class _AdminRecipeState extends State<AdminRecipe> {
   late Recipe _recipe;
   List<String> _steps = [];
-  final ContentUploadService _uploadServiceImage = ContentUploadService(
+  final ContentUploadService _uploadServiceRecipeImage = ContentUploadService(
     directoryPath: "recipes/thumbnails",
     type: FileType.image,
   );
-  final ContentUploadService _uploadServiceVideo = ContentUploadService(
+  final ContentUploadService _uploadServiceRecipeVideo = ContentUploadService(
     directoryPath: "recipes/videos",
     type: FileType.video,
   );
+  final ContentUploadService _uploadServiceIngredientImage =
+      ContentUploadService(
+    directoryPath: "ingredients",
+    type: FileType.image,
+  );
+
+  late Future<List<Ingredient>> _ingredients;
 
   @override
   void initState() {
     super.initState();
+    _ingredients = Ingredient.getAll();
     _recipe = widget.recipe ?? Recipe(difficulty: 0.0, ingredients: []);
     _steps = _recipe.description?.split("\\\n") ?? [];
   }
@@ -100,7 +108,9 @@ class _AdminRecipeState extends State<AdminRecipe> {
               child: AspectRatio(
                 aspectRatio: 16 / 9,
                 child: Image(
-                  image: FileImage(File(_recipe.imageUrl ?? '')),
+                  image: _recipe.imageUrl!.contains("https://")
+                      ? NetworkImage(_recipe.imageUrl ?? '')
+                      : FileImage(File(_recipe.imageUrl ?? '')),
                   fit: BoxFit.cover,
                   errorBuilder: (BuildContext context, Object exception,
                       StackTrace? stackTrace) {
@@ -111,29 +121,30 @@ class _AdminRecipeState extends State<AdminRecipe> {
                   },
                 ),
               ),
-            ),
-          ShadButton(
-            backgroundColor: Colors.white,
-            decoration: const ShadDecoration(
-              border: ShadBorder(
-                top: ShadBorderSide(color: primaryColor, width: 2),
-                bottom: ShadBorderSide(color: primaryColor, width: 2),
-                left: ShadBorderSide(color: primaryColor, width: 2),
-                right: ShadBorderSide(color: primaryColor, width: 2),
+            )
+          else
+            ShadButton(
+              backgroundColor: Colors.white,
+              decoration: const ShadDecoration(
+                border: ShadBorder(
+                  top: ShadBorderSide(color: primaryColor, width: 2),
+                  bottom: ShadBorderSide(color: primaryColor, width: 2),
+                  left: ShadBorderSide(color: primaryColor, width: 2),
+                  right: ShadBorderSide(color: primaryColor, width: 2),
+                ),
               ),
+              size: ShadButtonSize.lg,
+              child: const Icon(
+                FontAwesomeIcons.image,
+              ),
+              onPressed: () async {
+                await _uploadServiceRecipeImage.showUploadDialog(context);
+                setState(() {
+                  _recipe.imageUrl =
+                      _uploadServiceRecipeImage.uploadManager.getFile();
+                });
+              },
             ),
-            size: ShadButtonSize.lg,
-            child: const Icon(
-              FontAwesomeIcons.image,
-            ),
-            onPressed: () async {
-              await _uploadServiceImage.showUploadDialog(context);
-              setState(() {
-                _recipe.imageUrl = _uploadServiceImage.uploadManager.getFile();
-                print("Image URL: ${_recipe.imageUrl}");
-              });
-            },
-          ),
         ],
       ),
     );
@@ -242,20 +253,87 @@ class _AdminRecipeState extends State<AdminRecipe> {
       constraints: const BoxConstraints(maxWidth: 300),
       radius: BorderRadius.circular(20),
       title: const Text('Ajouter un ingrédient'),
-      actions: const [ShadButton(child: Text('Save changes'))],
+      actions: [
+        ShadButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Valider')),
+        ShadButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Ajouter un nouvel ingrédient')),
+      ],
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         width: 100,
-        child: const Column(
+        height: 300,
+        child: FutureBuilder(
+            future: _ingredients,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return SelectableList(
+                    ingredients: snapshot.data as List<Ingredient>,
+                    selectedIngredients: _recipe.ingredients ?? [],
+                    onIngredientSelected: (ingredient) {
+                      setState(() {
+                        // Add the ingredient to the recipe if it's name's not already there
+                        if (!_recipe.ingredients!.any(
+                            (element) => element.name == ingredient.name)) {
+                          _recipe.ingredients!.add(ingredient);
+                        } else {
+                          // Remove the ingredient from the recipe
+                          _recipe.ingredients!.removeWhere(
+                              (element) => element.name == ingredient.name);
+                        }
+                      });
+                    });
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+      ),
+    );
+  }
+
+  Widget _buildNewIngredientPopup() {
+    return ShadDialog(
+      constraints: const BoxConstraints(maxWidth: 300),
+      radius: BorderRadius.circular(20),
+      title: const Text('Ajouter un ingrédient'),
+      actions: const [ShadButton(onPressed: null, child: Text('Save changes'))],
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        width: 100,
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("TODO - Ingredient Image"),
-            SizedBox(height: 10),
-            ShadInput(
+            ShadButton(
+              backgroundColor: Colors.white,
+              decoration: const ShadDecoration(
+                border: ShadBorder(
+                  top: ShadBorderSide(color: primaryColor, width: 2),
+                  bottom: ShadBorderSide(color: primaryColor, width: 2),
+                  left: ShadBorderSide(color: primaryColor, width: 2),
+                  right: ShadBorderSide(color: primaryColor, width: 2),
+                ),
+              ),
+              size: ShadButtonSize.lg,
+              child: const Icon(
+                FontAwesomeIcons.image,
+              ),
+              onPressed: () async {
+                await _uploadServiceIngredientImage.showUploadDialog(context);
+                setState(() {});
+              },
+            ),
+            const SizedBox(height: 10),
+            const ShadInput(
               placeholder: Text("Nom de l'ingrédient"),
               keyboardType: TextInputType.text,
             ),
-            ShadInput(
+            const ShadInput(
               placeholder: Text("Quantité"),
               keyboardType: TextInputType.number,
             ),
@@ -411,9 +489,10 @@ class _AdminRecipeState extends State<AdminRecipe> {
         side: const BorderSide(color: primaryColor),
       ),
       onPressed: () async {
-        print("FAB pressed ${_recipe.imageUrl}");
         if (_recipe.imageUrl != null) {
-          await _uploadServiceImage.startUpload(context);
+          await _uploadServiceRecipeImage.startUpload(context).then(
+                Navigator.of(context).pop,
+              );
         }
       },
       child: const Icon(FontAwesomeIcons.floppyDisk, color: primaryColor),

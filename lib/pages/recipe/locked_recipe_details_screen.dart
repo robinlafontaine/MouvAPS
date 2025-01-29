@@ -257,7 +257,7 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
     if (!mounted) return;
     // Add the points to the user
     Provider.of<UserPointsNotifier>(context, listen: false)
-        .addPoints(widget.recipe.pricePoints ?? 0);
+        .decrementPoints(widget.recipe.pricePoints ?? 0);
     // Go back to the previous screen and refresh the state
     Navigator.pop(context);
     widget.onRecipeStateChanged();

@@ -15,10 +15,24 @@ class UserPointsNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> decrementPoints(int points) async {
+    final user = Auth.instance.getUser();
+    if (user != null) {
+      try {
+        _points -= points;
+        await User.decrementPointsByUuid(user.id, points);
+        print('Points deduced: $points - Total points: $_points');
+        notifyListeners();
+      } catch (e) {
+        print('Error decrementing points: $e');
+      }
+    }
+  }
+
   Future<void> addPoints(int points) async {
     final user = Auth.instance.getUser();
     if (user != null) {
-      await User.updatePointsByUuid(user.id, _points + points);
+      await User.incrementPointsByUuid(user.id, points);
       _points += points;
       notifyListeners();
     }

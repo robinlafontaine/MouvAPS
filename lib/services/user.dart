@@ -86,18 +86,24 @@ class User {
     return User.fromJson(response);
   }
 
-  // Update the user's points by user uuid
-  static Future<int> updatePointsByUuid(String? uuid, int points) async {
-    final newPoints = await _supabase.rpc('decrement_user_points', params: {
+  // Decrement the user's points by user uuid
+  static Future<int> decrementPointsByUuid(String? uuid, int points) async {
+    final response = await _supabase.rpc('decrement_user_points', params: {
       'p_user_id': uuid,
-      'p_points_to_subtract': points,
+      'p_points_to_subtact': points,
     });
 
-    if (newPoints.error != null) {
-      throw Exception(newPoints.error!.message);
-    }
+    return response;
+  }
 
-    return newPoints.data as int;
+  // Increment the user's points by user uuid
+  static Future<int> incrementPointsByUuid(String? uuid, int points) async {
+    final response = await _supabase.rpc('increment_user_points', params: {
+      'p_user_id': uuid,
+      'p_points_to_add': points,
+    });
+
+    return response;
   }
 
   // Get user's points
