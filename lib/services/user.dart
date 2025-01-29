@@ -1,6 +1,12 @@
 import 'package:logger/logger.dart';
 import 'package:mouvaps/services/pathology.dart';
 import 'package:mouvaps/services/role.dart';
+import 'package:mouvaps/services/difficulty.dart';
+import 'package:mouvaps/services/regime.dart';
+import 'package:mouvaps/services/allergie.dart';
+import 'package:mouvaps/services/materiel_sportif.dart';
+import 'package:mouvaps/services/attentes_alimentaires.dart';
+import 'package:mouvaps/services/attentes_sportives.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -8,12 +14,17 @@ class User {
   final String userUuid;
   List<Pathology>? pathologies;
   int points;
-  int age;
+  DateTime birthday;
   String firstName;
   String lastName;
   List<Role> roles;
   String gender;
-  String level;
+  String difficulty;
+  List<Regime> regimesAlimentaires;
+  List<MaterielSportif> materielSportif;
+  List<Allergie> allergies;
+  List<AttentesAlimentaires> attentesAlimentaires;
+  List<AttentesSportives> attentesSportives;
 
   Logger logger = Logger();
 
@@ -21,29 +32,63 @@ class User {
     required this.userUuid,
     required this.pathologies,
     required this.points,
-    required this.age,
+    required this.birthday,
     required this.firstName,
     required this.lastName,
     required this.roles,
     required this.gender,
-    required this.level,
+    required this.difficulty,
+    required this.regimesAlimentaires,
+    required this.materielSportif,
+    required this.allergies,
+    required this.attentesAlimentaires,
+    required this.attentesSportives,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     User user = User(
       points: json['points'] as int,
       userUuid: json['user_uuid'] as String,
-      pathologies: (json['user_pathologie'] as List<dynamic>?)
+      pathologies: json['user_pathologie'] != null ?
+        (json['user_pathologie'] as List<dynamic>?)
           ?.map((e) => Pathology.fromJson(e['pathologies']))
-          .toList(),
-      age: json['age'] as int,
+          .toList()
+        : [],
+      birthday: DateTime.parse(json['birthday']),
       firstName: json['first_name'] as String,
       lastName: json['last_name'] as String,
-      roles: (json['user_role'] as List<dynamic>?)
+      roles: json['user_role'] != null ?
+        (json['user_role'] as List<dynamic>?)
           !.map((e) => Role.fromJson(e['roles']))
-          .toList(),
-      gender: json['gender'] as String,
-      level: json['level'] as String,
+          .toList()
+        : [],
+      gender: json['gender'] != null ? json['gender'] as String : "inconnu",
+      difficulty: json['difficulty'] != null ? Difficulty.fromJson(json['difficulty']).name : "inconnu",
+      regimesAlimentaires: json['user_regime'] != null ?
+        (json['user_regime'] as List<dynamic>?)
+          !.map((e) => Regime.fromJson(e['regimes_alimentaires']))
+          .toList()
+        : [],
+      materielSportif: json['user_materiel_sportif'] != null ?
+        (json['user_materiel_sportif'] as List<dynamic>?)
+          !.map((e) => MaterielSportif.fromJson(e['materiel_sportif']))
+          .toList()
+        : [],
+      allergies: json['user_allergie'] != null ?
+        (json['user_allergie'] as List<dynamic>?)
+          !.map((e) => Allergie.fromJson(e['allergies']))
+          .toList()
+        : [],
+      attentesAlimentaires: json['user_attentes_alimentaires'] != null ?
+        (json['user_attentes_alimentaires'] as List<dynamic>?)
+          !.map((e) => AttentesAlimentaires.fromJson(e['attentes_alimentaires']))
+          .toList()
+        : [],
+      attentesSportives: json['user_attentes_sportives'] != null ?
+        (json['user_attentes_sportives'] as List<dynamic>?)
+          !.map((e) => AttentesSportives.fromJson(e['attentes_sportives']))
+          .toList()
+        : [],
     );
     return user;
   }
@@ -53,10 +98,17 @@ class User {
       'user_uuid': userUuid,
       'pathologies': pathologies?.map((e) => e.toJson()).toList(),
       'points': points,
-      'age': age,
+      'birthday': birthday.toString(),
       'first_name': firstName,
       'last_name': lastName,
       'roles': roles.map((e) => e.toJson()).toList(),
+      'gender': gender,
+      'difficulty': difficulty,
+      'regimes_alimentaires': regimesAlimentaires.map((e) => e.toJson()).toList(),
+      'materiel_sportif': materielSportif.map((e) => e.toJson()).toList(),
+      'allergies': allergies.map((e) => e.toJson()).toList(),
+      'attentes_alimentaires': attentesAlimentaires.map((e) => e.toJson()).toList(),
+      'attentes_sportives': attentesSportives.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -123,7 +175,7 @@ class User {
         .select('''
             user_uuid,
             points,
-            age,
+            birthday,
             first_name,
             last_name,
             user_pathologie (
@@ -139,7 +191,42 @@ class User {
               )
             ),
             gender,
-            level
+            user_difficulty (
+              niveaux (
+                id,
+                name
+              )
+            ),
+            user_regime (
+              regimes_alimentaires (
+                id,
+                name
+              )
+            ),
+            user_materiel_sportif (
+              materiel_sportif (
+                id,
+                name
+              )
+            ),
+            user_allergie (
+              allergies (
+                id,
+                name
+              )
+            ),
+            user_attentes_alimentaires (
+              attentes_alimentaires (
+                id,
+                name
+              )
+            ),
+            user_attentes_sportives (
+              attentes_sportives (
+                id,
+                name
+              )
+            )
           ''');
     return response.map((json) => User.fromJson(json)).toList();
   }
@@ -162,7 +249,7 @@ class User {
             .select('''
             user_uuid,
             points,
-            age,
+            birthday,
             first_name,
             last_name,
             user_pathologie (
@@ -178,7 +265,42 @@ class User {
               )
             ),
             gender,
-            level
+            user_difficulty (
+              niveaux (
+                id,
+                name
+              )
+            ),
+            user_regime (
+              regimes_alimentaires (
+                id,
+                name
+              )
+            ),
+            user_materiel_sportif (
+              materiel_sportif (
+                id,
+                name
+              )
+            ),
+            user_allergie (
+              allergies (
+                id,
+                name
+              )
+            ),
+            user_attentes_alimentaires (
+              attentes_alimentaires (
+                id,
+                name
+              )
+            ),
+            user_attentes_sportives (
+              attentes_sportives (
+                id,
+                name
+              )
+            )
           ''')
             .eq('user_uuid', uuid).single();
     return User.fromJson(response);
@@ -189,12 +311,17 @@ class User {
       userUuid: const Uuid().v4(),
       pathologies: [],
       points: 0,
-      age: 0,
+      birthday: DateTime.now(),
       firstName: '',
       lastName: '',
       roles: [],
       gender: '',
-      level: '',
+      difficulty: '',
+      regimesAlimentaires: [],
+      materielSportif: [],
+      allergies: [],
+      attentesAlimentaires: [],
+      attentesSportives: [],
     );
   }
 

@@ -12,7 +12,7 @@ class Difficulty {
   factory Difficulty.fromJson(Map<String, dynamic> json) {
     return Difficulty(
       id: json['id'] as int,
-      name: json['name'] as String,
+      name: json['name'] as String
     );
   }
 
@@ -27,7 +27,7 @@ class Difficulty {
 
   Future<Difficulty> create() async {
     try {
-      final response = await _supabase.from('difficulties').insert(toJson());
+      final response = await _supabase.from('niveaux').insert(toJson());
 
       return Difficulty.fromJson(response.data);
     } catch (error) {
@@ -36,7 +36,7 @@ class Difficulty {
   }
 
   static Future<List<Difficulty>> getAll() async {
-    final response = await _supabase.from('difficulties').select().order('id', ascending: true);
+    final response = await _supabase.from('niveaux').select().order('id', ascending: true);
     return (response as List)
         .map((e) => Difficulty.fromJson(e))
         .toList();

@@ -27,7 +27,7 @@ class UserTile extends StatelessWidget {
             ),
           ),
           title: H4(content: "${user.firstName} ${user.lastName}"),
-          subtitle: SubTitle(content: "${user.age} ans"),
+          subtitle: SubTitle(content: "${DateTime.now().difference(user.birthday).inDays ~/ 365 } ans"),
           onTap: () {
             Navigator.push(
               context,

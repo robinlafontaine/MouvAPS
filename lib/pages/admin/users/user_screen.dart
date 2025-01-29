@@ -89,41 +89,29 @@ class UserScreen extends StatelessWidget {
                             ),
                             userElement(
                               label: "Age",
-                              child: P(content: "${currentUser.age.toString()} ans")
+                              child: P(content: "${DateTime.now().difference(currentUser.birthday).inDays ~/ 365 } ans")
                             ),
                             userElement(
                                 label: "Genre",
                                 child: P(content: currentUser.gender)
                             ),
                             userElement(
-                                label: "Niveau",
-                                child: P(content: currentUser.level)
-                            ),
-                            userElement(
                               label: "Points",
                               child: P(content: "${currentUser.points.toString()} points")
-                            ),
-                            userElement(
-                              label: "Pathologies",
-                              child: Flex(
-                                direction: Axis.horizontal,
-                                children: [
-                                  for (final pathology in currentUser.pathologies!) ...[
-                                    CustomBadge(
-                                      text: pathology.name,
-                                      backgroundColor: constants.lightColor,
-                                      textColor: constants.textColor,
-                                    ),
-                                    const SizedBox(width: 10)
-                                  ],
-                                ],
-                              )
                             ),
                             userElement(
                               label: "Rôles",
                               child: Flex(
                                 direction: Axis.horizontal,
                                 children: [
+                                  if (currentUser.roles.isEmpty) ...[
+                                    const CustomBadge(
+                                      text: "EN ATTENTE",
+                                      backgroundColor: constants.lightColor,
+                                      textColor: constants.textColor,
+                                    ),
+                                    const SizedBox(width: 10)
+                                  ] else
                                   for (final role in currentUser.roles) ...[
                                     CustomBadge(
                                       text: role.name,
@@ -134,6 +122,29 @@ class UserScreen extends StatelessWidget {
                                   ]
                                 ],
                               )
+                            ),
+                            badgeElements(
+                                label: "Pathologies",
+                                elements: currentUser.pathologies!
+                            ),
+                            badgeElements(
+                                label: "Régime",
+                                elements: currentUser.regimesAlimentaires
+                            ),
+                            badgeElements(
+                              label: "Matériel sportif",
+                              elements: currentUser.materielSportif
+                            ),
+                            badgeElements(
+                                label: "Allergies",
+                                elements: currentUser.allergies
+                            ),
+                            badgeElements(
+                                label: "Attentes alimentaires",
+                                elements: currentUser.attentesAlimentaires
+                            ),badgeElements(
+                                label: "Attentes sportives",
+                                elements: currentUser.attentesSportives
                             ),
                           ],
                         ),
@@ -154,6 +165,38 @@ class UserScreen extends StatelessWidget {
         const Divider(),
         H4(content: label),
         child,
+      ],
+    );
+  }
+
+  Widget badgeElements<T extends dynamic>(
+      {required String label, required List<T> elements}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Divider(),
+        H4(content: label),
+        Flex(
+          direction: Axis.horizontal,
+          children: [
+            if (elements.isEmpty) ...[
+              const CustomBadge(
+                text: "Inconnu",
+                backgroundColor: constants.lightColor,
+                textColor: constants.textColor,
+              ),
+              const SizedBox(width: 10)
+            ] else
+            for (final element in elements) ...[
+              CustomBadge(
+                text: element.name,
+                backgroundColor: constants.lightColor,
+                textColor: constants.textColor,
+              ),
+              const SizedBox(width: 10)
+            ],
+          ],
+        ),
       ],
     );
   }
