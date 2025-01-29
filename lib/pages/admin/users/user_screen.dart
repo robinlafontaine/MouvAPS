@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mouvaps/utils/text_utils.dart';
 import 'package:mouvaps/utils/constants.dart' as constants;
 import 'package:mouvaps/services/user.dart';
+import 'package:mouvaps/widgets/certificate_button.dart';
 import 'package:mouvaps/widgets/custom_badge.dart';
 import 'package:mouvaps/pages/admin/users/user_edit_screen.dart';
 
@@ -87,17 +88,22 @@ class UserScreen extends StatelessWidget {
                                 H4(content: "${currentUser.firstName} ${currentUser.lastName}"),
                               ],
                             ),
+                            CertificateButton(user: currentUser),
                             userElement(
                               label: "Age",
                               child: P(content: "${DateTime.now().difference(currentUser.birthday).inDays ~/ 365 } ans")
                             ),
                             userElement(
                                 label: "Genre",
-                                child: P(content: currentUser.gender)
+                                child: P(content: currentUser.gender.capitalize())
                             ),
                             userElement(
                               label: "Points",
                               child: P(content: "${currentUser.points.toString()} points")
+                            ),
+                            userElement(
+                                label: "Niveau",
+                                child: P(content: currentUser.difficulty.capitalize())
                             ),
                             userElement(
                               label: "Rôles",
@@ -129,11 +135,11 @@ class UserScreen extends StatelessWidget {
                             ),
                             badgeElements(
                                 label: "Régime",
-                                elements: currentUser.regimesAlimentaires
+                                elements: currentUser.diet
                             ),
                             badgeElements(
                               label: "Matériel sportif",
-                              elements: currentUser.materielSportif
+                              elements: currentUser.homeMaterial
                             ),
                             badgeElements(
                                 label: "Allergies",
@@ -141,10 +147,11 @@ class UserScreen extends StatelessWidget {
                             ),
                             badgeElements(
                                 label: "Attentes alimentaires",
-                                elements: currentUser.attentesAlimentaires
-                            ),badgeElements(
+                                elements: currentUser.dietExpectations
+                            ),
+                            badgeElements(
                                 label: "Attentes sportives",
-                                elements: currentUser.attentesSportives
+                                elements: currentUser.sportExpectations
                             ),
                           ],
                         ),

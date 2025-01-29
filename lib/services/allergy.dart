@@ -31,6 +31,4 @@ class Allergy {
         .map((e) => Allergy.fromJson(e))
         .toList();
   }
-
-
 }

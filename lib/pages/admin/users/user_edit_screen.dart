@@ -7,11 +7,12 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/services/pathology.dart';
 import 'package:mouvaps/services/role.dart';
-import 'package:mouvaps/services/allergie.dart';
-import 'package:mouvaps/services/materiel_sportif.dart';
-import 'package:mouvaps/services/regime.dart';
-import 'package:mouvaps/services/attentes_alimentaires.dart';
-import 'package:mouvaps/services/attentes_sportives.dart';
+import 'package:mouvaps/services/difficulty.dart';
+import 'package:mouvaps/services/diet.dart';
+import 'package:mouvaps/services/allergy.dart';
+import 'package:mouvaps/services/home_material.dart';
+import 'package:mouvaps/services/diet_expectations.dart';
+import 'package:mouvaps/services/sport_expectations.dart';
 
 class UserEditScreen extends StatefulWidget {
   final Future<User> user;
@@ -43,7 +44,16 @@ class _UserEditScreenState extends State<UserEditScreen> {
               ),
               onPressed: () async {
                 await currentUser.update();
-                //Navigator.pop(context);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text("Modifications enregistrées"),
+                        backgroundColor: Colors.green,
+                        behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
               }
           ),
         ],
@@ -91,9 +101,8 @@ class _UserEditScreenState extends State<UserEditScreen> {
                                 label: "Date de naissance",
                                 child: ShadDatePickerFormField(
                                   initialValue: currentUser.birthday,
-                                  captionLayout: ShadCalendarCaptionLayout.dropdownYears,
-                                  closeOnSelection: false,
-                                  closeOnTapOutside: false,
+                                  captionLayout: ShadCalendarCaptionLayout.dropdown,
+                                  formatDate: (date) => DateFormat('dd/MM/yyyy').format(date),
                                   validator: (v) {
                                     if (v == null) {
                                       return "Merci d'entrer votre date de naissance";
@@ -116,6 +125,47 @@ class _UserEditScreenState extends State<UserEditScreen> {
                                   },
                                 )
                             ),
+                            FutureBuilder(
+                                future: Difficulty.getAll(),
+                                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const CircularProgressIndicator();
+                                  }
+                                  if (snapshot.hasError) {
+                                    return Text(snapshot.error.toString());
+                                  }
+                                  if (snapshot.hasData) {
+                                    List<Difficulty> difficulties = snapshot.data;
+                                    return formElement(
+                                        label: "Niveau",
+                                        child: ShadSelect<String>(
+                                          minWidth: 340,
+                                          maxHeight: 200,
+                                          allowDeselection: true,
+                                          closeOnSelect: false,
+                                          placeholder: const Text("Sélectionnez un niveau"),
+                                          options: [
+                                            ...difficulties.map(
+                                                  (e) => ShadOption(
+                                                value: e.name.toString().capitalize(),
+                                                child: Text(e.name.toString().capitalize()),
+                                              ),
+                                            ),
+                                          ],
+                                          selectedOptionsBuilder: (context,
+                                              values) =>
+                                              Text(values.map((v) =>
+                                                  v.capitalize()).join(', ')),
+                                          initialValue: currentUser.difficulty,
+                                          onChanged: (value) {
+                                            currentUser.difficulty = value!;
+                                          },
+                                        )
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                }
+                            ),
                             futureSelect<Role>(
                               name: "Rôles",
                               placeholder: "Sélectionnez les rôles",
@@ -128,35 +178,35 @@ class _UserEditScreenState extends State<UserEditScreen> {
                               futureElements: Pathology.getAll(),
                               userElements: currentUser.pathologies!,
                             ),
-                            futureSelect<Regime>(
+                            futureSelect<Diet>(
                               name: "Régime",
                               placeholder: "Sélectionnez le régime",
-                              futureElements: Regime.getAll(),
-                              userElements: currentUser.regimesAlimentaires,
+                              futureElements: Diet.getAll(),
+                              userElements: currentUser.diet,
                             ),
-                            futureSelect<Allergie>(
+                            futureSelect<Allergy>(
                               name: "Allergies",
                               placeholder: "Sélectionnez les allergies",
-                              futureElements: Allergie.getAll(),
+                              futureElements: Allergy.getAll(),
                               userElements: currentUser.allergies,
                             ),
-                            futureSelect<MaterielSportif>(
+                            futureSelect<HomeMaterial>(
                               name: "Matériel sportif",
                               placeholder: "Sélectionnez le matériel sportif",
-                              futureElements: MaterielSportif.getAll(),
-                              userElements: currentUser.materielSportif,
+                              futureElements: HomeMaterial.getAll(),
+                              userElements: currentUser.homeMaterial,
                             ),
-                            futureSelect<AttentesAlimentaires>(
+                            futureSelect<DietExpectations>(
                               name: "Attentes alimentaires",
                               placeholder: "Sélectionnez les attentes alimentaires",
-                              futureElements: AttentesAlimentaires.getAll(),
-                              userElements: currentUser.attentesAlimentaires,
+                              futureElements: DietExpectations.getAll(),
+                              userElements: currentUser.dietExpectations,
                             ),
-                            futureSelect<AttentesSportives>(
+                            futureSelect<SportExpectations>(
                               name: "Attentes sportives",
                               placeholder: "Sélectionnez les attentes sportives",
-                              futureElements: AttentesSportives.getAll(),
-                              userElements: currentUser.attentesSportives,
+                              futureElements: SportExpectations.getAll(),
+                              userElements: currentUser.sportExpectations,
                             ),
                             const SizedBox(height: 200),
                           ],

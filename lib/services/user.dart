@@ -1,12 +1,14 @@
+import 'dart:io';
+
 import 'package:logger/logger.dart';
 import 'package:mouvaps/services/pathology.dart';
 import 'package:mouvaps/services/role.dart';
 import 'package:mouvaps/services/difficulty.dart';
-import 'package:mouvaps/services/regime.dart';
-import 'package:mouvaps/services/allergie.dart';
-import 'package:mouvaps/services/materiel_sportif.dart';
-import 'package:mouvaps/services/attentes_alimentaires.dart';
-import 'package:mouvaps/services/attentes_sportives.dart';
+import 'package:mouvaps/services/diet.dart';
+import 'package:mouvaps/services/allergy.dart';
+import 'package:mouvaps/services/home_material.dart';
+import 'package:mouvaps/services/diet_expectations.dart';
+import 'package:mouvaps/services/sport_expectations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -20,11 +22,11 @@ class User {
   List<Role> roles;
   String gender;
   String difficulty;
-  List<Regime> regimesAlimentaires;
-  List<MaterielSportif> materielSportif;
-  List<Allergie> allergies;
-  List<AttentesAlimentaires> attentesAlimentaires;
-  List<AttentesSportives> attentesSportives;
+  List<Diet> diet;
+  List<HomeMaterial> homeMaterial;
+  List<Allergy> allergies;
+  List<DietExpectations> dietExpectations;
+  List<SportExpectations> sportExpectations;
 
   Logger logger = Logger();
 
@@ -38,11 +40,11 @@ class User {
     required this.roles,
     required this.gender,
     required this.difficulty,
-    required this.regimesAlimentaires,
-    required this.materielSportif,
+    required this.diet,
+    required this.homeMaterial,
     required this.allergies,
-    required this.attentesAlimentaires,
-    required this.attentesSportives,
+    required this.dietExpectations,
+    required this.sportExpectations,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -64,29 +66,29 @@ class User {
         : [],
       gender: json['gender'] != null ? json['gender'] as String : "inconnu",
       difficulty: json['difficulty'] != null ? Difficulty.fromJson(json['difficulty']).name : "inconnu",
-      regimesAlimentaires: json['user_regime'] != null ?
+      diet: json['user_regime'] != null ?
         (json['user_regime'] as List<dynamic>?)
-          !.map((e) => Regime.fromJson(e['regimes_alimentaires']))
+          !.map((e) => Diet.fromJson(e['regimes_alimentaires']))
           .toList()
         : [],
-      materielSportif: json['user_materiel_sportif'] != null ?
+      homeMaterial: json['user_materiel_sportif'] != null ?
         (json['user_materiel_sportif'] as List<dynamic>?)
-          !.map((e) => MaterielSportif.fromJson(e['materiel_sportif']))
+          !.map((e) => HomeMaterial.fromJson(e['materiel_sportif']))
           .toList()
         : [],
       allergies: json['user_allergie'] != null ?
         (json['user_allergie'] as List<dynamic>?)
-          !.map((e) => Allergie.fromJson(e['allergies']))
+          !.map((e) => Allergy.fromJson(e['allergies']))
           .toList()
         : [],
-      attentesAlimentaires: json['user_attentes_alimentaires'] != null ?
+      dietExpectations: json['user_attentes_alimentaires'] != null ?
         (json['user_attentes_alimentaires'] as List<dynamic>?)
-          !.map((e) => AttentesAlimentaires.fromJson(e['attentes_alimentaires']))
+          !.map((e) => DietExpectations.fromJson(e['attentes_alimentaires']))
           .toList()
         : [],
-      attentesSportives: json['user_attentes_sportives'] != null ?
+      sportExpectations: json['user_attentes_sportives'] != null ?
         (json['user_attentes_sportives'] as List<dynamic>?)
-          !.map((e) => AttentesSportives.fromJson(e['attentes_sportives']))
+          !.map((e) => SportExpectations.fromJson(e['attentes_sportives']))
           .toList()
         : [],
     );
@@ -96,19 +98,11 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'user_uuid': userUuid,
-      'user_pathologie': pathologies?.map((e) => e.toJson()).toList(),
       'points': points,
       'birthday': birthday.toString(),
       'first_name': firstName,
       'last_name': lastName,
-      'user_role': roles.map((e) => e.toJson()).toList(),
       'gender': gender,
-      'user_difficulty': difficulty,
-      'user_regime': regimesAlimentaires.map((e) => e.toJson()).toList(),
-      'user_materiel_sportif': materielSportif.map((e) => e.toJson()).toList(),
-      'user_allergie': allergies.map((e) => e.toJson()).toList(),
-      'user_attentes_alimentaires': attentesAlimentaires.map((e) => e.toJson()).toList(),
-      'user_attentes_sportives': attentesSportives.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -124,12 +118,148 @@ class User {
   }
 
   Future<User> update() async {
+    // Check if user exists
+    final existingUser = await _supabase
+        .from('users')
+        .select()
+        .eq('user_uuid', userUuid)
+        .maybeSingle();
+
+    if (existingUser == null) {
+      throw Exception("User with UUID $userUuid doesn't exist");
+    }
+
+    // Roles
+    await _supabase
+        .from('user_role')
+        .delete()
+        .eq('user_uuid', userUuid);
+
+    for (final role in roles) {
+      await _supabase
+          .from('user_role')
+          .upsert({
+            'user_uuid': userUuid,
+            'role_id': role.id,
+          })
+          .select()
+          .single();
+    }
+
+    // Pathologies
+    await _supabase
+        .from('user_pathologie')
+        .delete()
+        .eq('user_uuid', userUuid);
+
+    for (final pathology in pathologies!) {
+      await _supabase
+          .from('user_pathologie')
+          .insert({
+            'user_uuid': userUuid,
+            'pathologie_id': pathology.id,
+          })
+          .select()
+          .single();
+    }
+
+    // Diet
+    await _supabase
+        .from('user_regime')
+        .delete()
+        .eq('user_uuid', userUuid);
+
+    for (final diet in diet) {
+      await _supabase
+          .from('user_regime')
+          .insert({
+            'user_uuid': userUuid,
+            'regime_id': diet.id,
+          })
+          .select()
+          .single();
+    }
+
+    // Home material
+    await _supabase
+        .from('user_materiel_sportif')
+        .delete()
+        .eq('user_uuid', userUuid);
+
+    for (final material in homeMaterial) {
+      await _supabase
+          .from('user_materiel_sportif')
+          .insert({
+            'user_uuid': userUuid,
+            'materiel_id': material.id,
+          })
+          .select()
+          .single();
+    }
+
+    // Allergies
+    await _supabase
+        .from('user_allergie')
+        .delete()
+        .eq('user_uuid', userUuid);
+
+    for (final allergy in allergies) {
+      await _supabase
+          .from('user_allergie')
+          .insert({
+            'user_uuid': userUuid,
+            'allergie_id': allergy.id,
+          })
+          .select()
+          .single();
+    }
+
+    // Diet expectations
+    await _supabase
+        .from('user_attentes_alimentaires')
+        .delete()
+        .eq('user_uuid', userUuid);
+
+    for (final dietExpectation in dietExpectations) {
+      await _supabase
+          .from('user_attentes_alimentaires')
+          .insert({
+            'user_uuid': userUuid,
+            'attente_id': dietExpectation.id,
+          })
+          .select()
+          .single();
+    }
+
+    // Sport expectations
+    await _supabase
+        .from('user_attentes_sportives')
+        .delete()
+        .eq('user_uuid', userUuid);
+
+    for (final sportExpectation in sportExpectations) {
+      await _supabase
+          .from('user_attentes_sportives')
+          .insert({
+            'user_uuid': userUuid,
+            'attente_id': sportExpectation.id,
+          })
+          .select()
+          .single();
+    }
+
+    // User update
     final response = await _supabase
         .from('users')
         .update(toJson())
         .eq('user_uuid', userUuid)
         .select()
-        .single();
+        .maybeSingle();
+
+    if (response == null) {
+      throw Exception("L'utilisateur n'a pas été mis à jour !");
+    }
+
     return User.fromJson(response);
   }
 
@@ -317,11 +447,11 @@ class User {
       roles: [],
       gender: '',
       difficulty: '',
-      regimesAlimentaires: [],
-      materielSportif: [],
+      diet: [],
+      homeMaterial: [],
       allergies: [],
-      attentesAlimentaires: [],
-      attentesSportives: [],
+      dietExpectations: [],
+      sportExpectations: [],
     );
   }
 
@@ -343,6 +473,23 @@ class User {
     }
   }
 
+  Future<File?> getCertificate() async {
+    logger.d(userUuid);
+
+    final check = await _supabase.storage.from('user-data').list(path: userUuid, searchOptions: const SearchOptions(search: 'certificat'));
+    logger.d(check[0].name);
+    if (check.isEmpty) {
+      return null;
+    }
+    try {
+      final response = await _supabase.storage.from('user-data').download("$userUuid/${check[0].name}");
+      final file = File.fromRawPath(response);
+      return file;
+    } catch (e) {
+      logger.e(e);
+      return null;
+    }
+  }
 }
 
 
