@@ -15,8 +15,12 @@ class UserPointsNotifier extends ChangeNotifier {
     }
   }
 
-  void addPoints(int points) {
-    _points += points;
-    notifyListeners();
+  Future<void> addPoints(int points) async {
+    final user = Auth.instance.getUser();
+    if (user != null) {
+      await User.updatePointsByUuid(user.id, _points + points);
+      _points += points;
+      notifyListeners();
+    }
   }
 }

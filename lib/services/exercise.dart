@@ -57,11 +57,8 @@ class Exercise {
   }
 
   Future<Exercise> create() async {
-    final response = await _supabase
-        .from('exercises')
-        .insert(toJson())
-        .select()
-        .single();
+    final response =
+        await _supabase.from('exercises').insert(toJson()).select().single();
     return Exercise.fromJson(response);
   }
 
@@ -81,11 +78,8 @@ class Exercise {
   }
 
   static Future<Exercise> getById(int id) async {
-    final response = await _supabase
-        .from('exercises')
-        .select()
-        .eq('id', id)
-        .single();
+    final response =
+        await _supabase.from('exercises').select().eq('id', id).single();
 
     return Exercise.fromJson(response);
   }
@@ -106,8 +100,9 @@ class Exercise {
             tags,
             created_at
           )
-        ''').eq('user_id', Auth.instance.getUUID() as String).order(
-          'playlist_order', ascending: true);
+        ''')
+          .eq('user_id', Auth.instance.getUUID() as String)
+          .order('playlist_order', ascending: true);
 
       if (response.isEmpty) {
         return [];
@@ -118,8 +113,21 @@ class Exercise {
         exercise.setIsUnlocked(json['is_unlocked']);
         return exercise;
       }).toList();
+    } catch (e) {
+      logger.e('Error getting exercises: $e');
+      return [];
+    }
+  }
 
-    } catch(e){
+  static Future<List<Exercise>> getAllAdmin() async {
+    try {
+      final response = await _supabase
+          .from('exercises')
+          .select()
+          .order('created_at', ascending: false);
+
+      return response.map((json) => Exercise.fromJson(json)).toList();
+    } catch (e) {
       logger.e('Error getting exercises: $e');
       return [];
     }
@@ -130,50 +138,43 @@ class Exercise {
       throw Exception('Content ID is required for deletion');
     }
 
-    await _supabase
-        .from('exercises')
-        .delete()
-        .eq('id', id as int);
+    await _supabase.from('exercises').delete().eq('id', id as int);
   }
 
   static Future<List<Exercise>> search(String query) async {
-    final response = await _supabase
-        .from('exercises')
-        .select()
-        .or(
-        'name.ilike.%$query%,'
-            'tags->contains.{"search_key": "$query"}'
-    );
+    final response =
+        await _supabase.from('exercises').select().or('name.ilike.%$query%,'
+            'tags->contains.{"search_key": "$query"}');
     return response.map((json) => Exercise.fromJson(json)).toList();
   }
 
   static Future<void> watched(Exercise exercise) async {
-      final userId = Auth.instance.getUUID();
+    final userId = Auth.instance.getUUID();
 
-      if (userId == null) {
-        throw Exception('User not logged in');
-      }
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
 
-      final response = await _supabase.rpc('update_playlist_progress', params: {
-        'p_user_id': userId,
-        'p_current_exercise_id': exercise.id,
-      });
+    final response = await _supabase.rpc('update_playlist_progress', params: {
+      'p_user_id': userId,
+      'p_current_exercise_id': exercise.id,
+    });
 
-      final nextExerciseId = response;
+    final nextExerciseId = response;
 
-      if (nextExerciseId != null) {
-        logger.i('Next exercise unlocked: $nextExerciseId');
-      } else {
-        logger.i('No more exercises in the playlist');
-      }
+    if (nextExerciseId != null) {
+      logger.i('Next exercise unlocked: $nextExerciseId');
+    } else {
+      logger.i('No more exercises in the playlist');
+    }
 
-      final pointsResponse = await _supabase.rpc('increment_user_points', params: {
-        'p_user_id': userId,
-        'p_points_to_add': exercise.rewardPoints,
-      });
+    final pointsResponse =
+        await _supabase.rpc('increment_user_points', params: {
+      'p_user_id': userId,
+      'p_points_to_add': exercise.rewardPoints,
+    });
 
-      logger.i('User points updated to: $pointsResponse points');
-
+    logger.i('User points updated to: $pointsResponse points');
   }
 
   Map<String, dynamic> _toLocalMap(String localUrl, String localThumbnailUrl) {
@@ -189,7 +190,8 @@ class Exercise {
     };
   }
 
-  static Future<Exercise> saveLocalExercise(Exercise exercise, String localUrl, String localThumbnailUrl) async {
+  static Future<Exercise> saveLocalExercise(
+      Exercise exercise, String localUrl, String localThumbnailUrl) async {
     try {
       final localExercise = exercise._toLocalMap(localUrl, localThumbnailUrl);
       await _db.insert('exercises', localExercise);

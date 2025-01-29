@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:chewie/chewie.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_rating/flutter_rating.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mouvaps/services/video.dart';
+import 'package:mouvaps/utils/text_utils.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/ingredient.dart';
 import 'package:mouvaps/services/recipe.dart';
@@ -14,7 +15,8 @@ class RecipeDetailsScreen extends StatefulWidget {
   final Recipe recipe;
   final bool isOffline;
 
-  const RecipeDetailsScreen({super.key, required this.recipe, this.isOffline = false});
+  const RecipeDetailsScreen(
+      {super.key, required this.recipe, this.isOffline = false});
 
   @override
   State<RecipeDetailsScreen> createState() => _RecipeDetailsScreenState();
@@ -66,9 +68,9 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
                       widget: StarRating(
                         rating: widget.recipe.difficulty.toDouble(),
                         color: primaryColor,
-                        emptyIcon: CupertinoIcons.circle,
-                        filledIcon: CupertinoIcons.circle_fill,
-                        halfFilledIcon: CupertinoIcons.circle_lefthalf_fill,
+                        emptyIcon: FontAwesomeIcons.star,
+                        filledIcon: FontAwesomeIcons.solidStar,
+                        halfFilledIcon: FontAwesomeIcons.solidStarHalfStroke,
                         borderColor: primaryColor,
                         starCount: 3,
                         size: 20,
@@ -80,24 +82,17 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
                         ? '${(widget.recipe.timeMins! ~/ 60)}h${(widget.recipe.timeMins! % 60 > 0 ? ' ${(widget.recipe.timeMins! % 60)} min' : '')}'
                         : '${widget.recipe.timeMins} min',
                   ),
-                  _buildInfoRow(
-                    icon: Icons.payments,
-                    text: '${widget.recipe.pricePoints} points',
-                  ),
                 ],
               ),
               const SizedBox(height: 8),
-              Text(
-                "Ingrédients",
-                style: ShadTheme.of(context).textTheme.h2,
-              ),
+              const H2(content: "Ingrédients"),
               const SizedBox(height: 8),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   // Grid axis count based on screen size
-                  crossAxisCount: 2,
+                  crossAxisCount: 3,
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
                 ),
@@ -140,12 +135,14 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
   }
 
   Widget _buildIngredientCard(Ingredient ingredient) {
+    double deviceWidth = MediaQuery.of(context).size.width;
+    double imageHeight = deviceWidth / 7;
     return ShadCard(
       padding: const EdgeInsets.all(0),
       title: Center(
         child: Text(
           ingredient.name,
-          style: ShadTheme.of(context).textTheme.h3,
+          style: ShadTheme.of(context).textTheme.p,
           softWrap: true,
         ),
       ),
@@ -155,22 +152,23 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
           style: ShadTheme.of(context).textTheme.p,
         ),
       ),
-      child: ClipRRect(
-        child: AspectRatio(
-          aspectRatio: 16 / 9,
-
-          child: Image(
-            image: widget.isOffline
-                ? FileImage(File(ingredient.imageUrl))
-                : NetworkImage(ingredient.imageUrl),
-            fit: BoxFit.contain,
-            errorBuilder: (BuildContext context, Object exception,
-                StackTrace? stackTrace) {
-              return const Icon(
-                Icons.image_not_supported,
-                size: 30,
-              );
-            },
+      child: Center(
+        child: ClipRRect(
+          child: SizedBox(
+            height: imageHeight,
+            child: Image(
+              image: widget.isOffline
+                  ? FileImage(File(ingredient.imageUrl))
+                  : NetworkImage(ingredient.imageUrl),
+              fit: BoxFit.cover,
+              errorBuilder: (BuildContext context, Object exception,
+                  StackTrace? stackTrace) {
+                return const Icon(
+                  Icons.image_not_supported,
+                  size: 30,
+                );
+              },
+            ),
           ),
         ),
       ),
