@@ -9,6 +9,8 @@ import 'package:mouvaps/pages/profile/profile_screen.dart';
 import 'package:mouvaps/utils/text_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:mouvaps/notifiers/user_points_notifier.dart';
+import 'package:mouvaps/utils/constants.dart' as constants;
+import 'package:mouvaps/services/auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -45,6 +47,30 @@ class _HomeScreenState extends State<HomeScreen> {
     final userPointsNotifier =
         Provider.of<UserPointsNotifier>(context, listen: false);
     userPointsNotifier.fetchUserPoints();
+  }
+
+  //TODO: Rework banner design
+  Widget _buildCertificateBanner() {
+      return FutureBuilder<bool>(
+        future: Auth.instance.hasCertificate(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && !snapshot.data!) {
+            return MaterialBanner(
+              content: const Text('N\'oubliez pas d\'envoyer votre certificat médical !'),
+              leading: const Icon(Icons.description),
+              backgroundColor: constants.lightColor,
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pushNamed(context, "/profile"),
+                  child: const Text('J\'y vais !'),
+                ),
+              ],
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      );
   }
 
   @override
@@ -101,17 +127,24 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: Padding(
-        padding:
-          const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
-        child: PageView(
-          controller: _pageController,
-          onPageChanged: _onPageChanged,
+        padding: const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
+        child: Stack(
           children: [
-            SelectedPage(currentIndex: 0, isAdmin: globals.isAdmin),
-            SelectedPage(currentIndex: 1, isAdmin: globals.isAdmin),
-            SelectedPage(currentIndex: 2, isAdmin: globals.isAdmin),
-            if(!globals.isAdmin) SelectedPage(currentIndex: 3, isAdmin: globals.isAdmin),
-            if(!globals.isAdmin) SelectedPage(currentIndex: 4, isAdmin: globals.isAdmin),
+            PageView(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              children: [
+                SelectedPage(currentIndex: 0, isAdmin: globals.isAdmin),
+                SelectedPage(currentIndex: 1, isAdmin: globals.isAdmin),
+                SelectedPage(currentIndex: 2, isAdmin: globals.isAdmin),
+                if(!globals.isAdmin) SelectedPage(currentIndex: 3, isAdmin: globals.isAdmin),
+                if(!globals.isAdmin) SelectedPage(currentIndex: 4, isAdmin: globals.isAdmin),
+              ],
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: _buildCertificateBanner(),
+            ),
           ],
         ),
       ),

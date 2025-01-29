@@ -220,5 +220,24 @@ class Exercise {
       return [];
     }
   }
+
+  static Future<List<Exercise>> getDemoExercises() async {
+      try {
+        final response = await _supabase
+            .from('exercises')
+            .select()
+            .eq('is_demo', true);
+
+        if (response.isEmpty) {
+          return [];
+        }
+
+        return response.map((json) => Exercise.fromJson(json)).toList();
+
+      } catch(e){
+        logger.e('Error getting exercises: $e');
+        return [];
+      }
+  }
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }

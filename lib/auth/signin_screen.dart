@@ -40,7 +40,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const ShadImage(
+                    Image.asset(
                       'assets/images/icon.png',
                       height: 100,
                     ),
@@ -64,7 +64,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         keyboardType: TextInputType.emailAddress,
                         prefix: const Padding(
                           padding: EdgeInsets.all(4.0),
-                          child: ShadImage.square(size: 16, LucideIcons.mail),
+                          child: Icon(LucideIcons.mail, size: 16),
                         ),
                         decoration: const ShadDecoration(
                             color: constants.textFieldColor,
