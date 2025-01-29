@@ -4,25 +4,25 @@ import 'db.dart';
 import 'ingredient.dart';
 
 class Recipe {
-  final int? id;
-  final String name;
-  final String videoUrl;
-  final String imageUrl;
-  final List<Ingredient>? ingredients;
-  final String description;
-  final double difficulty;
-  final int? timeMins;
-  final int? pricePoints;
-  final DateTime? createdAt;
+  int? id;
+  String? name;
+  String? videoUrl;
+  String? imageUrl;
+  List<Ingredient>? ingredients;
+  String? description;
+  double? difficulty;
+  int? timeMins;
+  int? pricePoints;
+  DateTime? createdAt;
 
   Recipe({
     this.id,
-    required this.name,
-    required this.videoUrl,
-    required this.imageUrl,
-    required this.ingredients,
-    required this.description,
-    required this.difficulty,
+    this.name,
+    this.videoUrl,
+    this.imageUrl,
+    this.ingredients,
+    this.description,
+    this.difficulty,
     this.timeMins,
     this.pricePoints,
     this.createdAt,
@@ -204,7 +204,8 @@ class Recipe {
     };
   }
 
-  static Future<Recipe> saveLocalRecipe(Recipe recipe, String localUrl, String localThumbnailUrl, List<String> ingredientThumbnailUrls) async {
+  static Future<Recipe> saveLocalRecipe(Recipe recipe, String localUrl,
+      String localThumbnailUrl, List<String> ingredientThumbnailUrls) async {
     try {
       final db = await ContentDatabase.instance.database;
 
@@ -300,15 +301,15 @@ class Recipe {
       final recipeData = Map<String, dynamic>.from(recipes.first);
       final ingredients = await db.rawQuery(_ingredientQuery, [id]);
 
-      recipeData['recipe_ingredient'] = ingredients.map((ri) =>
-      Map<String, dynamic>.from({
-        'quantity': ri['quantity'],
-        'ingredient': {
-          'name': ri['name'],
-          'image_url': ri['image_url'],
-        }
-      })
-      ).toList();
+      recipeData['recipe_ingredient'] = ingredients
+          .map((ri) => Map<String, dynamic>.from({
+                'quantity': ri['quantity'],
+                'ingredient': {
+                  'name': ri['name'],
+                  'image_url': ri['image_url'],
+                }
+              }))
+          .toList();
 
       return Recipe.fromJson(recipeData);
     } catch (e) {
@@ -325,17 +326,18 @@ class Recipe {
       return await Future.wait(
         recipes.map((recipeRow) async {
           final recipeData = Map<String, dynamic>.from(recipeRow);
-          final ingredients = await db.rawQuery(_ingredientQuery, [recipeData['id']]);
+          final ingredients =
+              await db.rawQuery(_ingredientQuery, [recipeData['id']]);
 
-          recipeData['recipe_ingredient'] = ingredients.map((ri) =>
-          Map<String, dynamic>.from({
-            'quantity': ri['quantity'],
-            'ingredient': {
-              'name': ri['name'],
-              'image_url': ri['image_url'],
-            }
-          })
-          ).toList();
+          recipeData['recipe_ingredient'] = ingredients
+              .map((ri) => Map<String, dynamic>.from({
+                    'quantity': ri['quantity'],
+                    'ingredient': {
+                      'name': ri['name'],
+                      'image_url': ri['image_url'],
+                    }
+                  }))
+              .toList();
 
           return Recipe.fromJson(recipeData);
         }),
@@ -345,7 +347,6 @@ class Recipe {
       return [];
     }
   }
-
 
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }

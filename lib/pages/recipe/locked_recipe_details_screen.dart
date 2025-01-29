@@ -48,7 +48,7 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            H1(content: widget.recipe.name),
+            H1(content: widget.recipe.name ?? 'Pas de nom'),
             _buildUnlockButton(),
           ],
         ),
@@ -68,8 +68,8 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: widget.isOffline
-                          ? FileImage(File(widget.recipe.imageUrl))
-                          : NetworkImage(widget.recipe.imageUrl),
+                          ? FileImage(File(widget.recipe.imageUrl ?? ''))
+                          : NetworkImage(widget.recipe.imageUrl ?? ''),
                       fit: BoxFit
                           .cover, // Ensures the image covers the container
                       alignment: Alignment.center,
@@ -97,7 +97,7 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
                     children: [
                       const P(content: 'Difficulté : '),
                       StarRating(
-                        rating: widget.recipe.difficulty.toDouble(),
+                        rating: widget.recipe.difficulty!.toDouble(),
                         color: primaryColor,
                         emptyIcon: FontAwesomeIcons.star,
                         filledIcon: FontAwesomeIcons.solidStar,

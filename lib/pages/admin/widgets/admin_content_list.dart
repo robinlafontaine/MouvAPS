@@ -78,9 +78,10 @@ class _ContentListAdminState extends State<ContentListAdmin> {
     }
   }
 
-  Widget _buildTitleButton(String title, Function() onPressed) {
+  Widget _buildTitleButton(String? title, Function() onPressed) {
     return ListTile(
-      title: Text(title, style: ShadTheme.of(context).textTheme.p),
+      title:
+          Text(title ?? 'Untitled', style: ShadTheme.of(context).textTheme.p),
       onTap: onPressed,
     );
   }
