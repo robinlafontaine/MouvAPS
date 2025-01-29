@@ -89,15 +89,11 @@ class UserScreen extends StatelessWidget {
                             ),
                             userElement(
                               label: "Age",
-                              child: P(content: "${currentUser.age.toString()} ans")
+                              child: P(content: "${DateTime.now().difference(currentUser.birthday).inDays ~/ 365 } ans")
                             ),
                             userElement(
                                 label: "Genre",
                                 child: P(content: currentUser.gender)
-                            ),
-                            userElement(
-                                label: "Niveau",
-                                child: P(content: currentUser.level)
                             ),
                             userElement(
                               label: "Points",
@@ -124,6 +120,14 @@ class UserScreen extends StatelessWidget {
                               child: Flex(
                                 direction: Axis.horizontal,
                                 children: [
+                                  if (currentUser.roles.isEmpty) ...[
+                                    const CustomBadge(
+                                      text: "EN ATTENTE",
+                                      backgroundColor: constants.lightColor,
+                                      textColor: constants.textColor,
+                                    ),
+                                    const SizedBox(width: 10)
+                                  ] else
                                   for (final role in currentUser.roles) ...[
                                     CustomBadge(
                                       text: role.name,

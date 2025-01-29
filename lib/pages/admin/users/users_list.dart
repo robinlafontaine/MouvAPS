@@ -29,6 +29,13 @@ class _UserListState extends State<UserList> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(children: snapshot.data!.map((content) {
+            if (widget.role == "PENDING") {
+              if (content.roles.isEmpty) {
+                return UserTile(
+                  user: content,
+                );
+              }
+            }
             for (var role in content.roles) {
               if (role.name == widget.role) {
                 return UserTile(

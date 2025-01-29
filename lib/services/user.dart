@@ -8,12 +8,11 @@ class User {
   final String userUuid;
   List<Pathology>? pathologies;
   int points;
-  int age;
+  DateTime birthday;
   String firstName;
   String lastName;
   List<Role> roles;
   String gender;
-  String level;
 
   Logger logger = Logger();
 
@@ -21,12 +20,11 @@ class User {
     required this.userUuid,
     required this.pathologies,
     required this.points,
-    required this.age,
+    required this.birthday,
     required this.firstName,
     required this.lastName,
     required this.roles,
     required this.gender,
-    required this.level,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -36,14 +34,13 @@ class User {
       pathologies: (json['user_pathologie'] as List<dynamic>?)
           ?.map((e) => Pathology.fromJson(e['pathologies']))
           .toList(),
-      age: json['age'] as int,
+      birthday: DateTime.parse(json['birthday']),
       firstName: json['first_name'] as String,
       lastName: json['last_name'] as String,
       roles: (json['user_role'] as List<dynamic>?)
           !.map((e) => Role.fromJson(e['roles']))
           .toList(),
       gender: json['gender'] as String,
-      level: json['level'] as String,
     );
     return user;
   }
@@ -53,7 +50,7 @@ class User {
       'user_uuid': userUuid,
       'pathologies': pathologies?.map((e) => e.toJson()).toList(),
       'points': points,
-      'age': age,
+      'birthday': birthday.toString(),
       'first_name': firstName,
       'last_name': lastName,
       'roles': roles.map((e) => e.toJson()).toList(),
@@ -123,7 +120,7 @@ class User {
         .select('''
             user_uuid,
             points,
-            age,
+            birthday,
             first_name,
             last_name,
             user_pathologie (
@@ -138,8 +135,7 @@ class User {
                 name
               )
             ),
-            gender,
-            level
+            gender
           ''');
     return response.map((json) => User.fromJson(json)).toList();
   }
@@ -162,7 +158,7 @@ class User {
             .select('''
             user_uuid,
             points,
-            age,
+            birthday,
             first_name,
             last_name,
             user_pathologie (
@@ -177,8 +173,7 @@ class User {
                 name
               )
             ),
-            gender,
-            level
+            gender
           ''')
             .eq('user_uuid', uuid).single();
     return User.fromJson(response);
@@ -189,12 +184,11 @@ class User {
       userUuid: const Uuid().v4(),
       pathologies: [],
       points: 0,
-      age: 0,
+      birthday: DateTime.now(),
       firstName: '',
       lastName: '',
       roles: [],
       gender: '',
-      level: '',
     );
   }
 
