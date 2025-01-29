@@ -55,7 +55,6 @@ class Ingredient {
     image_url
   ''');
 
-    print(response);
     return response.map((json) => Ingredient.fromJson2(json)).toList();
   }
 }
