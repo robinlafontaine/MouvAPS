@@ -9,6 +9,8 @@ const Color disabledButtonColor = Color.fromRGBO(166, 166, 166, 1);
 const Color textColor = Color.fromRGBO(37, 37, 37, 1);
 
 const errorColor = Color(0xFFED5555);
+const double formErrorFontSize = 14;
+const double formErrorFontWeight = 500;
 
 const Color buttonTextColor = lightColor;
 const Color destructiveButtonColor = Color(0xFFED5555);
@@ -52,17 +54,23 @@ const double subtitleFontWeight = 400;
 
 // form contents
 
-final genres = {
-  'homme': 'Homme',
-  'femme': 'Femme',
-  'null': 'Ne préfère pas répondre',
+final genresOptions = {
+  'HOMME': 'Homme',
+  'FEMME': 'Femme',
+  'NON_BINAIRE': 'Non Binaire',
 };
 
-final familySituations = {
-  'celibataire': 'Célibataire',
-  'marie': 'Marié(e)',
-  'divorce': 'Divorcé(e)',
-  'veuf': 'Veuf(ve)',
+
+final jobPhysicalityOptions = {
+  'SEDENTAIRE': 'Sédentaire',
+  'PHYSIQUE': 'Physique',
+  'LES_DEUX': 'Les deux'
+};
+
+final activityLevelOptions = {
+  'DEBUTANT': 'Débutant',
+  'INTERMEDIAIRE': 'Intermédiaire',
+  'AVANCE': 'Avancé',
 };
 
 // TODO: sizes for different screen sizes

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mouvaps/pages/form/identity_form_screen.dart';
-import 'package:mouvaps/models/form_answers.dart';
+import 'package:mouvaps/services/form_answers.dart';
 import 'package:mouvaps/utils/button_styling.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-
 import 'package:mouvaps/utils/constants.dart' as constants;
 
 class NameFormScreen extends StatefulWidget {
@@ -37,11 +36,6 @@ class NameFormScreenState extends State<NameFormScreen>{
               const SizedBox(height: 16),
               ShadInputFormField(
                 id: 'prenom',
-                // label: const Text('Prénom', style:TextStyle(
-                //   fontSize: Constants.form_label_font_size,
-                //   fontWeight: Constants.form_label_font_weight,
-                //   color: Constants.text_color,
-                // ),),
                 placeholder: const Text('Votre prénom', style:
                 TextStyle(
                   color: constants.textFieldPlaceholderColor
@@ -60,11 +54,6 @@ class NameFormScreenState extends State<NameFormScreen>{
               const SizedBox(height: 16),
               ShadInputFormField(
                 id: 'nom',
-                // label: const Text('Nom', style: TextStyle(
-                //   fontSize: Constants.form_label_font_size,
-                //   fontWeight: Constants.form_label_font_weight,
-                //   color: Constants.text_color,
-                // ),),
                 placeholder: const Text('Votre Nom', style:
                 TextStyle(
                   color: constants.textFieldPlaceholderColor,

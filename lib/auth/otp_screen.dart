@@ -125,7 +125,7 @@ class _OTPScreenState extends State<OTPScreen> {
     _startCountdown();
 
     ShadAlert(
-      iconSrc: LucideIcons.send,
+      icon: const Icon(LucideIcons.send),
       title: const Text('Email envoyé'),
       description: Text('Nouveau code envoyé à ${widget.email}'),
     );
@@ -147,7 +147,7 @@ class _OTPScreenState extends State<OTPScreen> {
             ShadInputOTPSlot(),
           ],
         ),
-        ShadImage.square(size: 24, LucideIcons.dot),
+        Icon(size: 24, LucideIcons.dot),
         ShadInputOTPGroup(
           children: [
             ShadInputOTPSlot(),
@@ -175,7 +175,7 @@ class _OTPScreenState extends State<OTPScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const ShadImage(
+                Image.asset(
                   'assets/images/icon.png',
                   height: 100,
                 ),
