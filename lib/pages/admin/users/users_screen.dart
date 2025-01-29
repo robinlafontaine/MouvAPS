@@ -7,15 +7,19 @@ class UsersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-      children:[
-        H2(content: 'En attente'),
-        UserList(),
-        H2(content: 'Liste des utilisateurs'),
-        UserList(),
-      ]
+    return const SingleChildScrollView(
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+        children:[
+          H2(content: 'En attente'),
+          UserList(role: "PENDING"),
+          H2(content: 'Vérifiés'),
+          UserList(role: "VERIFIED"),
+          H2(content: 'Administrateurs'),
+          UserList(role: "ADMIN"),
+        ]
+      ),
     );
   }
 }
