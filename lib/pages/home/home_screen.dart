@@ -25,7 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index; // Update the selected index when the item is tapped
+      _selectedIndex =
+          index; // Update the selected index when the item is tapped
     });
     _pageController.animateToPage(
       index,
@@ -36,10 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onPageChanged(int index) {
     setState(() {
-      _selectedIndex = index; // Update the selected index when the page is swiped
+      _selectedIndex =
+          index; // Update the selected index when the page is swiped
     });
   }
-
 
   @override
   void initState() {
@@ -51,26 +52,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //TODO: Rework banner design
   Widget _buildCertificateBanner() {
-      return FutureBuilder<bool>(
-        future: Auth.instance.hasCertificate(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData && !snapshot.data!) {
-            return MaterialBanner(
-              content: const Text('N\'oubliez pas d\'envoyer votre certificat médical !'),
-              leading: const Icon(Icons.description),
-              backgroundColor: constants.lightColor,
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pushNamed(context, "/profile"),
-                  child: const Text('J\'y vais !'),
-                ),
-              ],
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
-      );
+    return FutureBuilder<bool>(
+      future: Auth.instance.hasCertificate(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && !snapshot.data!) {
+          return MaterialBanner(
+            content: const Text(
+                'N\'oubliez pas d\'envoyer votre certificat médical !'),
+            leading: const Icon(Icons.description),
+            backgroundColor: constants.lightColor,
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pushNamed(context, "/profile"),
+                child: const Text('J\'y vais !'),
+              ),
+            ],
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
   }
 
   @override
@@ -137,8 +139,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 SelectedPage(currentIndex: 0, isAdmin: globals.isAdmin),
                 SelectedPage(currentIndex: 1, isAdmin: globals.isAdmin),
                 SelectedPage(currentIndex: 2, isAdmin: globals.isAdmin),
-                if(!globals.isAdmin) SelectedPage(currentIndex: 3, isAdmin: globals.isAdmin),
-                if(!globals.isAdmin) SelectedPage(currentIndex: 4, isAdmin: globals.isAdmin),
+                if (!globals.isAdmin)
+                  SelectedPage(currentIndex: 3, isAdmin: globals.isAdmin),
+                if (!globals.isAdmin)
+                  SelectedPage(currentIndex: 4, isAdmin: globals.isAdmin),
               ],
             ),
             Align(
