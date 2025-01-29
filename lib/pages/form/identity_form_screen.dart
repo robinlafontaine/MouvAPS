@@ -37,6 +37,7 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 24),
                     Text.rich(TextSpan(
                         text: 'Bonjour',
                         style: ShadTheme.of(context).textTheme.h1,
@@ -67,8 +68,10 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
                       label: const Text('Quelle est votre date de naissance ?',
                           style: labelTextStyle),
                       placeholder: const Text('Date de naissance'),
-                      closeOnSelection: false,
                       captionLayout: ShadCalendarCaptionLayout.dropdown,
+                      closeOnSelection: true,
+                      formatDate: (date) =>
+                          DateFormat('dd/MM/yyyy').format(date),
                       validator: (v) {
                         if (v == null) {
                           return "Merci d'entrer votre date de naissance";
@@ -213,7 +216,7 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
                         }
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 50),
                     ShadButton(
                       onPressed: () {
                         if (formKey.currentState!.saveAndValidate()) {
@@ -243,7 +246,8 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
                       },
                       child: const Text("Continuer",
                           style: primaryButtonTextStyle),
-                    )
+                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
@@ -259,6 +263,7 @@ class IdentityFormScreenState extends State<IdentityFormScreen> {
             children: [
               ShadSelect<Pathology>.multiple(
                 minWidth: 340,
+                maxHeight: 200,
                 onChanged: print,
                 allowDeselection: true,
                 closeOnSelect: false,
