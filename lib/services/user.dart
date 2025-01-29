@@ -1,15 +1,19 @@
 import 'package:logger/logger.dart';
 import 'package:mouvaps/services/pathology.dart';
+import 'package:mouvaps/services/role.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 class User {
   final String userUuid;
-  final List<Pathology>? pathologies;
-  final int points;
-  final int age;
-  final String firstName;
-  final String lastName;
+  List<Pathology>? pathologies;
+  int points;
+  int age;
+  String firstName;
+  String lastName;
+  List<Role> roles;
+  String gender;
+  String level;
 
   Logger logger = Logger();
 
@@ -20,10 +24,13 @@ class User {
     required this.age,
     required this.firstName,
     required this.lastName,
+    required this.roles,
+    required this.gender,
+    required this.level,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+    User user = User(
       points: json['points'] as int,
       userUuid: json['user_uuid'] as String,
       pathologies: (json['user_pathologie'] as List<dynamic>?)
@@ -32,17 +39,24 @@ class User {
       age: json['age'] as int,
       firstName: json['first_name'] as String,
       lastName: json['last_name'] as String,
+      roles: (json['user_role'] as List<dynamic>?)
+          !.map((e) => Role.fromJson(e['roles']))
+          .toList(),
+      gender: json['gender'] as String,
+      level: json['level'] as String,
     );
+    return user;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'user_uuid': userUuid,
-      'user_pathologie': pathologies?.map((e) => e.toJson()).toList(),
+      'pathologies': pathologies?.map((e) => e.toJson()).toList(),
       'points': points,
       'age': age,
       'first_name': firstName,
       'last_name': lastName,
+      'roles': roles.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -117,7 +131,15 @@ class User {
                 id,
                 name
               )
-            )
+            ),
+            user_role (
+              roles (
+                id,
+                name
+              )
+            ),
+            gender,
+            level
           ''');
     return response.map((json) => User.fromJson(json)).toList();
   }
@@ -148,7 +170,15 @@ class User {
                 id,
                 name
               )
-            )
+            ),
+            user_role (
+              roles (
+                id,
+                name
+              )
+            ),
+            gender,
+            level
           ''')
             .eq('user_uuid', uuid).single();
     return User.fromJson(response);
@@ -162,6 +192,9 @@ class User {
       age: 0,
       firstName: '',
       lastName: '',
+      roles: [],
+      gender: '',
+      level: '',
     );
   }
 
@@ -184,3 +217,5 @@ class User {
   }
 
 }
+
+
