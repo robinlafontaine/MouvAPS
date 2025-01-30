@@ -56,74 +56,79 @@ class User {
 
       pathologies: (json['user_pathologie'] is List)
           ? (json['user_pathologie'] as List)
-          .where((e) => e is Map && e.containsKey('pathologies'))
-          .map((e) => Pathology.fromJson(e['pathologies']))
-          .toList()
+              .where((e) => e is Map && e.containsKey('pathologies'))
+              .map((e) => Pathology.fromJson(e['pathologies']))
+              .toList()
           : [],
 
-      birthday: json['birthday'] is String ? DateTime.tryParse(json['birthday']) ?? DateTime(2000, 1, 1) : DateTime(2000, 1, 1),
+      birthday: json['birthday'] is String
+          ? DateTime.tryParse(json['birthday']) ?? DateTime(2000, 1, 1)
+          : DateTime(2000, 1, 1),
 
-      firstName: json['first_name'] is String ? json['first_name'] as String : "Inconnu",
+      firstName: json['first_name'] is String
+          ? json['first_name'] as String
+          : "Inconnu",
 
-      lastName: json['last_name'] is String ? json['last_name'] as String : "Inconnu",
+      lastName:
+          json['last_name'] is String ? json['last_name'] as String : "Inconnu",
 
       roles: (json['user_role'] is List)
           ? (json['user_role'] as List)
-          .where((e) => e is Map && e.containsKey('roles'))
-          .map((e) => Role.fromJson(e['roles']))
-          .toList()
+              .where((e) => e is Map && e.containsKey('roles'))
+              .map((e) => Role.fromJson(e['roles']))
+              .toList()
           : [],
 
       gender: json['gender'] is String ? json['gender'] as String : "inconnu",
 
       difficulty: json['user_difficulty'] is List
           ? (json['user_difficulty'] as List)
-          .where((e) => e is Map && e.containsKey('niveaux'))
-          .map((e) => Difficulty.fromJson(e['niveaux']))
-          .isNotEmpty // Vérifie si la liste n'est pas vide
-          ? (json['user_difficulty'] as List)
-          .where((e) => e is Map && e.containsKey('niveaux'))
-          .map((e) => Difficulty.fromJson(e['niveaux']))
-          .first // Prends le premier élément
-          : Difficulty(id: 1, name: "Inconnu") // Si la liste est vide
-          : Difficulty(id: 1, name: "Inconnu"), // Cas où 'user_difficulty' n'est pas une liste
-
+                  .where((e) => e is Map && e.containsKey('niveaux'))
+                  .map((e) => Difficulty.fromJson(e['niveaux']))
+                  .isNotEmpty // Vérifie si la liste n'est pas vide
+              ? (json['user_difficulty'] as List)
+                  .where((e) => e is Map && e.containsKey('niveaux'))
+                  .map((e) => Difficulty.fromJson(e['niveaux']))
+                  .first // Prends le premier élément
+              : Difficulty(id: 1, name: "Inconnu") // Si la liste est vide
+          : Difficulty(
+              id: 1,
+              name: "Inconnu"), // Cas où 'user_difficulty' n'est pas une liste
 
       diet: (json['user_regime'] is List)
           ? (json['user_regime'] as List)
-          .where((e) => e is Map && e.containsKey('regimes_alimentaires'))
-          .map((e) => Diet.fromJson(e['regimes_alimentaires']))
-          .toList()
+              .where((e) => e is Map && e.containsKey('regimes_alimentaires'))
+              .map((e) => Diet.fromJson(e['regimes_alimentaires']))
+              .toList()
           : [],
 
       homeMaterial: (json['user_materiel_sportif'] is List)
           ? (json['user_materiel_sportif'] as List)
-          .where((e) => e is Map && e.containsKey('materiel_sportif'))
-          .map((e) => HomeMaterial.fromJson(e['materiel_sportif']))
-          .toList()
+              .where((e) => e is Map && e.containsKey('materiel_sportif'))
+              .map((e) => HomeMaterial.fromJson(e['materiel_sportif']))
+              .toList()
           : [],
 
       allergies: (json['user_allergie'] is List)
           ? (json['user_allergie'] as List)
-          .where((e) => e is Map && e.containsKey('allergies'))
-          .map((e) => Allergy.fromJson(e['allergies']))
-          .toList()
+              .where((e) => e is Map && e.containsKey('allergies'))
+              .map((e) => Allergy.fromJson(e['allergies']))
+              .toList()
           : [],
 
       dietExpectations: (json['user_attentes_alimentaires'] is List)
           ? (json['user_attentes_alimentaires'] as List)
-          .where((e) => e is Map && e.containsKey('attentes_alimentaires'))
-          .map((e) => DietExpectations.fromJson(e['attentes_alimentaires']))
-          .toList()
+              .where((e) => e is Map && e.containsKey('attentes_alimentaires'))
+              .map((e) => DietExpectations.fromJson(e['attentes_alimentaires']))
+              .toList()
           : [],
 
       sportExpectations: (json['user_attentes_sportives'] is List)
           ? (json['user_attentes_sportives'] as List)
-          .where((e) => e is Map && e.containsKey('attentes_sportives'))
-          .map((e) => SportExpectations.fromJson(e['attentes_sportives']))
-          .toList()
+              .where((e) => e is Map && e.containsKey('attentes_sportives'))
+              .map((e) => SportExpectations.fromJson(e['attentes_sportives']))
+              .toList()
           : [],
-
     );
     return user;
   }
@@ -142,11 +147,8 @@ class User {
   static final _supabase = Supabase.instance.client;
 
   Future<User> create() async {
-    final response = await _supabase
-        .from('users')
-        .insert(toJson())
-        .select()
-        .single();
+    final response =
+        await _supabase.from('users').insert(toJson()).select().single();
     return User.fromJson(response);
   }
 
@@ -163,10 +165,7 @@ class User {
     }
 
     // Roles
-    await _supabase
-        .from('user_role')
-        .delete()
-        .eq('user_uuid', userUuid);
+    await _supabase.from('user_role').delete().eq('user_uuid', userUuid);
 
     for (final role in roles) {
       await _supabase
@@ -180,10 +179,7 @@ class User {
     }
 
     // Pathologies
-    await _supabase
-        .from('user_pathologie')
-        .delete()
-        .eq('user_uuid', userUuid);
+    await _supabase.from('user_pathologie').delete().eq('user_uuid', userUuid);
 
     for (final pathology in pathologies!) {
       await _supabase
@@ -197,10 +193,7 @@ class User {
     }
 
     // Diet
-    await _supabase
-        .from('user_regime')
-        .delete()
-        .eq('user_uuid', userUuid);
+    await _supabase.from('user_regime').delete().eq('user_uuid', userUuid);
 
     for (final diet in diet) {
       await _supabase
@@ -231,10 +224,7 @@ class User {
     }
 
     // Allergies
-    await _supabase
-        .from('user_allergie')
-        .delete()
-        .eq('user_uuid', userUuid);
+    await _supabase.from('user_allergie').delete().eq('user_uuid', userUuid);
 
     for (final allergy in allergies) {
       await _supabase
@@ -282,10 +272,7 @@ class User {
     }
 
     // Difficulty
-    await _supabase
-        .from('user_difficulty')
-        .delete()
-        .eq('user_uuid', userUuid);
+    await _supabase.from('user_difficulty').delete().eq('user_uuid', userUuid);
 
     await _supabase
         .from('user_difficulty')
@@ -295,7 +282,6 @@ class User {
         })
         .select()
         .single();
-
 
     // User update
     final response = await _supabase
@@ -355,7 +341,6 @@ class User {
 
   // Get user's points by user uuid
   static Future<int> getPointsByUuid(String? uuid) async {
-
     if (uuid == null) {
       return 0;
     }
@@ -369,9 +354,7 @@ class User {
   }
 
   static Future<List<User>> getAll() async {
-    final response = await _supabase
-        .from('users')
-        .select('''
+    final response = await _supabase.from('users').select('''
             user_uuid,
             points,
             birthday,
@@ -431,21 +414,15 @@ class User {
   }
 
   Future<void> delete() async {
-    await _supabase
-        .from('users')
-        .delete()
-        .eq('user_uuid', userUuid);
+    await _supabase.from('users').delete().eq('user_uuid', userUuid);
   }
 
   static Future<User> getUserByUuid(String? uuid) async {
-
     if (uuid == null) {
       return empty();
     }
 
-    final response =
-        await _supabase.from('users')
-            .select('''
+    final response = await _supabase.from('users').select('''
             user_uuid,
             points,
             birthday,
@@ -500,8 +477,7 @@ class User {
                 name
               )
             )
-          ''')
-            .eq('user_uuid', uuid).single();
+          ''').eq('user_uuid', uuid).single();
     return User.fromJson(response);
   }
 
@@ -526,17 +502,17 @@ class User {
 
   static Future<bool> exists(String? uuid) async {
     try {
-    if (uuid == null) {
-      return false;
-    }
+      if (uuid == null) {
+        return false;
+      }
 
-    final response = await _supabase
-        .from('users')
-        .select('user_uuid')
-        .eq('user_uuid', uuid)
-        .single();
+      final response = await _supabase
+          .from('users')
+          .select('user_uuid')
+          .eq('user_uuid', uuid)
+          .single();
 
-    return response.isNotEmpty;
+      return response.isNotEmpty;
     } catch (e) {
       return false;
     }
@@ -545,12 +521,16 @@ class User {
   Future<File?> getCertificate() async {
     logger.d(userUuid);
     try {
-      final check = await _supabase.storage.from('user-data').list(path: userUuid, searchOptions: const SearchOptions(search: 'certificat'));
+      final check = await _supabase.storage.from('user-data').list(
+          path: userUuid,
+          searchOptions: const SearchOptions(search: 'certificat'));
       logger.d(check[0].name);
       if (check.isEmpty) {
         return null;
       }
-      final response = await _supabase.storage.from('user-data').download("$userUuid/${check[0].name}");
+      final response = await _supabase.storage
+          .from('user-data')
+          .download("$userUuid/${check[0].name}");
       final tempDir = await getTemporaryDirectory();
       File file = await File("${tempDir.path}/${check[0].name}").create();
       file.writeAsBytesSync(response);
@@ -562,5 +542,3 @@ class User {
     }
   }
 }
-
-
