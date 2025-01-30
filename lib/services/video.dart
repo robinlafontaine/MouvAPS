@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
@@ -7,6 +6,7 @@ import 'auth.dart';
 
 class VideoController {
   late ChewieController _chewieController;
+  late VideoPlayerController _videoPlayerController;
 
   VideoController({
     required String videoUrl,
@@ -14,12 +14,10 @@ class VideoController {
     bool requiresAuth = false,
     bool autoPlay = true,
   }) {
-    VideoPlayerController videoPlayerController;
-
     if (isOffline) {
-      videoPlayerController = VideoPlayerController.file(File(videoUrl));
+      _videoPlayerController = VideoPlayerController.file(File(videoUrl));
     } else {
-      videoPlayerController = VideoPlayerController.networkUrl(
+      _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(videoUrl),
         httpHeaders: requiresAuth
             ? {'Authorization': 'Bearer ${Auth.instance.getJwt()}'}
@@ -28,7 +26,7 @@ class VideoController {
     }
 
     _chewieController = ChewieController(
-      videoPlayerController: videoPlayerController,
+      videoPlayerController: _videoPlayerController,
       aspectRatio: 16 / 9,
       autoPlay: autoPlay,
       looping: false,
@@ -39,11 +37,9 @@ class VideoController {
   ChewieController get chewieController => _chewieController;
 
   void listenToEnd(VoidCallback callback) {
-    _chewieController.videoPlayerController.addListener(() {
-      if (_chewieController.videoPlayerController.value.position.inSeconds >
-          0) {
-        if (_chewieController.videoPlayerController.value.position >=
-            _chewieController.videoPlayerController.value.duration) {
+    _videoPlayerController.addListener(() {
+      if (_videoPlayerController.value.position.inSeconds > 0) {
+        if (_videoPlayerController.value.position >= _videoPlayerController.value.duration) {
           callback();
         }
       }
@@ -57,8 +53,8 @@ class VideoController {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
+            _videoPlayerController.pause(); // Pause the video before popping
             navigator.pop();
-            _chewieController.dispose();
           },
         ),
       ),
@@ -80,6 +76,8 @@ class VideoController {
   }
 
   void dispose() {
+    _videoPlayerController.pause();
+    _videoPlayerController.dispose();
     _chewieController.dispose();
   }
 }

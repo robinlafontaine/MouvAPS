@@ -57,6 +57,8 @@ dependencies:
   google_nav_bar: ^5.0.7
   phosphor_flutter: ^2.1.0
   font_awesome_flutter: ^10.8.0
+  open_filex: ^4.6.0
+
 
 dev_dependencies:
   flutter_test:

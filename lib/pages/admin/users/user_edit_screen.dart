@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mouvaps/utils/constants.dart';
 import 'package:mouvaps/utils/text_utils.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
+
 import 'package:mouvaps/services/user.dart';
 import 'package:mouvaps/services/pathology.dart';
 import 'package:mouvaps/services/role.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:mouvaps/services/difficulty.dart';
+import 'package:mouvaps/services/diet.dart';
+import 'package:mouvaps/services/allergy.dart';
+import 'package:mouvaps/services/home_material.dart';
+import 'package:mouvaps/services/diet_expectations.dart';
+import 'package:mouvaps/services/sport_expectations.dart';
 
 class UserEditScreen extends StatefulWidget {
   final Future<User> user;
@@ -22,6 +29,8 @@ class UserEditScreen extends StatefulWidget {
 }
 
 class _UserEditScreenState extends State<UserEditScreen> {
+  late User currentUser;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,14 +38,23 @@ class _UserEditScreenState extends State<UserEditScreen> {
         title: const H1(content: 'Modifications'),
         actions: [
           IconButton(
-            icon: const FaIcon(
-                FontAwesomeIcons.solidFloppyDisk,
-                color: primaryColor
-            ),
-            onPressed: () {
-              widget.user.then((value) => value.update());
-              Navigator.pop(context);
-            }
+              icon: const FaIcon(
+                  FontAwesomeIcons.solidFloppyDisk,
+                  color: primaryColor
+              ),
+              onPressed: () async {
+                await currentUser.update();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text("Modifications enregistrées"),
+                        backgroundColor: Colors.green,
+                        behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
+              }
           ),
         ],
       ),
@@ -53,7 +71,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
                     return Text(snapshot.error.toString());
                   }
                   if (snapshot.hasData) {
-                    final User currentUser = snapshot.data;
+                    currentUser = snapshot.data;
                     return Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: ShadForm(
@@ -82,150 +100,115 @@ class _UserEditScreenState extends State<UserEditScreen> {
                             formElement(
                                 label: "Date de naissance",
                                 child: ShadDatePickerFormField(
-                                  initialValue: DateTime(2000),
+                                  initialValue: currentUser.birthday,
+                                  captionLayout: ShadCalendarCaptionLayout.dropdown,
+                                  formatDate: (date) => DateFormat('dd/MM/yyyy').format(date),
+                                  validator: (v) {
+                                    if (v == null) {
+                                      return "Merci d'entrer votre date de naissance";
+                                    }
+                                    if (v.isAfter(DateTime.now())) {
+                                      return "La date de naissance ne peut pas être dans le futur";
+                                    }
+                                    if (v.isBefore(DateTime.now().subtract(const Duration(days: 365 * 100)))) {
+                                      return "La date de naissance ne peut pas être il y a plus de 100 ans";
+                                    }
+                                    if (v.isAfter(DateTime.now().subtract(const Duration(days: 365 * 18)))) {
+                                      return "Vous devez être majeur pour utiliser l'application";
+                                    }
+                                    currentUser.birthday = v;
+                                    return null;
+                                  },
+                                  allowDeselection: false,
+                                  onChanged: (value) {
+                                    currentUser.birthday = value!;
+                                  },
                                 )
                             ),
                             FutureBuilder(
-                              future: widget.roles,
-                              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                }
-                                if (snapshot.hasError) {
-                                  return Text(snapshot.error.toString());
-                                }
-                                if (snapshot.hasData) {
-                                  List<Role> roles = snapshot.data;
-                                  return formElement(
-                                    label: "Rôles",
-                                    child: ShadSelect<String>.multiple(
-                                      minWidth: 340,
-                                      allowDeselection: true,
-                                      closeOnSelect: false,
-                                      placeholder: const Text(
-                                          'Sélectionnez les rôles'),
-                                      options: [
-                                        ...roles.map(
-                                              (e) => ShadOption(
-                                            value: e.id.toString(),
-                                            child: Text(e.name),
-                                          ),
-                                        ),
-                                      ],
-                                      selectedOptionsBuilder: (context,
-                                        values) =>
-                                        Text(values.map((v) =>
-                                          v.capitalize()).join(', ')),
-                                      initialValues: currentUser.roles.map((e) => e.id.toString()).toList(),
-                                      onChanged: (values) {
-                                        currentUser.roles =
-                                          values.map((e) => Role(
-                                            id: int.parse(e),
-                                            name: roles
-                                              .firstWhere((element) =>
-                                            element.id == int.parse(e))
-                                              .name)).toList();
-                                      },
-                                    )
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              }
-                            ),
-                            FutureBuilder(
-                              future: widget.roles,
-                              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                }
-                                if (snapshot.hasError) {
-                                  return Text(snapshot.error.toString());
-                                }
-                                if (snapshot.hasData) {
-                                  List<Role> roles = snapshot.data;
-                                  return formElement(
-                                      label: "Rôles",
-                                      child: ShadSelect<String>.multiple(
-                                        minWidth: 340,
-                                        allowDeselection: true,
-                                        closeOnSelect: false,
-                                        placeholder: const Text(
-                                            'Sélectionnez les rôles'),
-                                        options: [
-                                          ...roles.map(
-                                                (e) => ShadOption(
-                                              value: e.id.toString(),
-                                              child: Text(e.name),
+                                future: Difficulty.getAll(),
+                                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const CircularProgressIndicator();
+                                  }
+                                  if (snapshot.hasError) {
+                                    return Text(snapshot.error.toString());
+                                  }
+                                  if (snapshot.hasData) {
+                                    List<Difficulty> difficulties = snapshot.data;
+                                    return formElement(
+                                        label: "Niveau",
+                                        child: ShadSelect<String>(
+                                          minWidth: 340,
+                                          maxHeight: 200,
+                                          allowDeselection: true,
+                                          closeOnSelect: false,
+                                          placeholder: const Text("Sélectionnez un niveau"),
+                                          options: [
+                                            ...difficulties.map(
+                                                  (e) => ShadOption(
+                                                value: e.name.toString().capitalize(),
+                                                child: Text(e.name.toString().capitalize()),
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                        selectedOptionsBuilder: (context,
-                                            values) =>
-                                            Text(values.map((v) =>
-                                                v.capitalize()).join(', ')),
-                                        initialValues: currentUser.roles.map((e) => e.id.toString()).toList(),
-                                        onChanged: (values) {
-                                          currentUser.roles =
-                                              values.map((e) => Role(
-                                                  id: int.parse(e),
-                                                  name: roles
-                                                      .firstWhere((element) =>
-                                                  element.id == int.parse(e))
-                                                      .name)).toList();
-                                        },
-                                      )
-                                  );
+                                          ],
+                                          selectedOptionsBuilder: (context,
+                                              values) =>
+                                              Text(values.map((v) =>
+                                                  v.capitalize()).join(', ')),
+                                          initialValue: currentUser.difficulty.name.capitalize(),
+                                          onChanged: (value) {
+                                            currentUser.difficulty = difficulties.firstWhere((e) => e.name.toString().capitalize() == value);
+                                          },
+                                        )
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
                                 }
-                                return const SizedBox.shrink();
-                              }
                             ),
-                            FutureBuilder(
-                              future: widget.pathologies,
-                              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                }
-                                if (snapshot.hasError) {
-                                  return Text(snapshot.error.toString());
-                                }
-                                if (snapshot.hasData) {
-                                  List<Pathology> pathologies = snapshot.data;
-                                  return formElement(
-                                    label: "Pathologies",
-                                    child: ShadSelect<String>.multiple(
-                                      minWidth: 340,
-                                      allowDeselection: true,
-                                      closeOnSelect: false,
-                                      placeholder: const Text(
-                                          'Sélectionnez les pathologies'),
-                                      options: [
-                                        ...pathologies.map(
-                                              (e) => ShadOption(
-                                            value: e.id.toString(),
-                                            child: Text(e.name),
-                                          ),
-                                        ),
-                                      ],
-                                      selectedOptionsBuilder: (context,
-                                          values) =>
-                                          Text(values.map((v) =>
-                                              v.capitalize()).join(', ')),
-                                      initialValues: currentUser.pathologies!.map((e) => e.id.toString()).toList(),
-                                      onChanged: (values) {
-                                        currentUser.pathologies =
-                                            values.map((e) => Pathology(
-                                                id: int.parse(e),
-                                                name: pathologies
-                                                    .firstWhere((element) =>
-                                                element.id == int.parse(e))
-                                                    .name)).toList();
-                                      },
-                                    )
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              }
+                            futureSelect<Role>(
+                              name: "Rôles",
+                              placeholder: "Sélectionnez les rôles",
+                              futureElements: Role.getAll(),
+                              userElements: currentUser.roles,
                             ),
+                            futureSelect<Pathology>(
+                              name: "Pathologies",
+                              placeholder: "Sélectionnez les pathologies",
+                              futureElements: Pathology.getAll(),
+                              userElements: currentUser.pathologies!,
+                            ),
+                            futureSelect<Diet>(
+                              name: "Régime",
+                              placeholder: "Sélectionnez le régime",
+                              futureElements: Diet.getAll(),
+                              userElements: currentUser.diet,
+                            ),
+                            futureSelect<Allergy>(
+                              name: "Allergies",
+                              placeholder: "Sélectionnez les allergies",
+                              futureElements: Allergy.getAll(),
+                              userElements: currentUser.allergies,
+                            ),
+                            futureSelect<HomeMaterial>(
+                              name: "Matériel sportif",
+                              placeholder: "Sélectionnez le matériel sportif",
+                              futureElements: HomeMaterial.getAll(),
+                              userElements: currentUser.homeMaterial,
+                            ),
+                            futureSelect<DietExpectations>(
+                              name: "Attentes alimentaires",
+                              placeholder: "Sélectionnez les attentes alimentaires",
+                              futureElements: DietExpectations.getAll(),
+                              userElements: currentUser.dietExpectations,
+                            ),
+                            futureSelect<SportExpectations>(
+                              name: "Attentes sportives",
+                              placeholder: "Sélectionnez les attentes sportives",
+                              futureElements: SportExpectations.getAll(),
+                              userElements: currentUser.sportExpectations,
+                            ),
+                            const SizedBox(height: 200),
                           ],
                         ),
                       ),
@@ -248,6 +231,52 @@ class _UserEditScreenState extends State<UserEditScreen> {
         child,
         const Divider(),
       ],
+    );
+  }
+
+  Widget futureSelect<T extends dynamic>(
+      {required String name, required String placeholder, required Future<List<T>> futureElements, required List<T> userElements}) {
+    return FutureBuilder(
+        future: futureElements,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          if (snapshot.hasData) {
+            List<T> elements = snapshot.data;
+            return formElement(
+                label: name,
+                child: ShadSelect<String>.multiple(
+                  minWidth: 340,
+                  maxHeight: 200,
+                  allowDeselection: true,
+                  closeOnSelect: false,
+                  placeholder: Text(placeholder),
+                  options: [
+                    ...elements.map(
+                          (e) => ShadOption(
+                        value: e.name.toString().capitalize(),
+                        child: Text(e.name.toString().capitalize()),
+                      ),
+                    ),
+                  ],
+                  selectedOptionsBuilder: (context,
+                      values) =>
+                      Text(values.map((v) =>
+                          v.capitalize()).join(', ')),
+                  initialValues: userElements.map((e) => e.name.toString().capitalize()).toList(),
+                  onChanged: (values) {
+                    userElements.clear();
+                    userElements.addAll(values.map((v) => elements.firstWhere((e) => e.name.toString().capitalize() == v)));
+                  },
+                )
+            );
+          }
+          return const SizedBox.shrink();
+        }
     );
   }
 }

@@ -32,6 +32,8 @@ class PhysicalActivityFormScreenState extends State<PhysicalActivityFormScreen> 
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -157,15 +159,20 @@ class PhysicalActivityFormScreenState extends State<PhysicalActivityFormScreen> 
                           const Text("Quelles sont vos attentes et besoins pour le programme sportif ?", style: labelTextStyle),
                           const SizedBox(height: 8),
                           _buildSportExpectationsSelect(sportExpectationsError),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 120),
                           ShadButton(
                             onPressed: () {
                               _handleFormSubmission();
                             },
                             child: const Text("Continuer",
                                 style: primaryButtonTextStyle),
-                          )
-                        ])))));
+                          ),
+                        ]
+                    )
+                )
+            )
+        )
+    );
   }
 
   void _handleFormSubmission() {
@@ -229,6 +236,7 @@ class PhysicalActivityFormScreenState extends State<PhysicalActivityFormScreen> 
                 allowDeselection: true,
                 closeOnSelect: false,
                 minWidth: 340,
+                maxHeight: 200,
                 placeholder: const Text('Sélectionnez du matériel', style: placeholderTextStyle),
                 options: snapshot.data!.map((e) => ShadOption(
                   value: e,
@@ -263,6 +271,7 @@ class PhysicalActivityFormScreenState extends State<PhysicalActivityFormScreen> 
                 allowDeselection: true,
                 closeOnSelect: false,
                 minWidth: 340,
+                maxHeight: 200,
                 placeholder: const Text('Sélectionnez une attente', style: placeholderTextStyle),
                 options: snapshot.data!.map((e) => ShadOption(
                   value: e,
