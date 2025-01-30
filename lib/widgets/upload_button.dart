@@ -110,6 +110,7 @@ class _UserUploadButtonState extends State<UserUploadButton> {
   @override
   Widget build(BuildContext context) {
     return ShadButton(
+      backgroundColor: Colors.red[700],
       onPressed: _wasSuccessful
           ? null
           : () {
@@ -124,7 +125,7 @@ class _UserUploadButtonState extends State<UserUploadButton> {
       },
       enabled: !_wasSuccessful,
       icon: _wasSuccessful ? const Icon(Icons.check, size: 24) : const Icon(Icons.cloud_upload, size: 24),
-      child: Text(_wasSuccessful ? 'Fichier envoyé' : 'Envoyer un fichier'),
+      child: Text(_wasSuccessful ? 'Certificat envoyé' : 'Envoyer mon certificat'),
     );
   }
 }
