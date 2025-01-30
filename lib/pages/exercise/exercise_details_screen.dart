@@ -15,7 +15,11 @@ class ExerciseDetailsScreen extends StatefulWidget {
   final VoidCallback onWatchedCallback;
 
   const ExerciseDetailsScreen(
-      {super.key, required this.exercise, this.isOffline = false, required this.isEnabled, required this.onWatchedCallback});
+      {super.key,
+      required this.exercise,
+      this.isOffline = false,
+      required this.isEnabled,
+      required this.onWatchedCallback});
 
   @override
   State<ExerciseDetailsScreen> createState() => _ExerciseDetailsScreenState();
@@ -37,7 +41,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen> {
   void initState() {
     super.initState();
     _videoController = VideoController(
-      videoUrl: widget.exercise.url,
+      videoUrl: widget.exercise.url ?? '',
       isOffline: false,
       autoPlay: false,
     );
@@ -52,7 +56,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            H1(content: widget.exercise.name),
+            H1(content: widget.exercise.name ?? ''),
           ],
         ),
       ),
@@ -71,8 +75,8 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: widget.isOffline
-                          ? FileImage(File(widget.exercise.thumbnailUrl))
-                          : NetworkImage(widget.exercise.thumbnailUrl),
+                          ? FileImage(File(widget.exercise.thumbnailUrl ?? ''))
+                          : NetworkImage(widget.exercise.thumbnailUrl ?? ''),
                       fit: BoxFit
                           .cover, // Ensures the image covers the container
                       alignment: Alignment.center,
@@ -99,22 +103,25 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen> {
                 ],
               ),
             ),
-              const SizedBox(height: 30),
-              ShadButton(
-                width: double.infinity,
-                onPressed: widget.isEnabled ? () async {
-                    _openVideo();
-                } : null,
-                child: const Text("Commencer l'exercice", style: TextStyle(fontSize: 18)),
-              ),
-              const SizedBox(height: 30),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: _buildPrecautions(),
-              ),
-            ],
-          ),
+            const SizedBox(height: 30),
+            ShadButton(
+              width: double.infinity,
+              onPressed: widget.isEnabled
+                  ? () async {
+                      _openVideo();
+                    }
+                  : null,
+              child: const Text("Commencer l'exercice",
+                  style: TextStyle(fontSize: 18)),
+            ),
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: _buildPrecautions(),
+            ),
+          ],
         ),
+      ),
     );
   }
 
@@ -125,7 +132,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen> {
         H2(content: 'Précautions'),
         P(
           content:
-          "Avant de faire du sport, il est essentiel de s'échauffer pendant 5 à 10 minutes pour préparer le corps et éviter les blessures. Assure-toi de porter des vêtements et des chaussures adaptés à l'activité, de rester bien hydraté avant, pendant et après l'effort, et de vérifier ton état de santé, surtout si tu as des conditions particulières (consulte un médecin si nécessaire). Choisis un environnement sécurisé, sans obstacles ni dangers, et commence l'exercice progressivement en augmentant l'intensité petit à petit. Enfin, évite de manger un repas copieux juste avant, mais ne fais pas de sport totalement à jeun.",
+              "Avant de faire du sport, il est essentiel de s'échauffer pendant 5 à 10 minutes pour préparer le corps et éviter les blessures. Assure-toi de porter des vêtements et des chaussures adaptés à l'activité, de rester bien hydraté avant, pendant et après l'effort, et de vérifier ton état de santé, surtout si tu as des conditions particulières (consulte un médecin si nécessaire). Choisis un environnement sécurisé, sans obstacles ni dangers, et commence l'exercice progressivement en augmentant l'intensité petit à petit. Enfin, évite de manger un repas copieux juste avant, mais ne fais pas de sport totalement à jeun.",
         ),
       ],
     );
@@ -147,7 +154,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen> {
 
   void _openVideo() {
     VideoController videoController = VideoController(
-      videoUrl: widget.exercise.url,
+      videoUrl: widget.exercise.url ?? '',
       isOffline: widget.isOffline,
     );
     videoController.openFullscreenVideo(context).then((_) {
