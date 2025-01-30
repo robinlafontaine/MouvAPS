@@ -94,6 +94,7 @@ class _ContentListAdminState extends State<ContentListAdmin> {
         side: const BorderSide(color: primaryColor),
       ),
       onPressed: () {
+        /* TODO Implement the logic for creating a new exercise or recipe
         if (widget.exercises != null && widget.recipes == null) {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -108,7 +109,7 @@ class _ContentListAdminState extends State<ContentListAdmin> {
               builder: (context) => const AdminRecipe(),
             ),
           );
-        } else {}
+        } else {}*/
       },
       child: const Icon(FontAwesomeIcons.plus, color: primaryColor),
     );

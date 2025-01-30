@@ -1,18 +1,28 @@
 import 'package:flutter/material.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mouvaps/services/ingredient.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class IngredientCard extends StatelessWidget {
+class IngredientCard extends StatefulWidget {
   final Ingredient ingredient;
   final bool isAddIngredient;
+  final VoidCallback onRemove;
 
-  const IngredientCard(
-      {super.key, required this.ingredient, required this.isAddIngredient});
+  const IngredientCard({
+    super.key,
+    required this.ingredient,
+    required this.isAddIngredient,
+    required this.onRemove,
+  });
 
   @override
+  State createState() => _IngredientCardState();
+}
+
+class _IngredientCardState extends State<IngredientCard> {
+  @override
   Widget build(BuildContext context) {
-    if (isAddIngredient) {
+    if (widget.isAddIngredient) {
       return _buildAddIngredientCard(context);
     } else {
       return _buildIngredientCard(context);
@@ -30,14 +40,14 @@ class IngredientCard extends StatelessWidget {
         padding: const EdgeInsets.all(0),
         title: Center(
           child: Text(
-            ingredient.name ?? '',
+            widget.ingredient.name ?? '',
             style: ShadTheme.of(context).textTheme.p,
             softWrap: true,
           ),
         ),
         footer: Center(
           child: Text(
-            ingredient.quantity.toString(),
+            widget.ingredient.quantity.toString(),
             style: ShadTheme.of(context).textTheme.p,
           ),
         ),
@@ -46,7 +56,7 @@ class IngredientCard extends StatelessWidget {
             child: SizedBox(
               height: imageHeight,
               child: Image(
-                image: NetworkImage(ingredient.imageUrl ?? ''),
+                image: NetworkImage(widget.ingredient.imageUrl ?? ''),
                 fit: BoxFit.cover,
                 errorBuilder: (BuildContext context, Object exception,
                     StackTrace? stackTrace) {
@@ -68,15 +78,30 @@ class IngredientCard extends StatelessWidget {
   }
 
   Future _buildIngredientPopup(BuildContext context) {
-    return showDialog(
+    return showShadDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(ingredient.name ?? ''),
-          content: Column(
+        return ShadDialog(
+          constraints: const BoxConstraints(maxWidth: 300),
+          title: Text(widget.ingredient.name ?? ''),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Fermer'),
+            ),
+            IconButton(
+                icon: const Icon(FontAwesomeIcons.trash, color: Colors.red),
+                onPressed: () {
+                  widget.onRemove();
+                  Navigator.of(context).pop();
+                }),
+          ],
+          child: Column(
             children: <Widget>[
               Image(
-                image: NetworkImage(ingredient.imageUrl ?? ''),
+                image: NetworkImage(widget.ingredient.imageUrl ?? ''),
                 fit: BoxFit.cover,
                 errorBuilder: (BuildContext context, Object exception,
                     StackTrace? stackTrace) {
@@ -86,16 +111,19 @@ class IngredientCard extends StatelessWidget {
                   );
                 },
               ),
+              const SizedBox(height: 10),
+              ShadInput(
+                placeholder: const Text('Quantité'),
+                initialValue: widget.ingredient.quantity.toString(),
+                keyboardType: TextInputType.number,
+                onChanged: (String value) {
+                  setState(() {
+                    widget.ingredient.quantity = int.parse(value);
+                  });
+                },
+              )
             ],
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Fermer'),
-            ),
-          ],
         );
       },
     );

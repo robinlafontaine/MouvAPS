@@ -158,7 +158,14 @@ class _AdminRecipeState extends State<AdminRecipe> {
           } else {
             return IngredientCard(
                 ingredient: _recipe.ingredients![index],
-                isAddIngredient: false);
+                isAddIngredient: false,
+                onRemove: () {
+                  setState(() {
+                    print(
+                        "Removing ingredient at index $index, name: ${_recipe.ingredients![index].name!}");
+                    _recipe.ingredients!.removeAt(index);
+                  });
+                });
           }
         }
         return _buildAddIngredientCard();
