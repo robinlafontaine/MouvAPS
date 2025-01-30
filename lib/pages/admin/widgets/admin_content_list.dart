@@ -78,9 +78,10 @@ class _ContentListAdminState extends State<ContentListAdmin> {
     }
   }
 
-  Widget _buildTitleButton(String title, Function() onPressed) {
+  Widget _buildTitleButton(String? title, Function() onPressed) {
     return ListTile(
-      title: Text(title, style: ShadTheme.of(context).textTheme.p),
+      title:
+          Text(title ?? 'Untitled', style: ShadTheme.of(context).textTheme.p),
       onTap: onPressed,
     );
   }
@@ -93,6 +94,7 @@ class _ContentListAdminState extends State<ContentListAdmin> {
         side: const BorderSide(color: primaryColor),
       ),
       onPressed: () {
+        /* TODO Implement the logic for creating a new exercise or recipe
         if (widget.exercises != null && widget.recipes == null) {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -107,7 +109,7 @@ class _ContentListAdminState extends State<ContentListAdmin> {
               builder: (context) => const AdminRecipe(),
             ),
           );
-        } else {}
+        } else {}*/
       },
       child: const Icon(FontAwesomeIcons.plus, color: primaryColor),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import '../services/user.dart';
 import '../services/auth.dart';
 
@@ -6,6 +7,8 @@ class UserPointsNotifier extends ChangeNotifier {
   int _points = 0;
 
   int get points => _points;
+
+  Logger logger = Logger();
 
   Future<void> fetchUserPoints() async {
     final user = Auth.instance.getUser();
@@ -15,12 +18,29 @@ class UserPointsNotifier extends ChangeNotifier {
     }
   }
 
+  Future<void> decrementPoints(int points) async {
+    final user = Auth.instance.getUser();
+    if (user != null) {
+      try {
+        await User.decrementPointsByUuid(user.id, points);
+        fetchUserPoints();
+        notifyListeners();
+      } catch (e) {
+        logger.e('Error decrementing points: $e');
+      }
+    }
+  }
+
   Future<void> addPoints(int points) async {
     final user = Auth.instance.getUser();
     if (user != null) {
-      await User.updatePointsByUuid(user.id, _points + points);
-      _points += points;
-      notifyListeners();
+      try {
+        await User.incrementPointsByUuid(user.id, points);
+        fetchUserPoints();
+        notifyListeners();
+      } catch (e) {
+        logger.e('Error adding points: $e');
+      }
     }
   }
 }

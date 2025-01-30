@@ -53,8 +53,8 @@ class _RecipeWidgetState extends State<RecipeWidget> {
         aspectRatio: 16 / 9,
         child: Image(
           image: widget.isOffline
-              ? FileImage(File(widget.recipe.imageUrl))
-              : NetworkImage(widget.recipe.imageUrl),
+              ? FileImage(File(widget.recipe.imageUrl ?? ''))
+              : NetworkImage(widget.recipe.imageUrl ?? ''),
           fit: BoxFit.cover,
           errorBuilder:
               (BuildContext context, Object exception, StackTrace? stackTrace) {
@@ -70,7 +70,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
 
   Widget _buildRecipeTitle() {
     return Text(
-      widget.recipe.name,
+      widget.recipe.name ?? 'Pas de nom',
       style: ShadTheme.of(context).textTheme.h3,
     );
   }
@@ -98,19 +98,19 @@ class _RecipeWidgetState extends State<RecipeWidget> {
       isEnabled: !widget.isLocked && !widget.isOffline,
       downloadRequests: [
         DownloadRequest(
-          url: widget.recipe.imageUrl,
+          url: widget.recipe.imageUrl ?? '',
           filename: 'r_${widget.recipe.name}_i',
-          fileExtension: widget.recipe.imageUrl.split('.').last,
+          fileExtension: widget.recipe.imageUrl!.split('.').last,
         ),
         DownloadRequest(
-          url: widget.recipe.videoUrl,
+          url: widget.recipe.videoUrl ?? '',
           filename: 'r_${widget.recipe.name}_v',
-          fileExtension: widget.recipe.videoUrl.split('.').last,
+          fileExtension: widget.recipe.videoUrl!.split('.').last,
         ),
         ...widget.recipe.ingredients!.map((ingredient) => DownloadRequest(
-              url: ingredient.imageUrl,
+              url: ingredient.imageUrl ?? '',
               filename: 'ing_${ingredient.name}',
-              fileExtension: ingredient.imageUrl.split('.').last,
+              fileExtension: ingredient.imageUrl!.split('.').last,
             )),
       ],
       onSave: (paths) async {

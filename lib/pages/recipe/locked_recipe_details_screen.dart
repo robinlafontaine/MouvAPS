@@ -48,7 +48,7 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            H1(content: widget.recipe.name),
+            H1(content: widget.recipe.name ?? 'Pas de nom'),
             _buildUnlockButton(),
           ],
         ),
@@ -68,8 +68,8 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: widget.isOffline
-                          ? FileImage(File(widget.recipe.imageUrl))
-                          : NetworkImage(widget.recipe.imageUrl),
+                          ? FileImage(File(widget.recipe.imageUrl ?? ''))
+                          : NetworkImage(widget.recipe.imageUrl ?? ''),
                       fit: BoxFit
                           .cover, // Ensures the image covers the container
                       alignment: Alignment.center,
@@ -97,7 +97,7 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
                     children: [
                       const P(content: 'Difficulté : '),
                       StarRating(
-                        rating: widget.recipe.difficulty.toDouble(),
+                        rating: widget.recipe.difficulty!.toDouble(),
                         color: primaryColor,
                         emptyIcon: FontAwesomeIcons.star,
                         filledIcon: FontAwesomeIcons.solidStar,
@@ -130,8 +130,8 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
                               height: 40,
                               child: Image(
                                 image: widget.isOffline
-                                    ? FileImage(File(ingredient.imageUrl))
-                                    : NetworkImage(ingredient.imageUrl),
+                                    ? FileImage(File(ingredient.imageUrl ?? ''))
+                                    : NetworkImage(ingredient.imageUrl ?? ''),
                                 fit: BoxFit.contain,
                                 errorBuilder: (BuildContext context,
                                     Object exception, StackTrace? stackTrace) {
@@ -142,7 +142,7 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
                                 },
                               ),
                             ),
-                            P(content: ingredient.name),
+                            P(content: ingredient.name ?? ''),
                           ],
                         ),
                       ],
@@ -257,7 +257,7 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
     if (!mounted) return;
     // Add the points to the user
     Provider.of<UserPointsNotifier>(context, listen: false)
-        .addPoints(widget.recipe.pricePoints ?? 0);
+        .decrementPoints(widget.recipe.pricePoints ?? 0);
     // Go back to the previous screen and refresh the state
     Navigator.pop(context);
     widget.onRecipeStateChanged();

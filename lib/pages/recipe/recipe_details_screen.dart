@@ -29,7 +29,7 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
   void initState() {
     super.initState();
     _videoController = VideoController(
-      videoUrl: widget.recipe.videoUrl,
+      videoUrl: widget.recipe.videoUrl ?? '',
       isOffline: false,
       autoPlay: false,
     );
@@ -46,7 +46,7 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.recipe.name,
+          widget.recipe.name ?? 'Pas de nom',
           style: ShadTheme.of(context).textTheme.h1,
         ),
       ),
@@ -66,7 +66,7 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
                 children: [
                   _buildInfoRow(
                       widget: StarRating(
-                        rating: widget.recipe.difficulty.toDouble(),
+                        rating: widget.recipe.difficulty!.toDouble(),
                         color: primaryColor,
                         emptyIcon: FontAwesomeIcons.star,
                         filledIcon: FontAwesomeIcons.solidStar,
@@ -110,7 +110,7 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: MarkdownBody(
-                  data: widget.recipe.description,
+                  data: widget.recipe.description ?? 'Pas de description',
                 ),
               ),
             ],
@@ -141,7 +141,7 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
       padding: const EdgeInsets.all(0),
       title: Center(
         child: Text(
-          ingredient.name,
+          ingredient.name ?? '',
           style: ShadTheme.of(context).textTheme.p,
           softWrap: true,
         ),
@@ -158,8 +158,8 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
             height: imageHeight,
             child: Image(
               image: widget.isOffline
-                  ? FileImage(File(ingredient.imageUrl))
-                  : NetworkImage(ingredient.imageUrl),
+                  ? FileImage(File(ingredient.imageUrl ?? ''))
+                  : NetworkImage(ingredient.imageUrl ?? ''),
               fit: BoxFit.cover,
               errorBuilder: (BuildContext context, Object exception,
                   StackTrace? stackTrace) {

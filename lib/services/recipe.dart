@@ -4,25 +4,25 @@ import 'db.dart';
 import 'ingredient.dart';
 
 class Recipe {
-  final int? id;
-  final String name;
-  final String videoUrl;
-  final String imageUrl;
-  final List<Ingredient>? ingredients;
-  final String description;
-  final double difficulty;
-  final int? timeMins;
-  final int? pricePoints;
-  final DateTime? createdAt;
+  int? id;
+  String? name;
+  String? videoUrl;
+  String? imageUrl;
+  List<Ingredient>? ingredients;
+  String? description;
+  double? difficulty;
+  int? timeMins;
+  int? pricePoints;
+  DateTime? createdAt;
 
   Recipe({
     this.id,
-    required this.name,
-    required this.videoUrl,
-    required this.imageUrl,
-    required this.ingredients,
-    required this.description,
-    required this.difficulty,
+    this.name,
+    this.videoUrl,
+    this.imageUrl,
+    this.ingredients,
+    this.description,
+    this.difficulty,
     this.timeMins,
     this.pricePoints,
     this.createdAt,
@@ -64,6 +64,20 @@ class Recipe {
     };
   }
 
+  Map<String, dynamic> toJson2() {
+    return {
+      'id': id,
+      'name': name,
+      'video_url': videoUrl,
+      'thumbnail_url': imageUrl,
+      'description': description,
+      'time_mins': timeMins,
+      'created_at': createdAt?.toIso8601String(),
+      'difficulty': difficulty,
+      'price_points': pricePoints,
+    };
+  }
+
   static final _supabase = Supabase.instance.client;
   static Logger logger = Logger();
 
@@ -89,10 +103,67 @@ class Recipe {
 
     final response = await _supabase
         .from('recipes')
-        .update(toJson())
+        .update(toJson2())
         .eq('id', id as int)
         .select()
         .single();
+
+    // Delete removed ingredients
+    // If ingredient in local recipe is not in the updated recipe, delete it
+    if (ingredients != null) {
+      final updatedIngredients = ingredients!.map((e) => e.name).toSet();
+      final existingIngredients = await _supabase
+          .from('recipe_ingredient')
+          .select('ingredient:ingredients(name)')
+          .eq('recipe_id', id as Object)
+          .then((value) => value as List<dynamic>);
+
+      final existingIngredientNames = existingIngredients
+          .map((e) => e['ingredient']['name'] as String)
+          .toSet();
+
+      final removedIngredients =
+          existingIngredientNames.difference(updatedIngredients);
+
+      await Future.wait(
+        removedIngredients.map((ingredientName) async {
+          final ingredientId = await _supabase
+              .from('ingredients')
+              .select('id')
+              .eq('name', ingredientName as Object)
+              .single()
+              .then((value) => value['id'] as int);
+
+          return _supabase
+              .from('recipe_ingredient')
+              .delete()
+              .eq('recipe_id', id as Object)
+              .eq('ingredient_id', ingredientId);
+        }),
+      );
+    }
+
+    // Upsert ingredient's quantity
+    if (ingredients != null) {
+      await Future.wait(
+        ingredients!.asMap().entries.map((entry) async {
+          final ingredient = entry.value;
+
+          final ingredientId = await _supabase
+              .from('ingredients')
+              .select('id')
+              .eq('name', ingredient.name as Object)
+              .single()
+              .then((value) => value['id'] as int);
+
+          await _supabase.from('recipe_ingredient').upsert({
+            'recipe_id': id,
+            'ingredient_id': ingredientId,
+            'quantity': ingredient.quantity,
+          });
+        }),
+      );
+    }
 
     return Recipe.fromJson(response);
   }
@@ -204,7 +275,8 @@ class Recipe {
     };
   }
 
-  static Future<Recipe> saveLocalRecipe(Recipe recipe, String localUrl, String localThumbnailUrl, List<String> ingredientThumbnailUrls) async {
+  static Future<Recipe> saveLocalRecipe(Recipe recipe, String localUrl,
+      String localThumbnailUrl, List<String> ingredientThumbnailUrls) async {
     try {
       final db = await ContentDatabase.instance.database;
 
@@ -300,15 +372,15 @@ class Recipe {
       final recipeData = Map<String, dynamic>.from(recipes.first);
       final ingredients = await db.rawQuery(_ingredientQuery, [id]);
 
-      recipeData['recipe_ingredient'] = ingredients.map((ri) =>
-      Map<String, dynamic>.from({
-        'quantity': ri['quantity'],
-        'ingredient': {
-          'name': ri['name'],
-          'image_url': ri['image_url'],
-        }
-      })
-      ).toList();
+      recipeData['recipe_ingredient'] = ingredients
+          .map((ri) => Map<String, dynamic>.from({
+                'quantity': ri['quantity'],
+                'ingredient': {
+                  'name': ri['name'],
+                  'image_url': ri['image_url'],
+                }
+              }))
+          .toList();
 
       return Recipe.fromJson(recipeData);
     } catch (e) {
@@ -325,17 +397,18 @@ class Recipe {
       return await Future.wait(
         recipes.map((recipeRow) async {
           final recipeData = Map<String, dynamic>.from(recipeRow);
-          final ingredients = await db.rawQuery(_ingredientQuery, [recipeData['id']]);
+          final ingredients =
+              await db.rawQuery(_ingredientQuery, [recipeData['id']]);
 
-          recipeData['recipe_ingredient'] = ingredients.map((ri) =>
-          Map<String, dynamic>.from({
-            'quantity': ri['quantity'],
-            'ingredient': {
-              'name': ri['name'],
-              'image_url': ri['image_url'],
-            }
-          })
-          ).toList();
+          recipeData['recipe_ingredient'] = ingredients
+              .map((ri) => Map<String, dynamic>.from({
+                    'quantity': ri['quantity'],
+                    'ingredient': {
+                      'name': ri['name'],
+                      'image_url': ri['image_url'],
+                    }
+                  }))
+              .toList();
 
           return Recipe.fromJson(recipeData);
         }),
@@ -345,7 +418,6 @@ class Recipe {
       return [];
     }
   }
-
 
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }
