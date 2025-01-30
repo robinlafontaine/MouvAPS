@@ -21,10 +21,13 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    return ShadSwitch(
-      value: value,
-      onChanged: (v) => handleToggle(v),
-      label: const BadgeText(content:'Mode administrateur'),
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: ShadSwitch(
+        value: value,
+        onChanged: (v) => handleToggle(v),
+        label: const P(content: 'Mode administrateur'),
+      ),
     );
   }
 }
