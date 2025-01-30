@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chewie/chewie.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -15,6 +16,8 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'package:mouvaps/services/ingredient.dart';
 import 'package:mouvaps/utils/text_utils.dart';
+
+import 'package:mouvaps/services/video.dart';
 
 class AdminRecipe extends StatefulWidget {
   final Recipe? recipe;
@@ -45,12 +48,25 @@ class _AdminRecipeState extends State<AdminRecipe> {
   );
   late Future<List<Ingredient>> _ingredients;
   String _ingredientUrl = '';
+  late VideoController _videoController;
 
   @override
   void initState() {
     super.initState();
     _recipe = widget.recipe ?? Recipe(difficulty: 0.0, ingredients: []);
     _steps = _recipe.description?.split("\\") ?? [];
+
+    _videoController = VideoController(
+      videoUrl: widget.recipe?.videoUrl ?? '',
+      isOffline: false,
+      autoPlay: false,
+    );
+  }
+
+  @override
+  void dispose() {
+    _videoController.dispose();
+    super.dispose();
   }
 
   void _updateRecipeName(String name) {
@@ -61,7 +77,8 @@ class _AdminRecipeState extends State<AdminRecipe> {
 
   void _addStep(String stepDescription) {
     setState(() {
-      _steps.add("**Étape ${_steps.length + 1}**\\\n$stepDescription");
+      _steps.add("**Étape ${_steps.length}**\\\n$stepDescription");
+      _recipe.description = _steps.join("\\");
     });
   }
 
@@ -138,7 +155,26 @@ class _AdminRecipeState extends State<AdminRecipe> {
   }
 
   Widget _buildRecipeVideo() {
-    return const Center(child: Text("TODO - Recipe Video"));
+    return Center(
+      child: Column(
+        children: [
+          if (_recipe.videoUrl != null)
+            SizedBox(
+              height: 200,
+              child: Chewie(controller: _videoController.chewieController),
+            )
+          else
+            UploadFileButton(
+                contentUploadService: _uploadServiceRecipeVideo,
+                onUpload: () {
+                  setState(() {
+                    _recipe.videoUrl =
+                        _uploadServiceRecipeVideo.uploadManager.getFile();
+                  });
+                })
+        ],
+      ),
+    );
   }
 
   Widget _buildIngredients() {
@@ -161,8 +197,6 @@ class _AdminRecipeState extends State<AdminRecipe> {
                 isAddIngredient: false,
                 onRemove: () {
                   setState(() {
-                    print(
-                        "Removing ingredient at index $index, name: ${_recipe.ingredients![index].name!}");
                     _recipe.ingredients!.removeAt(index);
                   });
                 });
@@ -488,10 +522,13 @@ class _AdminRecipeState extends State<AdminRecipe> {
         side: const BorderSide(color: primaryColor),
       ),
       onPressed: () async {
-        if (_recipe.imageUrl != null) {
-          await _uploadServiceRecipeImage.startUpload(context).then(
-                Navigator.of(context).pop,
-              );
+        if (_recipe.id == null) {
+          await _recipe.create();
+        } else {
+          await _recipe.update();
+        }
+        if (mounted) {
+          Navigator.of(context).pop();
         }
       },
       child: const Icon(FontAwesomeIcons.floppyDisk, color: primaryColor),

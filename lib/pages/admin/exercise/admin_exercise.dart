@@ -5,11 +5,8 @@ import '../../../services/exercise.dart';
 
 class AdminExercise extends StatefulWidget {
   final Exercise? exercise;
-  final bool? newExercise;
 
-  const AdminExercise({super.key, this.exercise, this.newExercise})
-      : assert(exercise != null || newExercise != null,
-            'exercise or newExercise must be provided');
+  const AdminExercise({super.key, this.exercise});
 
   @override
   State<StatefulWidget> createState() {

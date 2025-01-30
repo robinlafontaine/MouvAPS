@@ -64,6 +64,20 @@ class Recipe {
     };
   }
 
+  Map<String, dynamic> toJson2() {
+    return {
+      'id': id,
+      'name': name,
+      'video_url': videoUrl,
+      'thumbnail_url': imageUrl,
+      'description': description,
+      'time_mins': timeMins,
+      'created_at': createdAt?.toIso8601String(),
+      'difficulty': difficulty,
+      'price_points': pricePoints,
+    };
+  }
+
   static final _supabase = Supabase.instance.client;
   static Logger logger = Logger();
 
@@ -89,10 +103,67 @@ class Recipe {
 
     final response = await _supabase
         .from('recipes')
-        .update(toJson())
+        .update(toJson2())
         .eq('id', id as int)
         .select()
         .single();
+
+    // Delete removed ingredients
+    // If ingredient in local recipe is not in the updated recipe, delete it
+    if (ingredients != null) {
+      final updatedIngredients = ingredients!.map((e) => e.name).toSet();
+      final existingIngredients = await _supabase
+          .from('recipe_ingredient')
+          .select('ingredient:ingredients(name)')
+          .eq('recipe_id', id as Object)
+          .then((value) => value as List<dynamic>);
+
+      final existingIngredientNames = existingIngredients
+          .map((e) => e['ingredient']['name'] as String)
+          .toSet();
+
+      final removedIngredients =
+          existingIngredientNames.difference(updatedIngredients);
+
+      await Future.wait(
+        removedIngredients.map((ingredientName) async {
+          final ingredientId = await _supabase
+              .from('ingredients')
+              .select('id')
+              .eq('name', ingredientName as Object)
+              .single()
+              .then((value) => value['id'] as int);
+
+          return _supabase
+              .from('recipe_ingredient')
+              .delete()
+              .eq('recipe_id', id as Object)
+              .eq('ingredient_id', ingredientId);
+        }),
+      );
+    }
+
+    // Upsert ingredient's quantity
+    if (ingredients != null) {
+      await Future.wait(
+        ingredients!.asMap().entries.map((entry) async {
+          final ingredient = entry.value;
+
+          final ingredientId = await _supabase
+              .from('ingredients')
+              .select('id')
+              .eq('name', ingredient.name as Object)
+              .single()
+              .then((value) => value['id'] as int);
+
+          await _supabase.from('recipe_ingredient').upsert({
+            'recipe_id': id,
+            'ingredient_id': ingredientId,
+            'quantity': ingredient.quantity,
+          });
+        }),
+      );
+    }
 
     return Recipe.fromJson(response);
   }
