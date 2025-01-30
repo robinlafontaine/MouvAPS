@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:mouvaps/pages/exercise/precaution_dialog.dart';
+import 'package:mouvaps/pages/exercise/exercise_details_screen.dart';
 import 'package:mouvaps/services/exercise.dart';
-import 'package:mouvaps/services/video.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:mouvaps/services/download.dart';
 import 'package:mouvaps/widgets/download_button.dart';
@@ -13,6 +12,7 @@ class ExerciseCard extends StatefulWidget {
   final bool isEnabled;
   final bool isOffline;
   final VoidCallback onWatchedCallback;
+
   const ExerciseCard(
       {super.key,
       required this.exercise,
@@ -27,14 +27,6 @@ class ExerciseCard extends StatefulWidget {
 }
 
 class _ExerciseCardState extends State<ExerciseCard> {
-  bool watched = false;
-  bool _isDisposed = false;
-
-  @override
-  void dispose() {
-    _isDisposed = true;
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,40 +84,20 @@ class _ExerciseCardState extends State<ExerciseCard> {
             : _buildDownloadButton(),
         onTap: widget.isEnabled
             ? () async {
-                final bool confirmed = await showPrecautionDialog(context);
-                if (confirmed) {
-                  _openVideo();
-                }
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ExerciseDetailsScreen(
+                    exercise: widget.exercise,
+                    isOffline: widget.isOffline,
+                    isEnabled: widget.isEnabled,
+                    onWatchedCallback: widget.onWatchedCallback
+                  ),
+                ),
+              );
               }
             : null,
       ),
     );
-  }
-
-  void _openVideo() {
-    VideoController video = VideoController(
-      videoUrl: widget.exercise.url,
-      isOffline: widget.isOffline,
-    );
-    video.openFullscreenVideo(context);
-    video.listenToEnd(() {
-      if (!_isDisposed && !watched && widget.isEnabled && !widget.isOffline) {
-        Exercise.watched(widget.exercise).then((value) {
-          if (!_isDisposed) {
-            setState(() {
-              watched = true;
-            });
-            widget.onWatchedCallback();
-          }
-        });
-      }
-    });
-  }
-
-  void _onDownloadComplete(Exercise exercise) {
-    if (!_isDisposed) {
-      setState(() {});
-    }
   }
 
   Widget _buildInfoRow({required IconData icon, required String text}) {
@@ -160,8 +132,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
       ],
       onSave: (paths) async {
         await Exercise.saveLocalExercise(widget.exercise, paths[1], paths[0]);
-      },
-      onDownloadComplete: _onDownloadComplete,
+      }, onDownloadComplete: (T) {  },
     );
   }
 }

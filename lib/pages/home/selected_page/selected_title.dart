@@ -13,10 +13,10 @@ class SelectedTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(isAdmin) {
+    if (isAdmin) {
       int index = currentIndex;
-      if(currentIndex > 2) {
-        index = 2;
+      if (currentIndex > 2) {
+        index = 0;
       }
       List<Widget> widgets = const <Widget>[
         H1(content: 'Utilisateurs'),

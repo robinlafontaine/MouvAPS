@@ -7,7 +7,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
   final ValueChanged<int> onTap;
   final bool isAdmin;
 
-
   const CustomBottomNavigationBar({
     super.key,
     required this.currentIndex,
@@ -17,13 +16,13 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(isAdmin) {
+    if (isAdmin) {
       int index = currentIndex;
-      if(currentIndex > 2) {
-        index = 2;
+      if (currentIndex > 2) {
+        index = 0;
       }
       return BottomNavigationBar(
-        items:  <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
               index == 0
@@ -49,12 +48,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
             label: 'Recettes',
           ),
         ],
-          type: BottomNavigationBarType.fixed,
-          currentIndex: index,
-          selectedItemColor: constants.primaryColor,
-          unselectedItemColor: constants.textColor,
-          showUnselectedLabels: true,
-          showSelectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: index,
+        selectedItemColor: constants.primaryColor,
+        unselectedItemColor: constants.textColor,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
         selectedLabelStyle: const TextStyle(
           color: constants.primaryColor,
           fontSize: 8,
@@ -65,7 +64,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           fontSize: 8,
           fontWeight: FontWeight.w600,
         ),
-          onTap: onTap,
+        onTap: onTap,
       );
     }
     return BottomNavigationBar(
@@ -131,7 +130,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
       ),
       onTap: onTap,
     );
-
   }
 
   void setState(Null Function() param0) {}
