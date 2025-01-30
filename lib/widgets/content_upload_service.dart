@@ -90,7 +90,7 @@ class ContentUploadService {
                 color: constants.primaryColor),
             title: Text('Envoyer une ${type.name}'),
             subtitle: Text('Choisissez une ${type.name} de votre appareil'),
-            onTap: () => pickFile(context, type: FileType.image),
+            onTap: () => pickFile(context, type: type),
           ),
           const SizedBox(height: 20),
         ],
