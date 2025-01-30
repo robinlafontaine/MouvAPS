@@ -139,16 +139,15 @@ class _AdminRecipeState extends State<AdminRecipe> {
                   },
                 ),
               ),
-            )
-          else
-            UploadFileButton(
-                contentUploadService: _uploadServiceRecipeImage,
-                onUpload: () {
-                  setState(() {
-                    _recipe.imageUrl =
-                        _uploadServiceRecipeImage.uploadManager.getFile();
-                  });
-                })
+            ),
+          UploadFileButton(
+              contentUploadService: _uploadServiceRecipeImage,
+              onUpload: () {
+                setState(() {
+                  _recipe.imageUrl =
+                      _uploadServiceRecipeImage.uploadManager.getFile();
+                });
+              })
         ],
       ),
     );
@@ -162,16 +161,15 @@ class _AdminRecipeState extends State<AdminRecipe> {
             SizedBox(
               height: 200,
               child: Chewie(controller: _videoController.chewieController),
-            )
-          else
-            UploadFileButton(
-                contentUploadService: _uploadServiceRecipeVideo,
-                onUpload: () {
-                  setState(() {
-                    _recipe.videoUrl =
-                        _uploadServiceRecipeVideo.uploadManager.getFile();
-                  });
-                })
+            ),
+          UploadFileButton(
+              contentUploadService: _uploadServiceRecipeVideo,
+              onUpload: () {
+                setState(() {
+                  _recipe.videoUrl =
+                      _uploadServiceRecipeVideo.uploadManager.getFile();
+                });
+              })
         ],
       ),
     );
@@ -523,8 +521,40 @@ class _AdminRecipeState extends State<AdminRecipe> {
       ),
       onPressed: () async {
         if (_recipe.id == null) {
+          String? imageUrl =
+              await _uploadServiceRecipeImage.uploadManager.uploadFile();
+          String? videoUrl =
+              await _uploadServiceRecipeVideo.uploadManager.uploadFile();
+          if (imageUrl != null) {
+            _recipe.imageUrl = imageUrl;
+          }
+          if (videoUrl != null) {
+            _recipe.videoUrl = videoUrl;
+          }
+          if (_recipe.imageUrl == null || _recipe.videoUrl == null) {
+            return;
+          }
           await _recipe.create();
         } else {
+          if (_recipe.imageUrl != null &&
+              _recipe.imageUrl!.contains("/data/user")) {
+            String? imageUrl =
+                await _uploadServiceRecipeImage.uploadManager.uploadFile();
+            if (imageUrl != null) {
+              _recipe.imageUrl = imageUrl;
+            }
+          }
+          if (_recipe.videoUrl != null &&
+              _recipe.videoUrl!.contains("/data/user")) {
+            String? videoUrl =
+                await _uploadServiceRecipeVideo.uploadManager.uploadFile();
+            if (videoUrl != null) {
+              _recipe.videoUrl = videoUrl;
+            }
+          }
+          if (_recipe.imageUrl == null || _recipe.videoUrl == null) {
+            return;
+          }
           await _recipe.update();
         }
         if (mounted) {

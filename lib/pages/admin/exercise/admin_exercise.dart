@@ -124,16 +124,15 @@ class _AdminExerciseState extends State<AdminExercise> {
                   },
                 ),
               ),
-            )
-          else
-            UploadFileButton(
-                contentUploadService: _uploadServiceThumbnail,
-                onUpload: () {
-                  setState(() {
-                    _exercise.thumbnailUrl =
-                        _uploadServiceThumbnail.uploadManager.getFile();
-                  });
-                })
+            ),
+          UploadFileButton(
+              contentUploadService: _uploadServiceThumbnail,
+              onUpload: () {
+                setState(() {
+                  _exercise.thumbnailUrl =
+                      _uploadServiceThumbnail.uploadManager.getFile();
+                });
+              })
         ],
       ),
     );
@@ -147,15 +146,14 @@ class _AdminExerciseState extends State<AdminExercise> {
             SizedBox(
               height: 200,
               child: Chewie(controller: _videoController.chewieController),
-            )
-          else
-            UploadFileButton(
-                contentUploadService: _uploadServiceVideo,
-                onUpload: () {
-                  setState(() {
-                    _exercise.url = _uploadServiceVideo.uploadManager.getFile();
-                  });
-                })
+            ),
+          UploadFileButton(
+              contentUploadService: _uploadServiceVideo,
+              onUpload: () {
+                setState(() {
+                  _exercise.url = _uploadServiceVideo.uploadManager.getFile();
+                });
+              })
         ],
       ),
     );
@@ -214,8 +212,41 @@ class _AdminExerciseState extends State<AdminExercise> {
       ),
       onPressed: () async {
         if (_exercise.id == null) {
+          String? imageUrl =
+              await _uploadServiceThumbnail.uploadManager.uploadFile();
+          String? videoUrl =
+              await _uploadServiceVideo.uploadManager.uploadFile();
+          if (imageUrl != null) {
+            _exercise.thumbnailUrl = imageUrl;
+          }
+          if (videoUrl != null) {
+            _exercise.url = videoUrl;
+          }
+          if (_exercise.url == null || _exercise.thumbnailUrl == null) {
+            return;
+          }
           await _exercise.create();
         } else {
+          if (_exercise.thumbnailUrl != null &&
+              _exercise.thumbnailUrl!.contains("/data/user")) {
+            String? thumbnailUrl =
+                await _uploadServiceThumbnail.uploadManager.uploadFile();
+            if (thumbnailUrl != null) {
+              _exercise.thumbnailUrl = thumbnailUrl;
+            }
+          }
+          if (_exercise.url != null && _exercise.url!.contains("/data/user")) {
+            String? videoUrl =
+                await _uploadServiceVideo.uploadManager.uploadFile();
+            if (videoUrl != null) {
+              _exercise.url = videoUrl;
+            }
+          }
+
+          if (_exercise.url == null || _exercise.thumbnailUrl == null) {
+            return;
+          }
+
           await _exercise.update();
         }
         if (mounted) {
