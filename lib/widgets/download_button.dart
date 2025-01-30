@@ -70,7 +70,7 @@ class _DownloadButtonState<T> extends State<DownloadButton<T>> {
     final stream = _downloadManager.getProgress(_itemId);
     if (stream != null) {
       _progressSubscription = stream.listen(
-            (progress) => _updateState(true, progress),
+        (progress) => _updateState(true, progress),
         onError: (_) => _resetState(),
         onDone: () => _checkDownloadState(),
       );
@@ -127,7 +127,8 @@ class _DownloadButtonState<T> extends State<DownloadButton<T>> {
 
   void _showError() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Une erreur est survenue lors du téléchargement')),
+      const SnackBar(
+          content: Text('Une erreur est survenue lors du téléchargement')),
     );
   }
 
@@ -148,8 +149,13 @@ class _DownloadButtonState<T> extends State<DownloadButton<T>> {
                 backgroundColor: constants.unselectedColor,
               ),
             Icon(
-              _isDownloading ? Icons.close : (isCompleted ? Icons.check_circle_outlined : Icons.download),
+              _isDownloading
+                  ? Icons.close
+                  : (isCompleted
+                      ? Icons.check_circle_outlined
+                      : Icons.download),
               color: constants.primaryColor,
+              size: 24,
             ),
           ],
         ),
