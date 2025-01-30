@@ -48,7 +48,14 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            H1(content: widget.recipe.name ?? 'Pas de nom'),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: Text(
+                widget.recipe.name ?? 'Pas de nom',
+                style: ShadTheme.of(context).textTheme.h1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
             _buildUnlockButton(),
           ],
         ),
