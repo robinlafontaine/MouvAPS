@@ -22,35 +22,40 @@ class IngredientCard extends StatelessWidget {
   Widget _buildIngredientCard(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
     double imageHeight = deviceWidth / 7;
-    return ShadCard(
-      padding: const EdgeInsets.all(0),
-      title: Center(
-        child: Text(
-          ingredient.name,
-          style: ShadTheme.of(context).textTheme.p,
-          softWrap: true,
+    return InkWell(
+      onTap: () {
+        _buildIngredientPopup(context);
+      },
+      child: ShadCard(
+        padding: const EdgeInsets.all(0),
+        title: Center(
+          child: Text(
+            ingredient.name ?? '',
+            style: ShadTheme.of(context).textTheme.p,
+            softWrap: true,
+          ),
         ),
-      ),
-      footer: Center(
-        child: Text(
-          ingredient.quantity.toString(),
-          style: ShadTheme.of(context).textTheme.p,
+        footer: Center(
+          child: Text(
+            ingredient.quantity.toString(),
+            style: ShadTheme.of(context).textTheme.p,
+          ),
         ),
-      ),
-      child: Center(
-        child: ClipRRect(
-          child: SizedBox(
-            height: imageHeight,
-            child: Image(
-              image: NetworkImage(ingredient.imageUrl),
-              fit: BoxFit.cover,
-              errorBuilder: (BuildContext context, Object exception,
-                  StackTrace? stackTrace) {
-                return const Icon(
-                  Icons.image_not_supported,
-                  size: 30,
-                );
-              },
+        child: Center(
+          child: ClipRRect(
+            child: SizedBox(
+              height: imageHeight,
+              child: Image(
+                image: NetworkImage(ingredient.imageUrl ?? ''),
+                fit: BoxFit.cover,
+                errorBuilder: (BuildContext context, Object exception,
+                    StackTrace? stackTrace) {
+                  return const Icon(
+                    Icons.image_not_supported,
+                    size: 30,
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -60,5 +65,39 @@ class IngredientCard extends StatelessWidget {
 
   Widget _buildAddIngredientCard(BuildContext context) {
     return const Text("TODO");
+  }
+
+  Future _buildIngredientPopup(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(ingredient.name ?? ''),
+          content: Column(
+            children: <Widget>[
+              Image(
+                image: NetworkImage(ingredient.imageUrl ?? ''),
+                fit: BoxFit.cover,
+                errorBuilder: (BuildContext context, Object exception,
+                    StackTrace? stackTrace) {
+                  return const Icon(
+                    Icons.image_not_supported,
+                    size: 30,
+                  );
+                },
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Fermer'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

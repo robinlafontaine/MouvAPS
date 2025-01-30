@@ -141,7 +141,7 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
       padding: const EdgeInsets.all(0),
       title: Center(
         child: Text(
-          ingredient.name,
+          ingredient.name ?? '',
           style: ShadTheme.of(context).textTheme.p,
           softWrap: true,
         ),
@@ -158,8 +158,8 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
             height: imageHeight,
             child: Image(
               image: widget.isOffline
-                  ? FileImage(File(ingredient.imageUrl))
-                  : NetworkImage(ingredient.imageUrl),
+                  ? FileImage(File(ingredient.imageUrl ?? ''))
+                  : NetworkImage(ingredient.imageUrl ?? ''),
               fit: BoxFit.cover,
               errorBuilder: (BuildContext context, Object exception,
                   StackTrace? stackTrace) {

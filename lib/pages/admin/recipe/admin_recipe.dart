@@ -43,15 +43,14 @@ class _AdminRecipeState extends State<AdminRecipe> {
     directoryPath: "ingredients",
     type: FileType.image,
   );
-
   late Future<List<Ingredient>> _ingredients;
+  String _ingredientUrl = '';
 
   @override
   void initState() {
     super.initState();
-    _ingredients = Ingredient.getAll();
     _recipe = widget.recipe ?? Recipe(difficulty: 0.0, ingredients: []);
-    _steps = _recipe.description?.split("\\\n") ?? [];
+    _steps = _recipe.description?.split("\\") ?? [];
   }
 
   void _updateRecipeName(String name) {
@@ -200,6 +199,7 @@ class _AdminRecipeState extends State<AdminRecipe> {
   }
 
   Widget _buildIngredientPopup() {
+    _ingredients = Ingredient.getAll();
     return ShadDialog(
       constraints: const BoxConstraints(maxWidth: 300),
       radius: BorderRadius.circular(20),
@@ -219,7 +219,7 @@ class _AdminRecipeState extends State<AdminRecipe> {
                     return _buildNewIngredientPopup();
                   });
             },
-            child: const Text('Ajouter')),
+            child: const Text('Ajouter un nouvel ingrédient')),
       ],
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -254,48 +254,84 @@ class _AdminRecipeState extends State<AdminRecipe> {
   }
 
   Widget _buildNewIngredientPopup() {
-    return ShadDialog(
-      constraints: const BoxConstraints(maxWidth: 300),
-      radius: BorderRadius.circular(20),
-      title: const Text('Ajouter un ingrédient'),
-      actions: const [ShadButton(onPressed: null, child: Text("Ajouter"))],
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        width: 100,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+    Ingredient newIngredient = Ingredient(name: "");
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return ShadDialog(
+          constraints: const BoxConstraints(maxWidth: 300),
+          radius: BorderRadius.circular(20),
+          title: const Text('Ajouter un ingrédient'),
+          actions: [
             ShadButton(
-              backgroundColor: Colors.white,
-              decoration: const ShadDecoration(
-                border: ShadBorder(
-                  top: ShadBorderSide(color: primaryColor, width: 2),
-                  bottom: ShadBorderSide(color: primaryColor, width: 2),
-                  left: ShadBorderSide(color: primaryColor, width: 2),
-                  right: ShadBorderSide(color: primaryColor, width: 2),
-                ),
-              ),
-              size: ShadButtonSize.lg,
-              child: const Icon(
-                FontAwesomeIcons.image,
-              ),
               onPressed: () async {
-                await _uploadServiceIngredientImage.showUploadDialog(context);
-                setState(() {});
+                Navigator.of(context).pop();
+                String? imageUrl = await _uploadServiceIngredientImage
+                    .uploadManager
+                    .uploadFile();
+                if (imageUrl != null) {
+                  newIngredient.imageUrl = imageUrl;
+                  Ingredient.upload(newIngredient);
+                  _ingredientUrl = '';
+                }
               },
-            ),
-            const SizedBox(height: 10),
-            const ShadInput(
-              placeholder: Text("Nom de l'ingrédient"),
-              keyboardType: TextInputType.text,
-            ),
-            const ShadInput(
-              placeholder: Text("Quantité"),
-              keyboardType: TextInputType.number,
+              child: const Text('Ajouter'),
             ),
           ],
-        ),
-      ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            width: 100,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_ingredientUrl.isEmpty)
+                  UploadFileButton(
+                    contentUploadService: _uploadServiceIngredientImage,
+                    onUpload: () {
+                      setState(() {
+                        _ingredientUrl = _uploadServiceIngredientImage
+                            .uploadManager
+                            .getFile();
+                      });
+                    },
+                  )
+                else
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Image(
+                        image: FileImage(File(_ingredientUrl)),
+                        fit: BoxFit.cover,
+                        errorBuilder: (BuildContext context, Object exception,
+                            StackTrace? stackTrace) {
+                          return const Icon(
+                            Icons.image_not_supported,
+                            size: 30,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 10),
+                ShadInput(
+                  placeholder: const Text("Nom de l'ingrédient"),
+                  keyboardType: TextInputType.text,
+                  onChanged: (name) {
+                    newIngredient.name = name;
+                  },
+                ),
+                ShadInput(
+                  placeholder: const Text("Quantité"),
+                  keyboardType: TextInputType.number,
+                  onChanged: (quantity) {
+                    newIngredient.quantity = int.parse(quantity);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

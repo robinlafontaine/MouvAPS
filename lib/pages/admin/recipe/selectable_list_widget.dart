@@ -34,7 +34,7 @@ class _SelectableListState extends State<SelectableList> {
   Widget _buildIngredientCard(Ingredient ingredient) {
     return Material(
       child: ListTile(
-        title: Text(ingredient.name),
+        title: Text(ingredient.name ?? ''),
         trailing: IconButton(
           icon: widget.selectedIngredients.any((selectedIngredient) =>
                   selectedIngredient.name == ingredient.name)

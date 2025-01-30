@@ -108,9 +108,9 @@ class _RecipeWidgetState extends State<RecipeWidget> {
           fileExtension: widget.recipe.videoUrl!.split('.').last,
         ),
         ...widget.recipe.ingredients!.map((ingredient) => DownloadRequest(
-              url: ingredient.imageUrl,
+              url: ingredient.imageUrl ?? '',
               filename: 'ing_${ingredient.name}',
-              fileExtension: ingredient.imageUrl.split('.').last,
+              fileExtension: ingredient.imageUrl!.split('.').last,
             )),
       ],
       onSave: (paths) async {

@@ -1,14 +1,14 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Ingredient {
-  final String name;
-  final int? quantity;
-  final String imageUrl;
+  String? name;
+  int? quantity;
+  String? imageUrl;
 
   Ingredient({
-    required this.name,
+    this.name,
     this.quantity,
-    required this.imageUrl,
+    this.imageUrl,
   });
 
   factory Ingredient.fromJson(Map<String, dynamic> json) {
@@ -30,6 +30,13 @@ class Ingredient {
     return {
       'name': name,
       'quantity': quantity,
+      'image_url': imageUrl,
+    };
+  }
+
+  Map<String, dynamic> toJson2() {
+    return {
+      'name': name,
       'image_url': imageUrl,
     };
   }
@@ -56,5 +63,10 @@ class Ingredient {
   ''');
 
     return response.map((json) => Ingredient.fromJson2(json)).toList();
+  }
+
+  // Upload an ingredient to the database
+  static Future<void> upload(Ingredient ingredient) async {
+    await _supabase.from('ingredients').upsert(ingredient.toJson2());
   }
 }

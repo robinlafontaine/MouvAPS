@@ -6,10 +6,10 @@ import 'package:mouvaps/utils/constants.dart';
 
 class UploadFileButton extends StatelessWidget {
   final ContentUploadService contentUploadService;
-  final VoidCallback onUpload;
+  final VoidCallback? onUpload;
 
   const UploadFileButton(
-      {super.key, required this.contentUploadService, required this.onUpload});
+      {super.key, required this.contentUploadService, this.onUpload});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class UploadFileButton extends StatelessWidget {
       ),
       onPressed: () async {
         await contentUploadService.showUploadDialog(context);
-        onUpload();
+        onUpload!();
       },
     );
   }

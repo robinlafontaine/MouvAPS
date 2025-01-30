@@ -130,8 +130,8 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
                               height: 40,
                               child: Image(
                                 image: widget.isOffline
-                                    ? FileImage(File(ingredient.imageUrl))
-                                    : NetworkImage(ingredient.imageUrl),
+                                    ? FileImage(File(ingredient.imageUrl ?? ''))
+                                    : NetworkImage(ingredient.imageUrl ?? ''),
                                 fit: BoxFit.contain,
                                 errorBuilder: (BuildContext context,
                                     Object exception, StackTrace? stackTrace) {
@@ -142,7 +142,7 @@ class _LockedRecipeDetailsScreenState extends State<LockedRecipeDetailsScreen> {
                                 },
                               ),
                             ),
-                            P(content: ingredient.name),
+                            P(content: ingredient.name ?? ''),
                           ],
                         ),
                       ],
