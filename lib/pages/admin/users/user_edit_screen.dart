@@ -156,9 +156,9 @@ class _UserEditScreenState extends State<UserEditScreen> {
                                               values) =>
                                               Text(values.map((v) =>
                                                   v.capitalize()).join(', ')),
-                                          initialValue: currentUser.difficulty,
+                                          initialValue: currentUser.difficulty.name.capitalize(),
                                           onChanged: (value) {
-                                            currentUser.difficulty = value!;
+                                            currentUser.difficulty = difficulties.firstWhere((e) => e.name.toString().capitalize() == value);
                                           },
                                         )
                                     );
@@ -267,7 +267,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
                       values) =>
                       Text(values.map((v) =>
                           v.capitalize()).join(', ')),
-                  initialValues: userElements.map((e) => e.name.toString()).toList(),
+                  initialValues: userElements.map((e) => e.name.toString().capitalize()).toList(),
                   onChanged: (values) {
                     userElements.clear();
                     userElements.addAll(values.map((v) => elements.firstWhere((e) => e.name.toString().capitalize() == v)));

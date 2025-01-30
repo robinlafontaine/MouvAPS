@@ -7,14 +7,31 @@ import 'package:mouvaps/widgets/certificate_button.dart';
 import 'package:mouvaps/widgets/custom_badge.dart';
 import 'package:mouvaps/pages/admin/users/user_edit_screen.dart';
 
-class UserScreen extends StatelessWidget {
+class UserScreen extends StatefulWidget {
   final String uuid;
-  final Future<User> user;
 
-  UserScreen({
-    super.key,
-    required this.uuid,
-  }) : user = User.getUserByUuid(uuid);
+  const UserScreen({super.key, required this.uuid});
+
+  @override
+  State<UserScreen> createState() => _UserScreenState();
+}
+
+class _UserScreenState extends State<UserScreen> {
+  late Future<User> user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = User.getUserByUuid(widget.uuid);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(() {
+      user = User.getUserByUuid(widget.uuid); // Reload data when page is revisited
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +42,10 @@ class UserScreen extends StatelessWidget {
           IconButton(
             icon: const FaIcon(
               FontAwesomeIcons.solidPenToSquare,
-              color: constants.primaryColor
+              color: constants.primaryColor,
             ),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              await Navigator.push(
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
@@ -49,119 +66,76 @@ class UserScreen extends StatelessWidget {
                   },
                 ),
               );
-            }
+              setState(() {
+                user = User.getUserByUuid(widget.uuid); // Reload user after editing
+              });
+            },
           ),
         ],
       ),
       body: SingleChildScrollView(
-          child: Column(
-            children: [
-              FutureBuilder(
-                  future: user,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    }
-                    if (snapshot.hasError) {
-                      return Text(snapshot.error.toString());
-                    }
-                    if (snapshot.hasData) {
-                      final User currentUser = snapshot.data;
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: constants.lightColor,
-                                  child: Text(
-                                    "${currentUser.firstName[0].toUpperCase()}${currentUser.lastName[0].toUpperCase()}",
-                                    style: const TextStyle(color: constants.primaryColor),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                H4(content: "${currentUser.firstName} ${currentUser.lastName}"),
-                              ],
-                            ),
-                            CertificateButton(user: currentUser),
-                            userElement(
-                              label: "Age",
-                              child: P(content: "${DateTime.now().difference(currentUser.birthday).inDays ~/ 365 } ans")
-                            ),
-                            userElement(
-                                label: "Genre",
-                                child: P(content: currentUser.gender.capitalize())
-                            ),
-                            userElement(
-                              label: "Points",
-                              child: P(content: "${currentUser.points.toString()} points")
-                            ),
-                            userElement(
-                                label: "Niveau",
-                                child: P(content: currentUser.difficulty.capitalize())
-                            ),
-                            userElement(
-                              label: "Rôles",
-                              child: Flex(
-                                direction: Axis.horizontal,
-                                children: [
-                                  if (currentUser.roles.isEmpty) ...[
-                                    const CustomBadge(
-                                      text: "En attente",
-                                      backgroundColor: constants.lightColor,
-                                      textColor: constants.textColor,
-                                    ),
-                                    const SizedBox(width: 10)
-                                  ] else
-                                  for (final role in currentUser.roles) ...[
-                                    CustomBadge(
-                                      text: role.name.capitalize(),
-                                      backgroundColor: constants.lightColor,
-                                      textColor: constants.textColor,
-                                    ),
-                                    const SizedBox(width: 10)
-                                  ]
-                                ],
-                              )
-                            ),
-                            badgeElements(
-                                label: "Pathologies",
-                                elements: currentUser.pathologies!
-                            ),
-                            badgeElements(
-                                label: "Régime",
-                                elements: currentUser.diet
-                            ),
-                            badgeElements(
-                              label: "Matériel sportif",
-                              elements: currentUser.homeMaterial
-                            ),
-                            badgeElements(
-                                label: "Allergies",
-                                elements: currentUser.allergies
-                            ),
-                            badgeElements(
-                                label: "Attentes alimentaires",
-                                elements: currentUser.dietExpectations
-                            ),
-                            badgeElements(
-                                label: "Attentes sportives",
-                                elements: currentUser.sportExpectations
-                            ),
-                          ],
+        child: FutureBuilder(
+          future: user,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text(snapshot.error.toString()));
+            }
+            if (snapshot.hasData) {
+              final User currentUser = snapshot.data;
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: constants.lightColor,
+                          child: Text(
+                            "${currentUser.firstName[0].toUpperCase()}${currentUser.lastName[0].toUpperCase()}",
+                            style: const TextStyle(color: constants.primaryColor),
+                          ),
                         ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }
-              )
-            ],
-          )),
+                        const SizedBox(width: 10),
+                        H4(content: "${currentUser.firstName} ${currentUser.lastName}"),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Center(child: CertificateButton(user: currentUser)),
+                    userElement(
+                      label: "Age",
+                      child: P(content: "${DateTime.now().difference(currentUser.birthday).inDays ~/ 365} ans"),
+                    ),
+                    userElement(
+                      label: "Genre",
+                      child: P(content: currentUser.gender.capitalize()),
+                    ),
+                    userElement(
+                      label: "Points",
+                      child: P(content: "${currentUser.points} points"),
+                    ),
+                    userElement(
+                      label: "Niveau",
+                      child: P(content: currentUser.difficulty.name.capitalize()),
+                    ),
+                    badgeElements(label: "Rôles", elements: currentUser.roles),
+                    badgeElements(label: "Pathologies", elements: currentUser.pathologies!),
+                    badgeElements(label: "Régime", elements: currentUser.diet),
+                    badgeElements(label: "Matériel sportif", elements: currentUser.homeMaterial),
+                    badgeElements(label: "Allergies", elements: currentUser.allergies),
+                    badgeElements(label: "Attentes alimentaires", elements: currentUser.dietExpectations),
+                    badgeElements(label: "Attentes sportives", elements: currentUser.sportExpectations),
+                  ],
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
     );
   }
 
@@ -176,33 +150,32 @@ class UserScreen extends StatelessWidget {
     );
   }
 
-  Widget badgeElements<T extends dynamic>(
-      {required String label, required List<T> elements}) {
+  Widget badgeElements<T extends dynamic>({required String label, required List<T> elements}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Divider(),
         H4(content: label),
-        Flex(
-          direction: Axis.horizontal,
-          children: [
-            if (elements.isEmpty) ...[
-              const CustomBadge(
-                text: "Inconnu",
-                backgroundColor: constants.lightColor,
-                textColor: constants.textColor,
-              ),
-              const SizedBox(width: 10)
-            ] else
-            for (final element in elements) ...[
-              CustomBadge(
-                text: element.name.toString().capitalize(),
-                backgroundColor: constants.lightColor,
-                textColor: constants.textColor,
-              ),
-              const SizedBox(width: 10)
-            ],
-          ],
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: elements.isEmpty
+              ? [
+            const CustomBadge(
+              text: "Inconnu",
+              backgroundColor: constants.lightColor,
+              textColor: constants.textColor,
+            ),
+          ]
+              : elements
+              .map(
+                (element) => CustomBadge(
+              text: element.name.toString().capitalize(),
+              backgroundColor: constants.lightColor,
+              textColor: constants.textColor,
+            ),
+          )
+              .toList(),
         ),
       ],
     );

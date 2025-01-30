@@ -9,6 +9,7 @@ import 'package:mouvaps/services/allergy.dart';
 import 'package:mouvaps/services/home_material.dart';
 import 'package:mouvaps/services/diet_expectations.dart';
 import 'package:mouvaps/services/sport_expectations.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -21,7 +22,7 @@ class User {
   String lastName;
   List<Role> roles;
   String gender;
-  String difficulty;
+  Difficulty difficulty;
   List<Diet> diet;
   List<HomeMaterial> homeMaterial;
   List<Allergy> allergies;
@@ -49,48 +50,80 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     User user = User(
-      points: json['points'] as int,
-      userUuid: json['user_uuid'] as String,
-      pathologies: json['user_pathologie'] != null ?
-        (json['user_pathologie'] as List<dynamic>?)
-          ?.map((e) => Pathology.fromJson(e['pathologies']))
+      points: json['points'] is int ? json['points'] as int : 0,
+
+      userUuid: json['user_uuid'] is String ? json['user_uuid'] as String : "",
+
+      pathologies: (json['user_pathologie'] is List)
+          ? (json['user_pathologie'] as List)
+          .where((e) => e is Map && e.containsKey('pathologies'))
+          .map((e) => Pathology.fromJson(e['pathologies']))
           .toList()
-        : [],
-      birthday: DateTime.parse(json['birthday']),
-      firstName: json['first_name'] as String,
-      lastName: json['last_name'] as String,
-      roles: json['user_role'] != null ?
-        (json['user_role'] as List<dynamic>?)
-          !.map((e) => Role.fromJson(e['roles']))
+          : [],
+
+      birthday: json['birthday'] is String ? DateTime.tryParse(json['birthday']) ?? DateTime(2000, 1, 1) : DateTime(2000, 1, 1),
+
+      firstName: json['first_name'] is String ? json['first_name'] as String : "Inconnu",
+
+      lastName: json['last_name'] is String ? json['last_name'] as String : "Inconnu",
+
+      roles: (json['user_role'] is List)
+          ? (json['user_role'] as List)
+          .where((e) => e is Map && e.containsKey('roles'))
+          .map((e) => Role.fromJson(e['roles']))
           .toList()
-        : [],
-      gender: json['gender'] != null ? json['gender'] as String : "inconnu",
-      difficulty: json['difficulty'] != null ? Difficulty.fromJson(json['difficulty']).name : "inconnu",
-      diet: json['user_regime'] != null ?
-        (json['user_regime'] as List<dynamic>?)
-          !.map((e) => Diet.fromJson(e['regimes_alimentaires']))
+          : [],
+
+      gender: json['gender'] is String ? json['gender'] as String : "inconnu",
+
+      difficulty: json['user_difficulty'] is List
+          ? (json['user_difficulty'] as List)
+          .where((e) => e is Map && e.containsKey('niveaux'))
+          .map((e) => Difficulty.fromJson(e['niveaux']))
+          .isNotEmpty // Vérifie si la liste n'est pas vide
+          ? (json['user_difficulty'] as List)
+          .where((e) => e is Map && e.containsKey('niveaux'))
+          .map((e) => Difficulty.fromJson(e['niveaux']))
+          .first // Prends le premier élément
+          : Difficulty(id: 1, name: "Inconnu") // Si la liste est vide
+          : Difficulty(id: 1, name: "Inconnu"), // Cas où 'user_difficulty' n'est pas une liste
+
+
+      diet: (json['user_regime'] is List)
+          ? (json['user_regime'] as List)
+          .where((e) => e is Map && e.containsKey('regimes_alimentaires'))
+          .map((e) => Diet.fromJson(e['regimes_alimentaires']))
           .toList()
-        : [],
-      homeMaterial: json['user_materiel_sportif'] != null ?
-        (json['user_materiel_sportif'] as List<dynamic>?)
-          !.map((e) => HomeMaterial.fromJson(e['materiel_sportif']))
+          : [],
+
+      homeMaterial: (json['user_materiel_sportif'] is List)
+          ? (json['user_materiel_sportif'] as List)
+          .where((e) => e is Map && e.containsKey('materiel_sportif'))
+          .map((e) => HomeMaterial.fromJson(e['materiel_sportif']))
           .toList()
-        : [],
-      allergies: json['user_allergie'] != null ?
-        (json['user_allergie'] as List<dynamic>?)
-          !.map((e) => Allergy.fromJson(e['allergies']))
+          : [],
+
+      allergies: (json['user_allergie'] is List)
+          ? (json['user_allergie'] as List)
+          .where((e) => e is Map && e.containsKey('allergies'))
+          .map((e) => Allergy.fromJson(e['allergies']))
           .toList()
-        : [],
-      dietExpectations: json['user_attentes_alimentaires'] != null ?
-        (json['user_attentes_alimentaires'] as List<dynamic>?)
-          !.map((e) => DietExpectations.fromJson(e['attentes_alimentaires']))
+          : [],
+
+      dietExpectations: (json['user_attentes_alimentaires'] is List)
+          ? (json['user_attentes_alimentaires'] as List)
+          .where((e) => e is Map && e.containsKey('attentes_alimentaires'))
+          .map((e) => DietExpectations.fromJson(e['attentes_alimentaires']))
           .toList()
-        : [],
-      sportExpectations: json['user_attentes_sportives'] != null ?
-        (json['user_attentes_sportives'] as List<dynamic>?)
-          !.map((e) => SportExpectations.fromJson(e['attentes_sportives']))
+          : [],
+
+      sportExpectations: (json['user_attentes_sportives'] is List)
+          ? (json['user_attentes_sportives'] as List)
+          .where((e) => e is Map && e.containsKey('attentes_sportives'))
+          .map((e) => SportExpectations.fromJson(e['attentes_sportives']))
           .toList()
-        : [],
+          : [],
+
     );
     return user;
   }
@@ -247,6 +280,22 @@ class User {
           .select()
           .single();
     }
+
+    // Difficulty
+    await _supabase
+        .from('user_difficulty')
+        .delete()
+        .eq('user_uuid', userUuid);
+
+    await _supabase
+        .from('user_difficulty')
+        .upsert({
+          'user_uuid': userUuid,
+          'difficulty_id': difficulty.id,
+        })
+        .select()
+        .single();
+
 
     // User update
     final response = await _supabase
@@ -446,7 +495,7 @@ class User {
       lastName: '',
       roles: [],
       gender: '',
-      difficulty: '',
+      difficulty: Difficulty(id: 1, name: "Inconnu"),
       diet: [],
       homeMaterial: [],
       allergies: [],
@@ -475,15 +524,17 @@ class User {
 
   Future<File?> getCertificate() async {
     logger.d(userUuid);
-
-    final check = await _supabase.storage.from('user-data').list(path: userUuid, searchOptions: const SearchOptions(search: 'certificat'));
-    logger.d(check[0].name);
-    if (check.isEmpty) {
-      return null;
-    }
     try {
+      final check = await _supabase.storage.from('user-data').list(path: userUuid, searchOptions: const SearchOptions(search: 'certificat'));
+      logger.d(check[0].name);
+      if (check.isEmpty) {
+        return null;
+      }
       final response = await _supabase.storage.from('user-data').download("$userUuid/${check[0].name}");
-      final file = File.fromRawPath(response);
+      final tempDir = await getTemporaryDirectory();
+      File file = await File("${tempDir.path}/${check[0].name}").create();
+      file.writeAsBytesSync(response);
+
       return file;
     } catch (e) {
       logger.e(e);
