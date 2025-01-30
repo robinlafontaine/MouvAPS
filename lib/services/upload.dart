@@ -52,6 +52,10 @@ class UploadManager {
     );
   }
 
+  String getFile() {
+    return _currentRequest!.file.path;
+  }
+
   Future<String?> uploadFile() async {
     if (_currentRequest == null) {
       return null;
@@ -80,12 +84,10 @@ class UploadManager {
   }
 
   Future<String?> _getUploadedUrl(String filePath) async {
-
     final parsedFilePath = filePath.replaceFirst('$bucketName/', '');
 
-    final response = supabase.storage
-        .from(bucketName)
-        .getPublicUrl(parsedFilePath);
+    final response =
+        supabase.storage.from(bucketName).getPublicUrl(parsedFilePath);
 
     if (response.isEmpty) {
       return null;

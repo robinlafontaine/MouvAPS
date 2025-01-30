@@ -5,21 +5,21 @@ import 'auth.dart';
 
 class Exercise {
   final int? id;
-  final String name;
-  final String url;
-  final String thumbnailUrl;
-  final int? rewardPoints;
-  final Duration? duration;
+  String? name;
+  String? url;
+  String? thumbnailUrl;
+  int? rewardPoints;
+  Duration? duration;
   bool isUnlocked = true;
   final Map<String, dynamic>? tags;
 
   Exercise({
-    required this.id,
-    required this.name,
-    required this.url,
-    required this.thumbnailUrl,
-    required this.duration,
-    required this.rewardPoints,
+    this.id,
+    this.name,
+    this.url,
+    this.thumbnailUrl,
+    this.duration,
+    this.rewardPoints,
     this.tags,
   });
 
@@ -48,6 +48,18 @@ class Exercise {
     };
   }
 
+  Map<String, dynamic> toJson2() {
+    return {
+      'id': id,
+      'name': name,
+      'url': url,
+      'thumbnail_url': thumbnailUrl,
+      'duration': duration!.inSeconds,
+      'tags': tags,
+      'reward_points': rewardPoints,
+    };
+  }
+
   static final _supabase = Supabase.instance.client;
   static final _db = ContentDatabase.instance;
   static Logger logger = Logger();
@@ -58,7 +70,7 @@ class Exercise {
 
   Future<Exercise> create() async {
     final response =
-        await _supabase.from('exercises').insert(toJson()).select().single();
+        await _supabase.from('exercises').insert(toJson2()).select().single();
     return Exercise.fromJson(response);
   }
 
@@ -69,7 +81,7 @@ class Exercise {
 
     final response = await _supabase
         .from('exercises')
-        .update(toJson())
+        .update(toJson2())
         .eq('id', id as int)
         .select()
         .single();
@@ -224,22 +236,19 @@ class Exercise {
   }
 
   static Future<List<Exercise>> getDemoExercises() async {
-      try {
-        final response = await _supabase
-            .from('exercises')
-            .select()
-            .eq('is_demo', true);
+    try {
+      final response =
+          await _supabase.from('exercises').select().eq('is_demo', true);
 
-        if (response.isEmpty) {
-          return [];
-        }
-
-        return response.map((json) => Exercise.fromJson(json)).toList();
-
-      } catch(e){
-        logger.e('Error getting exercises: $e');
+      if (response.isEmpty) {
         return [];
       }
+
+      return response.map((json) => Exercise.fromJson(json)).toList();
+    } catch (e) {
+      logger.e('Error getting exercises: $e');
+      return [];
+    }
   }
 //TODO: Algorithmic content serving using type, tags and user points (weights TBD)
 }

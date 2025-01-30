@@ -27,7 +27,6 @@ class ExerciseCard extends StatefulWidget {
 }
 
 class _ExerciseCardState extends State<ExerciseCard> {
-
   @override
   Widget build(BuildContext context) {
     return Opacity(
@@ -43,8 +42,8 @@ class _ExerciseCardState extends State<ExerciseCard> {
             aspectRatio: 16 / 9,
             child: Image(
               image: widget.isOffline
-                  ? FileImage(File(widget.exercise.thumbnailUrl))
-                  : NetworkImage(widget.exercise.thumbnailUrl),
+                  ? FileImage(File(widget.exercise.thumbnailUrl ?? ''))
+                  : NetworkImage(widget.exercise.thumbnailUrl ?? ''),
               fit: BoxFit.cover,
               errorBuilder: (BuildContext context, Object exception,
                   StackTrace? stackTrace) {
@@ -57,7 +56,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
           ),
         ),
         title: Text(
-          widget.exercise.name,
+          widget.exercise.name ?? '',
           style: ShadTheme.of(context).textTheme.h3,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -84,16 +83,15 @@ class _ExerciseCardState extends State<ExerciseCard> {
             : _buildDownloadButton(),
         onTap: widget.isEnabled
             ? () async {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ExerciseDetailsScreen(
-                    exercise: widget.exercise,
-                    isOffline: widget.isOffline,
-                    isEnabled: widget.isEnabled,
-                    onWatchedCallback: widget.onWatchedCallback
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ExerciseDetailsScreen(
+                        exercise: widget.exercise,
+                        isOffline: widget.isOffline,
+                        isEnabled: widget.isEnabled,
+                        onWatchedCallback: widget.onWatchedCallback),
                   ),
-                ),
-              );
+                );
               }
             : null,
       ),
@@ -120,19 +118,20 @@ class _ExerciseCardState extends State<ExerciseCard> {
       isEnabled: widget.isEnabled && !widget.isOffline,
       downloadRequests: [
         DownloadRequest(
-          url: widget.exercise.thumbnailUrl,
+          url: widget.exercise.thumbnailUrl ?? '',
           filename: 'e_${widget.exercise.name}_t',
-          fileExtension: widget.exercise.thumbnailUrl.split('.').last,
+          fileExtension: widget.exercise.thumbnailUrl!.split('.').last,
         ),
         DownloadRequest(
-          url: widget.exercise.url,
+          url: widget.exercise.url ?? '',
           filename: 'e_${widget.exercise.name}_v',
-          fileExtension: widget.exercise.url.split('.').last,
+          fileExtension: widget.exercise.url!.split('.').last,
         ),
       ],
       onSave: (paths) async {
         await Exercise.saveLocalExercise(widget.exercise, paths[1], paths[0]);
-      }, onDownloadComplete: (T) {  },
+      },
+      onDownloadComplete: (T) {},
     );
   }
 }

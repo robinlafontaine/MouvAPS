@@ -19,7 +19,9 @@ class ContentUploadService {
     this.onUploadComplete,
   }) : uploadManager = UploadManager(bucketName: 'media-content');
 
-  Future<void> _pickFile(BuildContext context, {FileType type = FileType.custom, List<String>? allowedExtensions}) async {
+  Future<void> pickFile(BuildContext context,
+      {FileType type = FileType.custom,
+      List<String>? allowedExtensions}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: type,
       allowedExtensions: allowedExtensions,
@@ -41,7 +43,7 @@ class ContentUploadService {
     }
   }
 
-  Future<void> _startUpload(BuildContext context) async {
+  Future<void> startUpload(BuildContext context) async {
     final response = await uploadManager.uploadFile();
 
     if (context.mounted) {
@@ -84,10 +86,11 @@ class ContentUploadService {
           ),
           const SizedBox(height: 20),
           ListTile(
-            leading: Icon(type.name == 'image' ? Icons.image : Icons.video_file, color: constants.primaryColor),
+            leading: Icon(type.name == 'image' ? Icons.image : Icons.video_file,
+                color: constants.primaryColor),
             title: Text('Envoyer une ${type.name}'),
             subtitle: Text('Choisissez une ${type.name} de votre appareil'),
-            onTap: () => _pickFile(context, type: FileType.image),
+            onTap: () => pickFile(context, type: FileType.image),
           ),
           const SizedBox(height: 20),
         ],
@@ -107,8 +110,9 @@ class ContentUploadService {
 
     if (shouldUpload == true) {
       if (context.mounted) {
-        await _startUpload(context);
         return _uploadedFileUrl;
+        /*await _startUpload(context);
+        return _uploadedFileUrl;*/
       }
     }
     return null;
